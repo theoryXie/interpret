@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * @author xsy
- * @description: TODO
+ * @description: 词法分析方法的实现类
  * @date 2019/9/2121:30
  */
 

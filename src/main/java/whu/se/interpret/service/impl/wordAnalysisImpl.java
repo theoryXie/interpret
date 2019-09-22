@@ -19,6 +19,10 @@ public interface wordAnalysisImpl {
      **/
     public List<token> wordAnalysis(String code);
 
+
+
+    
+
     //TODO 判断是否是数字
 
     //TODO 判断是否是关键字
