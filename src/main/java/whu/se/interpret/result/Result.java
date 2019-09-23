@@ -4,13 +4,7 @@ import whu.se.interpret.po.token;
 
 import java.util.List;
 
-/**
- * @author xsy
- * @description: 发送给前台的结果
- * @date 2019/9/2121:13
- */
-
-public class result {
+public class Result {
 
     //提交的程序是否正确
     private boolean is_success;
@@ -21,6 +15,7 @@ public class result {
     //词法分析单元返回的token序列
     private List<token> tokens;
 
-
-
+    public Result(boolean is_success){
+        this.is_success = is_success;
+    }
 }

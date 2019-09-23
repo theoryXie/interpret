@@ -1,9 +1,9 @@
 package whu.se.interpret.controller;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import whu.se.interpret.result.result;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import whu.se.interpret.po.Code;
+import whu.se.interpret.result.Result;
 
 import java.util.List;
 
@@ -13,8 +13,7 @@ import java.util.List;
  * @date 2019/9/20 23:50
  */
 
-@RestController
-@RequestMapping("")
+@Controller
 public class IndexController {
 
     /**
@@ -23,9 +22,13 @@ public class IndexController {
      * @Param code -- 前端传来的需要分析的代码 
      * @return result -- 分析的结果
      **/
-    @PostMapping("")
-    public result InterpretCode(){
-        return null;
+    @CrossOrigin
+    @PostMapping(value = "api/login")
+    @ResponseBody
+    public Result InterpretCode(@RequestBody Code code){
+        System.out.println(code.getCode());
+        Result result = new Result(true);
+        return result;
     }
 
 }
