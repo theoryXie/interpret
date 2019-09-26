@@ -2,6 +2,11 @@ package whu.se.interpret.po;
 
 public class Code {
     private String code;
+
+    public Code(){
+
+    }
+
     public Code(String code){
         this.code = code;
     }

@@ -9,5 +9,5 @@ import org.springframework.stereotype.Service;
  */
 
 @Service
-public class parser {
+public class Parser {
 }
