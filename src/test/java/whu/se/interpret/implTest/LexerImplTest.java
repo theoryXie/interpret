@@ -26,7 +26,7 @@ public class LexerImplTest extends InterpretApplicationTests {
      **/
     @Test
     public void testLexer(){
-        String code = "int main(){int a = @;}";
+        String code = "/*xsy write in 2019*/\nint main(){int a = @;}";
         List<Token> tokens = lexerImpl.lexer(code);
         for(int i = 0;i <tokens.size(); i++){
             System.out.println(tokens.get(i));

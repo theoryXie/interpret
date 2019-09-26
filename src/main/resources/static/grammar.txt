@@ -1,0 +1,73 @@
+<begin> → <program>
+<program> → <bases>
+<bases> → <base> <bases>
+<bases> → ε
+<base> → <decl>
+<base> → <structdef>
+<base> → <function>
+<decl> → <type> id ;
+<decl> → <type> id = <bool>;
+<decl> → struct id id;
+<structdef> → struct id { <decls> };
+<decls> → <decl> <decls>
+<decls> → ε
+<function> → <type> <funcdecl> <block>
+<funcdecl> → id ( <paramdecls> )
+<funcdecl> → id ( )
+<paramdecls> → <paramdecl> , <pramdecls>
+<paramdecls> → <paramdecl>
+<paramdecl> → <basic> id
+<funcuse> → id ( <factors> )
+<funcuse> → id ( )
+<factors> → <factor> , <factors>
+<factors> → <factor>
+<block> → { <stmts> }
+<type> → <type> [ <num> ]
+<type> → <basic>
+<basic> → bool
+<basic> → int
+<basic> → float
+<basic> → char
+<stmts> → <stmt> <stmts>
+<stmts> → ε
+<stmt> → decl;
+<stmt> → <asgn>
+<stmt> → if ( <bool> ) <stmt>
+<stmt> → if ( <bool> ) <stmt> else <stmt>
+<stmt> → while ( <bool> ) <stmt>
+<stmt> → do <stmt> while ( <bool> );
+<stmt> → break ;
+<stmt> → <block>
+<stmt> → <bool> ;
+<asgn> → <loc> = <bool> ;
+<loc> → <loc> [ <bool> ]
+<loc> → id
+<loc> → id . id
+<bool> → <join> || <bool>
+<bool> → <join>
+<join> → <equality> && <join>
+<join> → <equality>
+<equality> → <rel> == <equality>
+<equality> → <rel> != <equality>
+<equality> → <rel>
+<rel> → <expr> < <expr>
+<rel> → <expr> <= <expr>
+<rel> → <expr> >= <expr>
+<rel> → <expr> > <expr>
+<rel> → <expr>
+<expr> → <expr> + <term>
+<expr> → <expr> - <term>
+<expr> → <term>
+<term> → <term> * <unary>
+<term> → <term> / <unary>
+<term> → <unary>
+<unary> → ! <unary>
+<unary> → - <unary>
+<unary> → <factor>
+<factor> → ( <bool> )
+<factor> → <loc>
+<factor> → <num>
+<factor> → <real>
+<factor> → <funcuse>
+<factor> → true
+<factor> → false
