@@ -8,5 +8,20 @@ import lombok.Setter;
 @Setter
 public class Code {
     private String code;
-    private String input;
+
+    public Code(){
+
+    }
+
+    public Code(String code){
+        this.code = code;
+    }
+
+    public String getCode(){
+        return this.code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
 }
