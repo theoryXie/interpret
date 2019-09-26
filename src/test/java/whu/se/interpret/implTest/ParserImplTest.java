@@ -37,7 +37,7 @@ public class ParserImplTest extends InterpretApplicationTests {
         Iterator iter = firstSet.entrySet().iterator();
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry) iter.next();
-            System.out.println(entry.getKey()+"\t\t\t\t:\t\t\t\t"+entry.getValue());
+            System.out.printf("%-20s:%s\n",entry.getKey(),entry.getValue());
         }
     }
 }
