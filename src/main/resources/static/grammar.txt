@@ -30,7 +30,7 @@
 <basic> → char
 <stmts> → <stmt> <stmts>
 <stmts> → ε
-<stmt> → <decl>;
+<stmt> → <decl> ;
 <stmt> → <asgn>
 <stmt> → if ( <bool> ) <stmt>
 <stmt> → if ( <bool> ) <stmt> else <stmt>
