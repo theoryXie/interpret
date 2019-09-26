@@ -34,7 +34,13 @@ public class ParserImplTest extends InterpretApplicationTests {
     public void testInit() throws FileNotFoundException {
         parserImpl.init();
         HashMap<String, HashSet<String>> firstSet = parserImpl.getAllFirst();
-        Iterator iter = firstSet.entrySet().iterator();
+        HashMap<String, HashSet<String>> followSet = parserImpl.getAllFollow();
+//        Iterator iter = firstSet.entrySet().iterator();
+//        while (iter.hasNext()) {
+//            Map.Entry entry = (Map.Entry) iter.next();
+//            System.out.printf("%-20s:%s\n",entry.getKey(),entry.getValue());
+//        }
+        Iterator iter = followSet.entrySet().iterator();
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry) iter.next();
             System.out.printf("%-20s:%s\n",entry.getKey(),entry.getValue());
