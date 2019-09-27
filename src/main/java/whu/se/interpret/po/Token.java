@@ -16,7 +16,7 @@ public class Token {
         intsym, floatsym, boolsym, charsym,
         ifsym, elsesym, whilesym, readsym, writesym,
         realsym, structsym, dosym, breaksym, errorsym,
-        voidsym, mainsym, returnsym
+        voidsym, mainsym, returnsym, errorcomment
     };
     String name;  //该词本身字符串形式
     Symbol tokenType;  //该词枚举码
@@ -40,13 +40,13 @@ public class Token {
 
     @Override
     public String toString() {
-        return "token{" +
+        return "\ntoken{" +
                 "name='" + name + '\'' +
                 ", tokenType=" + tokenType +
                 ", row=" + row +
                 ", value=" + value +
                 ", fvalue=" + fvalue +
-                '}';
+                "}";
     }
 
     public String getName() {

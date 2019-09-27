@@ -40,8 +40,8 @@ public class Lexer implements LexerImpl {
     /*  这一段是测试函数*/
 //    public static void main(String[] args) {
 //        System.out.println("helloWorld");
-//        String a = "int main(){int a=112a;||\n@#@}" +
-//                "";
+//        String a = "int main(){}/*123\n\n*/  //123\n" +
+//                "int";
 //        parser parser = new parser();
 //        List<Token> TokenList = parser.wordAnalysis(a);
 //        for(int i = 0;i<TokenList.size();i++)
@@ -59,7 +59,7 @@ public class Lexer implements LexerImpl {
         int row = 1;
         initSingleSymbolEnumArr(); //初始化单字符枚举数组
 
-        while(codePoint!=code.length()-1)
+        while(codePoint!=code.length())  //当codePoint不会越界时 即字符串没有访问完
         {
             //ch 为当前code指针所指位置的字符
             char ch = code.charAt(codePoint);
@@ -67,7 +67,7 @@ public class Lexer implements LexerImpl {
             if(isFilter(ch))  //筛除所有的分隔符
             {
                 if(ch=='\n')  //如遇回车则增加行号
-                    row++; //可能访问不到 需要解决 2019年9月25日18:31:01
+                    row++; //可能访问不到 可能需要解决 2019年9月25日18:31:01
                 codePoint++;
                 continue;
             }
@@ -143,6 +143,73 @@ public class Lexer implements LexerImpl {
                         }
                         break;
                     case '/':
+                        codePoint++;
+                        ch = code.charAt(codePoint);
+                        if(ch=='*')
+                        {
+                            codePoint++;
+                            while ( (codePoint!=code.length()) )  //当codePoint不会越界时 即字符串没有访问完
+                            {
+                                ch = code.charAt(codePoint);
+                                if(ch!='*')
+                                {
+                                    if(ch=='\n')
+                                    {
+                                        row++;
+                                    }
+                                    codePoint++;
+                                    if(codePoint==code.length()-2)  //如果没有两位可以访问(因为code在导入的时候添加了一位空格 所以此处减2)
+                                    {
+                                        Token mToken = new Token("", Token.Symbol.errorcomment, 0, row);
+                                        TokenList.add(mToken);
+                                        codePoint++;
+                                        break; //退出
+                                    }
+                                    continue;
+                                }else  //当遇到*号时
+                                {
+                                    if(codePoint==code.length()-1)  //如果*号为最后一位  这一段可能在上一块代码中已经排除了
+                                    {
+                                        Token mToken = new Token("", Token.Symbol.errorcomment, 0, row);
+                                        TokenList.add(mToken);
+                                        break; //退出
+                                    }
+                                    codePoint++;
+                                    ch = code.charAt(codePoint);
+                                    if(ch=='/')
+                                    {
+                                        codePoint++;
+                                        break;  //注释部分源码  跳过
+                                    }else
+                                    {
+                                        continue;
+                                    }
+                                }
+                            }
+                        }else if(ch=='/')
+                        {
+                            codePoint++;
+                            while (codePoint!=code.length())  //数组没有越界
+                            {
+                                ch = code.charAt(codePoint);
+                                if(ch!='\n')
+                                {
+                                    codePoint++;
+                                    continue;
+                                }else
+                                {
+                                    codePoint++;
+                                    row++;
+                                    break;
+                                }
+                            }
+                        }else
+                        {
+                            codePoint++;
+                            Token mToken = new Token(String.valueOf(ch), SingleSymbolEnumArr[ch], 0, row);
+                            TokenList.add(mToken);
+                        }
+                        break;
                     case '*':
                         codePoint++;
                         Token mToken = new Token(String.valueOf(ch), SingleSymbolEnumArr[ch], 0, row);
@@ -339,6 +406,7 @@ public class Lexer implements LexerImpl {
         SingleSymbolEnumArr['}'] = Token.Symbol.rbrace;
     }
 
+
     /**
      * 处理词法分析生成的token序列，生成传给前台的Result包
      *
@@ -360,9 +428,15 @@ public class Lexer implements LexerImpl {
                 wrongMessage.append("error: 第"+row+"行"+name+"是非法字符\n");
             }
         }
-        Result result = new Result(200,wrongMessage.toString(),tokens.toString());
-        return result;
+        if(isSuccess){ // 词法分析正确
+            String tokenString = tokens.toString();
+            return new Result("词法分析Token序列如下："+tokenString.substring(1,tokenString.length()-1));
+        }else{
+            return new Result(wrongMessage.toString());
+        }
+
     }
+
 
 
 

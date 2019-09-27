@@ -23,6 +23,26 @@ public class Parser implements ParserImpl {
     HashMap<String, HashSet<String>> firstSet = new HashMap<>();//所有非终结符号的first集
     HashMap<String, HashSet<String>> followSet = new HashMap<>();//所有非终结符号的follow集
 
+    //初始化grammar，firstSet，followSet
+    @Override
+    public void init() throws FileNotFoundException {
+        this.grammar = getGrammar("grammar.txt");
+        for(int i = 0; i < grammar.size(); i++){
+            String left = grammar.get(i).getLeft();//产生式左部
+            if(!firstSet.containsKey(left)) {
+                firstSet.put(left, getFirst(left));//将此产生式的first集放入总first集中
+            }
+        }
+        for(int i = 0; i < grammar.size(); i++){
+            String left = grammar.get(i).getLeft();//产生式左部
+            if(!followSet.containsKey(left)) {
+                followSet.put(left, getFollow(left));//将此产生式的first集放入总first集中
+            }
+        }
+        followSet.put("<begin>",new HashSet<>());
+        followSet.get("<begin>").add("$");
+    }
+
 
     @Override
     public boolean isTerm(String s) {
@@ -125,19 +145,59 @@ public class Parser implements ParserImpl {
 
 
     public HashSet<String> getFollow(String target) {
-        return null;
-    }
+        HashSet<String> follow_set = new HashSet<>();
 
-    @Override
-    public void init() throws FileNotFoundException {
-        this.grammar = getGrammar("grammar.txt");
         for(int i = 0; i < grammar.size(); i++){
-            String left = grammar.get(i).getLeft();//产生式左部
-            if(!firstSet.containsKey(left)) {
-                firstSet.put(left, getFirst(left));//将此产生式的first集放入总first集中
+            boolean flag = false;
+            //遍历产生式右部，找到target
+            int j;
+            for(j = 0; j < grammar.get(i).getRight().size(); j++){
+                if(grammar.get(i).getRight().get(j).equals(target)){
+                    flag = true;
+                    break;
+                }
+            }
+            //在产生式右部找到了target后
+            if(flag) {
+                String left = grammar.get(i).getLeft();//产生式左部
+
+                //target右边为空串
+                if (j == grammar.get(i).getRight().size()) {
+                    //并且target不等于产生式左部（等于左部时与自己取并集）
+                    //与产生式左部的follow集取并集
+                    follow_set.addAll(followSet.get(left));
+                }
+
+                //target右边不为空
+                else {
+                    //遍历右部符号
+                    for (; j < grammar.get(i).getRight().size(); j++) {
+                        String temp = grammar.get(i).getRight().get(j);
+                        //右边为终结符号，直接装入
+                        if (isTerm(temp)) {
+                            follow_set.add(temp);
+                            break;
+                        }
+                        //右边为非终结符号，且first集不含ε
+                        //则与右边非终结符号的first集求并集
+                        else if (!firstSet.get(temp).contains('ε')) {
+                            follow_set.addAll(firstSet.get(temp));
+                        }
+                        //右边为非终结符号，且first集含ε
+                        //则与右边非终结符号的first集和follow集求并集
+                        else {
+                            follow_set.addAll(firstSet.get(temp));
+                            follow_set.addAll(followSet.get(temp));
+                            follow_set.remove("ε");
+                        }
+                    }
+                }
             }
         }
+        return follow_set;
     }
+
+
 
     @Override
     public HashMap<String, HashSet<String>> getAllFirst() {
@@ -146,6 +206,6 @@ public class Parser implements ParserImpl {
 
     @Override
     public HashMap<String, HashSet<String>> getAllFollow() {
-        return null;
+        return followSet;
     }
 }
