@@ -39,11 +39,8 @@ public class IndexController {
     @PostMapping(value = "api/code")
     @ResponseBody
     public Result InterpretCode(@RequestBody Code code){
-        /*List<Token> tokens = lexerImpl.lexer(code.getCode()); //获取token序列
-        Result result = lexerImpl.analysisTokens(tokens);     //将token序列转化为发给前端的Result包*/
-        System.out.println(code.getCode());
-        System.out.println(code.getInput());
-        Result result = new Result("hhhhhhhhhhhhhhhhhhh");
+        List<Token> tokens = lexerImpl.lexer(code.getCode()); //获取token序列
+        Result result = lexerImpl.analysisTokens(tokens);     //将token序列转化为发给前端的Result包
         return result;
     }
 
@@ -66,8 +63,11 @@ public class IndexController {
             code += line + "\n";
         }
         reader.close();
-        Result result = new Result(200);
-        System.out.println(code);
+
+
+        List<Token> tokens = lexerImpl.lexer(code); //获取token序列
+        Result result = lexerImpl.analysisTokens(tokens);     //将token序列转化为发给前端的Result
+
         result.setCode(code);
         return result;
     }
