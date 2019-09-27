@@ -45,7 +45,6 @@ public class IndexController {
         System.out.println(code.getInput());
         Result result = new Result("hhhhhhhhhhhhhhhhhhh");
         return result;
-
     }
 
     /**
