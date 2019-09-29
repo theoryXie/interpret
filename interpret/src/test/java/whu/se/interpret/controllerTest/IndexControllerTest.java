@@ -38,7 +38,7 @@ public class IndexControllerTest extends InterpretApplicationTests {
         String jsonString = gs.toJson(code);
 
         try {
-            mockMvc.perform(MockMvcRequestBuilders.post("")
+            mockMvc.perform(MockMvcRequestBuilders.post("/api/code")
                     .contentType(MediaType.APPLICATION_JSON).content(jsonString))
                     .andDo(MockMvcResultHandlers.print())
                     .andExpect(MockMvcResultMatchers.status().isOk());
