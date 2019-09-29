@@ -4,9 +4,8 @@ import java.util.ArrayList;
 
 /**
  * @author xsy
- * @projectName interpret
  * @description: 产生式
- * @date 2019/9/268:43
+ * @date 2019/9/26 8:43
  */
 public class Node {
 
@@ -17,8 +16,9 @@ public class Node {
      * left -- 产生式左部 -- <expr>
      * right -- 产生式右部 -- <expr> + <term>
      */
-    String left;
-    ArrayList<String> right;
+    private String left;
+    private ArrayList<String> right;
+    private int index;
 
     public String getLeft() {
         return left;
@@ -36,6 +36,14 @@ public class Node {
         this.right = right;
     }
 
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
     @Override
     public String toString() {
         return "Node{" +
@@ -43,4 +51,5 @@ public class Node {
                 ", right=" + right +
                 '}';
     }
+
 }
