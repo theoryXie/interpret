@@ -11,10 +11,8 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * @author Administrator
- * @title: xsy
- * @projectName interpret
- * @description: TODO
+ * @author xsy
+ * @description: 语法分析测试类
  * @date 2019/9/269:04
  */
 public class ParserImplTest extends InterpretApplicationTests {

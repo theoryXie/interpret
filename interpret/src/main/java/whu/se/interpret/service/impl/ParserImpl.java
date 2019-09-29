@@ -33,4 +33,8 @@ public interface ParserImpl {
     // true -- 终结符
     // false -- 非终结符
     public boolean isTerm(String s);
+
+
+
+
 }

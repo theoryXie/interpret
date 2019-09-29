@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * @author xsy
  * @description: 词法分析测试
- * @date 2019/9/2522:20
+ * @date 2019/9/25 22:20
  */
 public class LexerImplTest extends InterpretApplicationTests {
 

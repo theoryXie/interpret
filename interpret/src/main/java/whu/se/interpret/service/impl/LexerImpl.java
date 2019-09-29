@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * @author xsy
  * @description: 词法分析给外界的接口
- * @date 2019/9/2121:30
+ * @date 2019/9/21 21:30
  */
 public interface LexerImpl {
 

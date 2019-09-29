@@ -9,10 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Administrator
- * @title: xsy
- * @projectName interpret
- * @description: TODO
+ * @author xsy
+ * @description: 词法分析接口
  * @date 2019/9/2522:15
  */
 
