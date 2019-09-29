@@ -1,5 +1,7 @@
 package whu.se.interpret.service;
 
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 import whu.se.interpret.po.Node;
@@ -25,7 +27,7 @@ public class Parser implements ParserImpl {
 
     //初始化grammar，firstSet，followSet
     @Override
-    public void init() throws FileNotFoundException {
+    public void init() throws IOException {
         this.grammar = getGrammar("grammar.txt");
         for(int i = 0; i < grammar.size(); i++){
             String left = grammar.get(i).getLeft();//产生式左部
@@ -57,11 +59,12 @@ public class Parser implements ParserImpl {
     }
 
     @Override
-    public ArrayList<Node> getGrammar(String filename) throws FileNotFoundException {
+    public ArrayList<Node> getGrammar(String filename) throws IOException {
         //获取资源文件夹static
-        File path = new File(ResourceUtils.getURL("classpath:static").getPath().replace("%20"," ").replace('/', '\\'));
+        Resource resource = new ClassPathResource("static/"+filename);
+        //File path = new File(ResourceUtils.getURL("classpath:static").getPath().replace("%20"," ").replace('/', '\\'));
         //获取资源文件夹下的文法文件
-        File grammarFile = new File(path.getAbsolutePath(),filename);
+        File grammarFile = resource.getFile();
         //最终的文法序列
         ArrayList<Node> grammar = new ArrayList<>();
         //逐行读取文法

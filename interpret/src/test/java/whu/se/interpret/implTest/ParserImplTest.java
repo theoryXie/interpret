@@ -7,6 +7,7 @@ import whu.se.interpret.po.Node;
 import whu.se.interpret.service.impl.ParserImpl;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -22,7 +23,7 @@ public class ParserImplTest extends InterpretApplicationTests {
     ParserImpl parserImpl;
 
     @Test
-    public void testGetGrammar() throws FileNotFoundException {
+    public void testGetGrammar() throws IOException {
         ArrayList<Node> grammar = parserImpl.getGrammar("grammar.txt");
         for (Node node : grammar) {
             System.out.println(node);
@@ -31,7 +32,7 @@ public class ParserImplTest extends InterpretApplicationTests {
 
 
     @Test
-    public void testInit() throws FileNotFoundException {
+    public void testInit() throws IOException {
         parserImpl.init();
         HashMap<String, HashSet<String>> firstSet = parserImpl.getAllFirst();
         HashMap<String, HashSet<String>> followSet = parserImpl.getAllFollow();
