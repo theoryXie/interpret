@@ -6,9 +6,9 @@
 <base> → <structdef>
 <base> → <function>
 <decl> → <type> id ;
-<decl> → <type> id = <bool>;
+<decl> → <type> id = <bool> ;
 <decl> → struct id id;
-<structdef> → struct id { <decls> };
+<structdef> → struct id { <decls> } ;
 <decls> → <decl> <decls>
 <decls> → ε
 <function> → <type> <funcdecl> <block>
@@ -35,7 +35,7 @@
 <stmt> → if ( <bool> ) <stmt>
 <stmt> → if ( <bool> ) <stmt> else <stmt>
 <stmt> → while ( <bool> ) <stmt>
-<stmt> → do <stmt> while ( <bool> );
+<stmt> → do <stmt> while ( <bool> ) ;
 <stmt> → break ;
 <stmt> → <block>
 <stmt> → <bool> ;

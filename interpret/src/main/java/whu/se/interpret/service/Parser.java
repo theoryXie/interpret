@@ -32,17 +32,18 @@ public class Parser implements ParserImpl {
         for(int i = 0; i < grammar.size(); i++){
             String left = grammar.get(i).getLeft();//产生式左部
             if(!firstSet.containsKey(left)) {
-                firstSet.put(left, getFirst(left));//将此产生式的first集放入总first集中
+                getFirst(left);
             }
         }
-        for(int i = 0; i < grammar.size(); i++){
+        followSet.put("<begin>", new HashSet<>());
+        followSet.get("<begin>").add("$");
+        for(int i = 1; i < grammar.size(); i++){
             String left = grammar.get(i).getLeft();//产生式左部
             if(!followSet.containsKey(left)) {
-                followSet.put(left, getFollow(left));//将此产生式的first集放入总first集中
+                getFollow(left);
             }
         }
-        followSet.put("<begin>",new HashSet<>());
-        followSet.get("<begin>").add("$");
+
     }
 
 
@@ -96,30 +97,29 @@ public class Parser implements ParserImpl {
     }
 
 
-    public HashSet<String> getFirst(String target) {
-        HashSet<String> first_set = new HashSet<>();
+    public void getFirst(String target) {
+        firstSet.put(target,new HashSet<>());
         //遍历产生式序列
         for(int i = 0; i < grammar.size(); i++){
             //如果产生式左边等于target
             if(grammar.get(i).getLeft().equals(target)){
                 //遍历产生式右部
                 ArrayList<String> right = grammar.get(i).getRight();//产生式右部
-                int right_size = right.size();
-                for(int j = 0; j < right_size; j++){
+                for(int j = 0; j < right.size(); j++){
                     //当前节点
                     String temp = right.get(j);
 
                     //当前节点为终结符号
                     if(isTerm(temp)){
-                        first_set.add(temp);//直接加入target的first集
+                        firstSet.get(target).add(temp);//直接加入target的first集
                         break;
                     }
 
                     //当前节点为空串
                     else if(temp.equals("ε")){
                         //如果ε是产生式右部的最后一个元素，直接将ε加入到target的first集
-                        if(j == right_size-1){
-                            first_set.add("ε");
+                        if(j == right.size()-1){
+                            firstSet.get(target).add("ε");
                         }
                     }
 
@@ -128,13 +128,13 @@ public class Parser implements ParserImpl {
                         //当右部当前元素等于左部时，直接跳过，避免左递归造成死循环
                         if(!temp.equals(grammar.get(i).getLeft())){
                             //求当前非终结符号的first集
-                            HashSet<String> tempFirstSet = getFirst(temp);
+                            getFirst(temp);
                             //如果temp的first集包含空串
-                            if(tempFirstSet.contains("ε")){
-                                tempFirstSet.remove("ε");
-                                first_set.addAll(tempFirstSet);//temp的first集 和 target的first集取并集
+                            if(firstSet.get(temp).contains("ε")){
+                                firstSet.get(temp).remove("ε");
+                                firstSet.get(target).addAll(firstSet.get(temp));//temp的first集 和 target的first集取并集
                             }else{
-                                first_set.addAll(tempFirstSet);//temp的first集 和 target的first集取并集
+                                firstSet.get(target).addAll(firstSet.get(temp));//temp的first集 和 target的first集取并集
                                 break;
                             }
                         }else
@@ -143,61 +143,63 @@ public class Parser implements ParserImpl {
                 }
             }
         }
-        return first_set;
     }
 
 
-    public HashSet<String> getFollow(String target) {
-        HashSet<String> follow_set = new HashSet<>();
-
-        for(int i = 0; i < grammar.size(); i++){
+    public void getFollow(String target) {
+        followSet.put(target,new HashSet<>());
+        for(int i = 0; i < grammar.size(); i++) {
             boolean flag = false;
             //遍历产生式右部，找到target
             int j;
-            for(j = 0; j < grammar.get(i).getRight().size(); j++){
-                if(grammar.get(i).getRight().get(j).equals(target)){
+            for (j = 0; j < grammar.get(i).getRight().size(); j++) {
+                if (grammar.get(i).getRight().get(j).equals(target)) {
                     flag = true;
                     break;
                 }
             }
             //在产生式右部找到了target后
-            if(flag) {
+            if (flag) {
                 String left = grammar.get(i).getLeft();//产生式左部
 
                 //target右边为空串
-                if (j == grammar.get(i).getRight().size()) {
+                if ((j == (grammar.get(i).getRight().size() - 1)) && target != left) {
                     //并且target不等于产生式左部（等于左部时与自己取并集）
                     //与产生式左部的follow集取并集
-                    follow_set.addAll(followSet.get(left));
+                    if(!followSet.containsKey(left))
+                        getFollow(left);
+                    followSet.get(target).addAll(followSet.get(left));
                 }
 
                 //target右边不为空
                 else {
                     //遍历右部符号
-                    for (; j < grammar.get(i).getRight().size(); j++) {
-                        String temp = grammar.get(i).getRight().get(j);
+                    for (; j < grammar.get(i).getRight().size() - 1; j++) {
+                        String temp = grammar.get(i).getRight().get(j + 1);
                         //右边为终结符号，直接装入
                         if (isTerm(temp)) {
-                            follow_set.add(temp);
+                            followSet.get(target).add(temp);
                             break;
                         }
                         //右边为非终结符号，且first集不含ε
                         //则与右边非终结符号的first集求并集
                         else if (!firstSet.get(temp).contains('ε')) {
-                            follow_set.addAll(firstSet.get(temp));
+                            followSet.get(target).addAll(firstSet.get(temp));
+                            break;
                         }
                         //右边为非终结符号，且first集含ε
                         //则与右边非终结符号的first集和follow集求并集
                         else {
-                            follow_set.addAll(firstSet.get(temp));
-                            follow_set.addAll(followSet.get(temp));
-                            follow_set.remove("ε");
+                            followSet.get(target).addAll(firstSet.get(temp));
+                            followSet.get(target).addAll(followSet.get(temp));
+                            followSet.get(target).remove("ε");
                         }
                     }
                 }
             }
+            if (grammar.get(i).getLeft() == "<begin>")
+                followSet.get(target).add("$");
         }
-        return follow_set;
     }
 
 
