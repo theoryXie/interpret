@@ -24,8 +24,8 @@ public class ParserImplTest extends InterpretApplicationTests {
     @Test
     public void testGetGrammar() throws FileNotFoundException {
         ArrayList<Node> grammar = parserImpl.getGrammar("grammar.txt");
-        for(int i = 0; i < grammar.size(); i++){
-            System.out.println(grammar.get(i));
+        for (Node node : grammar) {
+            System.out.println(node);
         }
     }
 
