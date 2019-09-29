@@ -40,10 +40,11 @@ public class Lexer implements LexerImpl {
     /*  这一段是测试函数*/
 //    public static void main(String[] args) {
 //        System.out.println("helloWorld");
-//        String a = "int main(){}/*123\n\n*/  //123\n" +
-//                "int";
+//        String a = "b=a\'\"\'//\n" +
+//                "b=a*c;//4" +
+//                "";
 //        parser parser = new parser();
-//        List<Token> TokenList = parser.wordAnalysis(a);
+//        List<Token> TokenList = parser.lexer(a);
 //        for(int i = 0;i<TokenList.size();i++)
 //        {
 //            System.out.println(TokenList.get(i).toString());
@@ -96,8 +97,11 @@ public class Lexer implements LexerImpl {
                 temp += ch;
                 codePoint++;
                 ch = code.charAt(codePoint);
-                while (isDigit(ch)||ch=='.')
+                boolean firstDot = true;
+                while (isDigit(ch)||(ch=='.'&&firstDot))
                 {
+                    if (ch=='.')
+                        firstDot = false;
                     temp += ch;
                     codePoint++;
                     ch = code.charAt(codePoint);
@@ -206,8 +210,10 @@ public class Lexer implements LexerImpl {
                         }else
                         {
                             codePoint++;
-                            Token mToken = new Token(String.valueOf(ch), SingleSymbolEnumArr[ch], 0, row);
+                            Token mToken = new Token("/", SingleSymbolEnumArr['/'], 0, row);
                             TokenList.add(mToken);
+                            if(ch=='\n')  //当除号后面是回车时 行号加一
+                                row++;
                         }
                         break;
                     case '*':
@@ -309,6 +315,8 @@ public class Lexer implements LexerImpl {
                     case ']':
                     case '{':
                     case '}':
+                    case '\'':
+                    case '\"':
                         codePoint++;
                         mToken = new Token(String.valueOf(ch), SingleSymbolEnumArr[ch], 0, row);
                         TokenList.add(mToken);
@@ -404,23 +412,25 @@ public class Lexer implements LexerImpl {
         SingleSymbolEnumArr[']'] = Token.Symbol.rbracket;
         SingleSymbolEnumArr['{'] = Token.Symbol.lbrace;
         SingleSymbolEnumArr['}'] = Token.Symbol.rbrace;
+        SingleSymbolEnumArr['\''] = Token.Symbol.SingleQuote;
+        SingleSymbolEnumArr['\"'] = Token.Symbol.DoubleQuotes;
     }
 
 
     /**
-     * 处理词法分析生成的token序列，生成传给前台的Result包
+     * 处理词法分析生成的Token序列，生成传给前台的Result包
      *
      * @author xsy
-     * @Param token序列
+     * @Param Token序列
      * @return Result包
      **/
     @Override
-    public Result analysisTokens(List<Token> tokens){
+    public Result analysisTokens(List<Token> Tokens){
         boolean isSuccess = true;//是否成功
         StringBuilder wrongMessage = new StringBuilder();//错误信息
-        //遍历token序列，检查有无错误类型
-        for(int i = 0; i < tokens.size(); i++){
-            Token temp = tokens.get(i);//当前token
+        //遍历Token序列，检查有无错误类型
+        for(int i = 0; i < Tokens.size(); i++){
+            Token temp = Tokens.get(i);//当前Token
             if(temp.getTokenType().toString().equals("errorsym")){ //错误词素
                 int row = temp.getRow();//错误词素的行号
                 String name = temp.getName();//错误词素的名字  比如@
@@ -429,8 +439,8 @@ public class Lexer implements LexerImpl {
             }
         }
         if(isSuccess){ // 词法分析正确
-            String tokenString = tokens.toString();
-            return new Result("词法分析Token序列如下："+tokenString.substring(1,tokenString.length()-1));
+            String TokenString = Tokens.toString();
+            return new Result("词法分析Token序列如下："+TokenString.substring(1,TokenString.length()-1));
         }else{
             return new Result(wrongMessage.toString());
         }
