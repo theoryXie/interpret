@@ -3,6 +3,7 @@ package whu.se.interpret.implTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import whu.se.interpret.InterpretApplicationTests;
+import whu.se.interpret.po.Family;
 import whu.se.interpret.po.Node;
 import whu.se.interpret.service.Parser;
 import whu.se.interpret.service.impl.ParserImpl;
@@ -57,7 +58,8 @@ public class ParserImplTest extends InterpretApplicationTests {
     public void generateFamily(){
         try {
             parserImpl.init("testMiNiGrammar");
-            //parserImpl.generateFamily()
+            Family family = parserImpl.generateFamily();
+            family.toString();
         }catch (IOException e){
             e.printStackTrace();
         }

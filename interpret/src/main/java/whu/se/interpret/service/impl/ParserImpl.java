@@ -36,7 +36,7 @@ public interface ParserImpl {
     public boolean isTerm(String s);
 
     //通过文法的数据结构生成I0项目集规范簇(Family)
-    public Family generateFamily(ArrayList<Node> grammer);
+    public Family generateFamily();
 
 
 }

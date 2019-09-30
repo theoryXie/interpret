@@ -218,7 +218,7 @@ public class Parser implements ParserImpl {
         return followSet;
     }
     @Override
-    public Family generateFamily(ArrayList<Node> grammer){
+    public Family generateFamily(){
         return null;
     }
 }

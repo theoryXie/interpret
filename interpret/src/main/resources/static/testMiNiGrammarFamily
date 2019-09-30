@@ -1,0 +1,259 @@
+I0
+<Begin>->.<program>
+<program>->.int main ( ) { <SS> }
+<program> 1
+int 2
+
+I1
+<Begin>-><program> .
+
+I2
+<program>->int .main ( ) { <SS> }
+main 3
+
+I3
+<program>->int main .( ) { <SS> }
+( 4
+
+I4
+<program>->int main ( .) { <SS> }
+) 5
+
+I5
+<program>->int main ( ) .{ <SS> }
+{ 6
+
+I6
+<program>->int main ( ) { .<SS> }
+<SS>->.<SS> <S>
+<SS>->.<S>
+<S>->.<D> = <E> ;
+<S>->.<D> ;
+<D>->.<type> <L>
+<D>->.<L>
+<L>->.id , <L>
+<L>->.id
+<type>->.int
+<type>->.float
+<D> 9
+<L> 11
+<S> 8
+<SS> 7
+<type> 10
+float 14
+id 12
+int 13
+
+I7
+<program>->int main ( ) { <SS> .}
+<SS>-><SS> .<S>
+<S>->.<D> = <E> ;
+<S>->.<D> ;
+<D>->.<type> <L>
+<D>->.<L>
+<L>->.id , <L>
+<L>->.id
+<type>->.int
+<type>->.float
+<D> 9
+<L> 11
+<S> 16
+<type> 10
+float 14
+id 12
+int 13
+} 15
+
+I8
+<SS>-><S> .
+
+I9
+<S>-><D> .= <E> ;
+<S>-><D> .;
+; 18
+= 17
+
+I10
+<D>-><type> .<L>
+<L>->.id , <L>
+<L>->.id
+<L> 19
+id 12
+
+I11
+<D>-><L> .
+
+I12
+<L>->id ., <L>
+<L>->id .
+, 20
+
+I13
+<type>->int .
+
+I14
+<type>->float .
+
+I15
+<program>->int main ( ) { <SS> } .
+
+I16
+<SS>-><SS> <S> .
+
+I17
+<S>-><D> = .<E> ;
+<E>->.<E> + <T>
+<E>->.<E> - <T>
+<E>->.<T>
+<T>->.<T> * <F>
+<T>->.<T> / <F>
+<T>->.<F>
+<F>->.( <E> )
+<F>->.id
+<F>->.num
+( 24
+<E> 21
+<F> 23
+<T> 22
+id 25
+num 26
+
+I18
+<S>-><D> ; .
+
+I19
+<D>-><type> <L> .
+
+I20
+<L>->id , .<L>
+<L>->.id , <L>
+<L>->.id
+<L> 27
+id 12
+
+I21
+<S>-><D> = <E> .;
+<E>-><E> .+ <T>
+<E>-><E> .- <T>
++ 29
+- 30
+; 28
+
+I22
+<E>-><T> .
+<T>-><T> .* <F>
+<T>-><T> ./ <F>
+* 31
+/ 32
+
+I23
+<T>-><F> .
+
+I24
+<F>->( .<E> )
+<E>->.<E> + <T>
+<E>->.<E> - <T>
+<E>->.<T>
+<T>->.<T> * <F>
+<T>->.<T> / <F>
+<T>->.<F>
+<F>->.( <E> )
+<F>->.id
+<F>->.num
+( 24
+<E> 33
+<F> 23
+<T> 22
+id 25
+num 26
+
+I25
+<F>->id .
+
+I26
+<F>->num .
+
+I27
+<L>->id , <L> .
+
+I28
+<S>-><D> = <E> ; .
+
+I29
+<E>-><E> + .<T>
+<T>->.<T> * <F>
+<T>->.<T> / <F>
+<T>->.<F>
+<F>->.( <E> )
+<F>->.id
+<F>->.num
+( 24
+<F> 23
+<T> 34
+id 25
+num 26
+
+I30
+<E>-><E> - .<T>
+<T>->.<T> * <F>
+<T>->.<T> / <F>
+<T>->.<F>
+<F>->.( <E> )
+<F>->.id
+<F>->.num
+( 24
+<F> 23
+<T> 35
+id 25
+num 26
+
+I31
+<T>-><T> * .<F>
+<F>->.( <E> )
+<F>->.id
+<F>->.num
+( 24
+<F> 36
+id 25
+num 26
+
+I32
+<T>-><T> / .<F>
+<F>->.( <E> )
+<F>->.id
+<F>->.num
+( 24
+<F> 37
+id 25
+num 26
+
+I33
+<F>->( <E> .)
+<E>-><E> .+ <T>
+<E>-><E> .- <T>
+) 38
++ 29
+- 30
+
+I34
+<E>-><E> + <T> .
+<T>-><T> .* <F>
+<T>-><T> ./ <F>
+* 31
+/ 32
+
+I35
+<E>-><E> - <T> .
+<T>-><T> .* <F>
+<T>-><T> ./ <F>
+* 31
+/ 32
+
+I36
+<T>-><T> * <F> .
+
+I37
+<T>-><T> / <F> .
+
+I38
+<F>->( <E> ) .
