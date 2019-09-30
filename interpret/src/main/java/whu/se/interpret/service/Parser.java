@@ -1,9 +1,12 @@
 package whu.se.interpret.service;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
+import whu.se.interpret.po.Family;
 import whu.se.interpret.po.Node;
 import whu.se.interpret.service.impl.ParserImpl;
 
@@ -17,18 +20,19 @@ import java.util.HashSet;
  * @description: 语法分析方法的实现类
  * @date 2019/9/22 8:21
  */
-
+@Getter
+@Setter
 @Service
 public class Parser implements ParserImpl {
 
-    ArrayList<Node> grammar = new ArrayList<>();//产生式序列
-    HashMap<String, HashSet<String>> firstSet = new HashMap<>();//所有非终结符号的first集
-    HashMap<String, HashSet<String>> followSet = new HashMap<>();//所有非终结符号的follow集
+    private ArrayList<Node> grammar = new ArrayList<>();//产生式序列
+    private HashMap<String, HashSet<String>> firstSet = new HashMap<>();//所有非终结符号的first集
+    private HashMap<String, HashSet<String>> followSet = new HashMap<>();//所有非终结符号的follow集
 
     //初始化grammar，firstSet，followSet
     @Override
-    public void init() throws IOException {
-        this.grammar = getGrammar("grammar.txt");
+    public void init(String grammarFileName) throws IOException {
+        this.grammar = getGrammar(grammarFileName);
         for(int i = 0; i < grammar.size(); i++){
             String left = grammar.get(i).getLeft();//产生式左部
             if(!firstSet.containsKey(left)) {
@@ -212,5 +216,9 @@ public class Parser implements ParserImpl {
     @Override
     public HashMap<String, HashSet<String>> getAllFollow() {
         return followSet;
+    }
+    @Override
+    public Family generateFamily(ArrayList<Node> grammer){
+        return null;
     }
 }

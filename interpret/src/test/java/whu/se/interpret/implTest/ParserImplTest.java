@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import whu.se.interpret.InterpretApplicationTests;
 import whu.se.interpret.po.Node;
+import whu.se.interpret.service.Parser;
 import whu.se.interpret.service.impl.ParserImpl;
 
 import java.io.FileNotFoundException;
@@ -31,7 +32,7 @@ public class ParserImplTest extends InterpretApplicationTests {
 
     @Test
     public void testInit() throws IOException {
-        parserImpl.init();
+        parserImpl.init("grammar");
         HashMap<String, HashSet<String>> firstSet = parserImpl.getAllFirst();
         HashMap<String, HashSet<String>> followSet = parserImpl.getAllFollow();
         Iterator iter = firstSet.entrySet().iterator();
@@ -44,5 +45,22 @@ public class ParserImplTest extends InterpretApplicationTests {
 //            Map.Entry entry = (Map.Entry) iter.next();
 //            System.out.printf("%-20s:%s\n",entry.getKey(),entry.getValue());
 //        }
+    }
+
+/** @Author: zfq
+ * @Description:
+ * @Date: 2019/9/30
+ * @param: null
+ * @return:
+ */
+    @Test
+    public void generateFamily(){
+        try {
+            parserImpl.init("testMiNiGrammar");
+            //parserImpl.generateFamily()
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
     }
 }
