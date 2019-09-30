@@ -5,9 +5,9 @@ import lombok.Setter;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ResourceUtils;
 import whu.se.interpret.po.Family;
 import whu.se.interpret.po.Node;
+import whu.se.interpret.po.SLRTable;
 import whu.se.interpret.service.impl.ParserImpl;
 
 import java.io.*;
@@ -33,9 +33,9 @@ public class Parser implements ParserImpl {
     @Override
     public void init(String grammarFileName) throws IOException {
         this.grammar = getGrammar(grammarFileName);
-        for(int i = 0; i < grammar.size(); i++){
-            String left = grammar.get(i).getLeft();//产生式左部
-            if(!firstSet.containsKey(left)) {
+        for (Node node : grammar) {
+            String left = node.getLeft();//产生式左部
+            if (!firstSet.containsKey(left)) {
                 getFirst(left);
             }
         }
@@ -57,10 +57,8 @@ public class Parser implements ParserImpl {
         if(s.charAt(0) == '<' && s.charAt(s.length()-1) == '>')
             return false;
         //s为空串
-        else if(s.equals("ε"))
-            return false;
+        else return !s.equals("ε");
         //s为终结符号
-        return true;
     }
 
     @Override
@@ -75,10 +73,10 @@ public class Parser implements ParserImpl {
         //逐行读取文法
         try(
                 FileReader fr = new FileReader(grammarFile);
-                BufferedReader br = new BufferedReader(fr);
+                BufferedReader br = new BufferedReader(fr)
                 )
         {
-            String line = "";
+            String line;
 
             while ((line = br.readLine())!=null){
                 Node node = new Node();//产生式
@@ -101,47 +99,47 @@ public class Parser implements ParserImpl {
     }
 
 
-    public void getFirst(String target) {
+    private void getFirst(String target) {
         firstSet.put(target,new HashSet<>());
         //遍历产生式序列
-        for(int i = 0; i < grammar.size(); i++){
+        for (Node node : grammar) {
             //如果产生式左边等于target
-            if(grammar.get(i).getLeft().equals(target)){
+            if (node.getLeft().equals(target)) {
                 //遍历产生式右部
-                ArrayList<String> right = grammar.get(i).getRight();//产生式右部
-                for(int j = 0; j < right.size(); j++){
+                ArrayList<String> right = node.getRight();//产生式右部
+                for (int j = 0; j < right.size(); j++) {
                     //当前节点
                     String temp = right.get(j);
 
                     //当前节点为终结符号
-                    if(isTerm(temp)){
+                    if (isTerm(temp)) {
                         firstSet.get(target).add(temp);//直接加入target的first集
                         break;
                     }
 
                     //当前节点为空串
-                    else if(temp.equals("ε")){
+                    else if (temp.equals("ε")) {
                         //如果ε是产生式右部的最后一个元素，直接将ε加入到target的first集
-                        if(j == right.size()-1){
+                        if (j == right.size() - 1) {
                             firstSet.get(target).add("ε");
                         }
                     }
 
                     //当前节点为非终结符号
-                    else{
+                    else {
                         //当右部当前元素等于左部时，直接跳过，避免左递归造成死循环
-                        if(!temp.equals(grammar.get(i).getLeft())){
+                        if (!temp.equals(node.getLeft())) {
                             //求当前非终结符号的first集
                             getFirst(temp);
                             //如果temp的first集包含空串
-                            if(firstSet.get(temp).contains("ε")){
+                            if (firstSet.get(temp).contains("ε")) {
                                 firstSet.get(temp).remove("ε");
                                 firstSet.get(target).addAll(firstSet.get(temp));//temp的first集 和 target的first集取并集
-                            }else{
+                            } else {
                                 firstSet.get(target).addAll(firstSet.get(temp));//temp的first集 和 target的first集取并集
                                 break;
                             }
-                        }else
+                        } else
                             break;
                     }
                 }
@@ -150,27 +148,27 @@ public class Parser implements ParserImpl {
     }
 
 
-    public void getFollow(String target) {
+    private void getFollow(String target) {
         followSet.put(target,new HashSet<>());
-        for(int i = 0; i < grammar.size(); i++) {
+        for (Node node : grammar) {
             boolean flag = false;
             //遍历产生式右部，找到target
             int j;
-            for (j = 0; j < grammar.get(i).getRight().size(); j++) {
-                if (grammar.get(i).getRight().get(j).equals(target)) {
+            for (j = 0; j < node.getRight().size(); j++) {
+                if (node.getRight().get(j).equals(target)) {
                     flag = true;
                     break;
                 }
             }
             //在产生式右部找到了target后
             if (flag) {
-                String left = grammar.get(i).getLeft();//产生式左部
+                String left = node.getLeft();//产生式左部
 
                 //target右边为空串
-                if ((j == (grammar.get(i).getRight().size() - 1)) && target != left) {
+                if ((j == (node.getRight().size() - 1)) && !target.equals(left)) {
                     //并且target不等于产生式左部（等于左部时与自己取并集）
                     //与产生式左部的follow集取并集
-                    if(!followSet.containsKey(left))
+                    if (!followSet.containsKey(left))
                         getFollow(left);
                     followSet.get(target).addAll(followSet.get(left));
                 }
@@ -178,8 +176,8 @@ public class Parser implements ParserImpl {
                 //target右边不为空
                 else {
                     //遍历右部符号
-                    for (; j < grammar.get(i).getRight().size() - 1; j++) {
-                        String temp = grammar.get(i).getRight().get(j + 1);
+                    for (; j < node.getRight().size() - 1; j++) {
+                        String temp = node.getRight().get(j + 1);
                         //右边为终结符号，直接装入
                         if (isTerm(temp)) {
                             followSet.get(target).add(temp);
@@ -187,7 +185,7 @@ public class Parser implements ParserImpl {
                         }
                         //右边为非终结符号，且first集不含ε
                         //则与右边非终结符号的first集求并集
-                        else if (!firstSet.get(temp).contains('ε')) {
+                        else if (!firstSet.get(temp).contains("ε")) {
                             followSet.get(target).addAll(firstSet.get(temp));
                             break;
                         }
@@ -201,7 +199,7 @@ public class Parser implements ParserImpl {
                     }
                 }
             }
-            if (grammar.get(i).getLeft() == "<begin>")
+            if (node.getLeft().equals("<begin>"))
                 followSet.get(target).add("$");
         }
     }
@@ -219,6 +217,11 @@ public class Parser implements ParserImpl {
     }
     @Override
     public Family generateFamily(ArrayList<Node> grammer){
+        return null;
+    }
+
+    @Override
+    public SLRTable generateSLRTable(Family family) {
         return null;
     }
 }
