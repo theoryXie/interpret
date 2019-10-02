@@ -52,4 +52,28 @@ public class Node {
                 '}';
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof Node) {
+            Node node = (Node) obj;
+            if (node.left.equals(this.left) && node.index == this.index && node.right.equals(this.right)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    public boolean equalsExceptIndex (Node node) {
+        if (node == null) return false;
+        if (this == node) return true;
+        return node.left.equals(this.left) && node.index == this.index;
+    }
 }
