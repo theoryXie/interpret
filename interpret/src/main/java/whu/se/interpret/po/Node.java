@@ -62,18 +62,8 @@ public class Node {
         }
         if (obj instanceof Node) {
             Node node = (Node) obj;
-            if (node.left.equals(this.left) && node.index == this.index && node.right.equals(this.right)) {
-                return true;
-            } else {
-                return false;
-            }
+            return node.left.equals(this.left) && node.index == this.index;
         }
         return false;
-    }
-
-    public boolean equalsExceptIndex (Node node) {
-        if (node == null) return false;
-        if (this == node) return true;
-        return node.left.equals(this.left) && node.index == this.index;
     }
 }
