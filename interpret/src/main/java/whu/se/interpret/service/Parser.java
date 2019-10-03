@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 import whu.se.interpret.po.Family;
 import whu.se.interpret.po.Node;
+import whu.se.interpret.po.SLRTable;
 import whu.se.interpret.service.impl.ParserImpl;
 
 import java.io.*;
@@ -28,6 +29,8 @@ public class Parser implements ParserImpl {
     private ArrayList<Node> grammar = new ArrayList<>();//产生式序列
     private HashMap<String, HashSet<String>> firstSet = new HashMap<>();//所有非终结符号的first集
     private HashMap<String, HashSet<String>> followSet = new HashMap<>();//所有非终结符号的follow集
+    private Family family;
+    private SLRTable slrTable;
 
     //初始化grammar，firstSet，followSet
     @Override
@@ -219,6 +222,12 @@ public class Parser implements ParserImpl {
     }
     @Override
     public Family generateFamily(){
+        this.family = null;
+        return null;
+    }
+
+    public SLRTable generateSLRTable(){
+        this.slrTable = null;
         return null;
     }
 }

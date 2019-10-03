@@ -1,0 +1,13 @@
+state(    )    *    +    id   $    <Begin><E>  <F>  <T>
+0    s4                  s5             1    3    2
+1                   s6        acc
+2         r2   s7   r2        r2
+3         r4   r4   r4        r4
+4    s4                  s5             8    3    2
+5         r6   r6   r6        r6
+6    s4                  s5                  3    9
+7    s4                  s5                  10
+8         s11       s6
+9         r1   s7   r1        r1
+10        r3   r3   r3        r3
+11        r5   r5   r5        r5

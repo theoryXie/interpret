@@ -57,7 +57,7 @@ public class ParserImplTest extends InterpretApplicationTests {
     @Test
     public void generateFamily(){
         try {
-            parserImpl.init("testMiNiGrammar");
+            parserImpl.init("test2MiNiGrammar");
             Family family = parserImpl.generateFamily();
             family.toString();
         }catch (IOException e){
