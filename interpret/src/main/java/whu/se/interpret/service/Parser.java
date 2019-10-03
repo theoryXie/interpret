@@ -191,6 +191,7 @@ public class Parser implements ParserImpl {
                         //则与右边非终结符号的first集和follow集求并集
                         else {
                             followSet.get(target).addAll(firstSet.get(temp));
+                            getFollow(temp);
                             followSet.get(target).addAll(followSet.get(temp));
                             followSet.get(target).remove("ε");
                         }
