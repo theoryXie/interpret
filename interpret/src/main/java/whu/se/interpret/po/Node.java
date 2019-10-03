@@ -18,7 +18,7 @@ public class Node {
      */
     private String left;
     private ArrayList<String> right;
-    private int index;
+    private int index = 0;
 
     public String getLeft() {
         return left;
@@ -52,18 +52,17 @@ public class Node {
                 '}';
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
+    public String toSLRString(){
+        StringBuffer stringBuffer =  new StringBuffer();
+        for (int i = 0;i<right.size();i++){
+            if(i == index) {
+                stringBuffer.append(".");
+                i--;
+            } else
+                stringBuffer.append(right.get(i));
+
         }
-        if (this == obj) {
-            return true;
-        }
-        if (obj instanceof Node) {
-            Node node = (Node) obj;
-            return node.left.equals(this.left) && node.index == this.index;
-        }
-        return false;
+        return left + "->"+stringBuffer.toString()+"\n";
     }
+
 }

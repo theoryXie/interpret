@@ -17,4 +17,19 @@ public class ProjectSet {
     private ArrayList<Node> core; //核心项目集
     private ArrayList<Node> production; //非核心项目集
     private HashMap<String, Integer> pointer; //输入某个符号（字符串），转到第几个I
+
+
+    @Override
+    public String toString() {
+        StringBuffer stringBuffer = new StringBuffer();
+        for (Node node:core
+             ) {
+            stringBuffer.append(node.toSLRString()).append("\n");
+        }
+        for (Node node:production
+        ) {
+            stringBuffer.append(node.toSLRString()).append("\n");
+        }
+        return stringBuffer.toString();
+    }
 }
