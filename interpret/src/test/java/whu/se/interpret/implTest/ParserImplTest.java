@@ -59,8 +59,8 @@ public class ParserImplTest extends InterpretApplicationTests {
     public void generateFamily(){
         try {
             parserImpl.init("test2MiNiGrammar");
-            Family family = parserImpl.generateFamily();
-            family.toString();
+            //Family family = parserImpl.generateFamily();
+            //family.toString();
         }catch (IOException e){
             e.printStackTrace();
         }
