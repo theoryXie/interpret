@@ -131,8 +131,9 @@ public class Parser implements ParserImpl {
                             getFirst(temp);
                             //如果temp的first集包含空串
                             if (firstSet.get(temp).contains("ε")) {
-                                firstSet.get(temp).remove("ε");
-                                firstSet.get(target).addAll(firstSet.get(temp));//temp的first集 和 target的first集取并集
+                                HashSet tempSet = firstSet.get(temp);
+                                tempSet.remove("ε");
+                                firstSet.get(target).addAll(tempSet);//temp的first集 和 target的first集取并集
                             } else {
                                 firstSet.get(target).addAll(firstSet.get(temp));//temp的first集 和 target的first集取并集
                                 break;
