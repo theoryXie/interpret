@@ -11,6 +11,19 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Pair {
-    private char c; //只能写大写S或者小写r
+    private char c; //只能写大写S或者小写r或者小写a，表示acc
     private int num; //数字
+
+    public Pair(char c, int num){
+        this.c = c;
+        this.num = num;
+    }
+
+    public Pair(char c){
+        this.c = c;
+    }
+
+    public Pair(int num){
+        this.num = num;
+    }
 }
