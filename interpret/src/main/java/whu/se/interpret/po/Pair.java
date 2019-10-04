@@ -26,4 +26,13 @@ public class Pair {
     public Pair(int num){
         this.num = num;
     }
+
+    @Override
+    public String toString() {
+        if (c == 'S' || c == 'r')
+            return ""+c+num;
+        else if (c == 'a')
+            return "acc";
+        else return ""+num;
+    }
 }
