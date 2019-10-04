@@ -16,7 +16,7 @@ public class SLRTable {
     private ArrayList<HashMap<String, ArrayList<Pair>>> actions; //action表
     private ArrayList<HashMap<String, ArrayList<Pair>>> gotos; //goto表
 
-    void print(){
+    public void print(){
         Set<String> terminators = new HashSet<>();
         for (HashMap<String, ArrayList<Pair>> map : actions) {
             terminators.addAll(map.keySet());

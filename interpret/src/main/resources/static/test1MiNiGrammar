@@ -1,4 +1,4 @@
-<Begin> → <E>
+<begin> → <E>
 <E> → <E> + <T>
 <E> → <T>
 <T> → <T> * <F>

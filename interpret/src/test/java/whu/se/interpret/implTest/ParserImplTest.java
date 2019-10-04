@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import whu.se.interpret.InterpretApplicationTests;
 import whu.se.interpret.po.Family;
 import whu.se.interpret.po.Node;
+import whu.se.interpret.po.SLRTable;
 import whu.se.interpret.service.Parser;
 import whu.se.interpret.service.impl.ParserImpl;
 
@@ -58,10 +59,10 @@ public class ParserImplTest extends InterpretApplicationTests {
     @Test
     public void generateFamily(){
         try {
-            parserImpl.init("test2MiNiGrammar");
+            parserImpl.init("test1MiNiGrammar");
             Family family = parserImpl.generateFamily(parserImpl.getGrammar());
-            //你在这里打印出来,和testMiNiGrammar对比一下
-            family.toString();
+            SLRTable slrTable = parserImpl.generateSLRTable(family);
+            slrTable.print();
         }catch (IOException e){
             e.printStackTrace();
         }

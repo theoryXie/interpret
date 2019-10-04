@@ -230,7 +230,6 @@ public class Parser implements ParserImpl {
         ArrayList<Node> core = new ArrayList<>(); //核心项目集
         for (Node node : grammar
         ) {
-            /**如果用的是测试文法，此处改成<Begin>*/
             if (node.getLeft().equals("<begin>")) {
                 core.add(node); //第0个项目集的核心集只有一个产生式，就是第一个
                 firstProjectSet.setCore(core);
@@ -242,7 +241,7 @@ public class Parser implements ParserImpl {
         updateProjectSets(firstProjectSet,pSets);
         slrFamily.setSets(pSets);
         /**如果用的是测试文法，此处取消注释*/
-        //System.out.println(slrFamily);
+        System.out.println(slrFamily);
         return slrFamily;
     }
 
