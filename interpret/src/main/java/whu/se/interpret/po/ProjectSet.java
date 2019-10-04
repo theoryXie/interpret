@@ -19,6 +19,9 @@ public class ProjectSet {
     private HashMap<String, Integer> pointer; //输入某个符号（字符串），转到第几个I
 
 
+
+
+
     @Override
     public String toString() {
         StringBuffer stringBuffer = new StringBuffer();
