@@ -24,11 +24,14 @@ public class ProjectSet {
         StringBuffer stringBuffer = new StringBuffer();
         for (Node node:core
              ) {
-            stringBuffer.append(node.toSLRString()).append("\n");
+            stringBuffer.append(node.toSLRString());
         }
         for (Node node:production
         ) {
-            stringBuffer.append(node.toSLRString()).append("\n");
+            stringBuffer.append(node.toSLRString());
+        }
+        for (String key : pointer.keySet()) {
+            stringBuffer.append(key).append(" "+pointer.get(key)).append("\n");
         }
         return stringBuffer.toString();
     }

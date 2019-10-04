@@ -19,7 +19,7 @@ public class Family {
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < sets.size(); i++) {
-            stringBuilder.append(i).append("\n:").append(sets.get(i));
+            stringBuilder.append("I"+i).append(":\n").append(sets.get(i)+"\n");
         }
         return stringBuilder.toString();
     }
