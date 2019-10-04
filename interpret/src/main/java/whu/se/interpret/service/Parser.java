@@ -49,6 +49,10 @@ public class Parser implements ParserImpl {
 
     }
 
+    @Override
+    public ArrayList<Node> getGrammar(){
+        return this.grammar;
+    }
 
     @Override
     public boolean isTerm(String s) {

@@ -35,6 +35,9 @@ public interface ParserImpl {
     // false -- 非终结符
     boolean isTerm(String s);
 
+    //获取语法
+    ArrayList<Node> getGrammar();
+
     //通过文法的数据结构生成I项目集规范族(Family)
     Family generateFamily(ArrayList<Node> grammar);
 
