@@ -424,12 +424,12 @@ public class Parser implements ParserImpl {
             HashMap<String, ArrayList<Pair>> actionRow = new HashMap<>();
             HashMap<String, ArrayList<Pair>> gotoRow = new HashMap<>();
             //如果是第一条产生式，就置为acc
-            if (cores.get(0).equals(grammar.get(0))) {
-                Pair pair0 = new Pair('a');
-                ArrayList<Pair> pairs0 = new ArrayList<>();
-                pairs0.add(pair0);
-                actionRow.put("$", pairs0);
-            }
+//            if (cores.get(0).equalsExceptIndex(grammar.get(0))) {
+//                Pair pair0 = new Pair('a');
+//                ArrayList<Pair> pairs0 = new ArrayList<>();
+//                pairs0.add(pair0);
+//                actionRow.put("$", pairs0);
+//            }
             //判断能否归约，遍历每一条产生式，先遍历核心项目集
             for (Node core : cores) {
                 //如果产生式最后面是点，说明可以归约
