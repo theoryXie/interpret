@@ -49,7 +49,7 @@ public class SLRTable {
             }
             for (String nonTerminator : nonTerminators) {
                 if (gotos.get(i).containsKey(nonTerminator)){
-                    f.format("10%s",gotos.get(i).get(nonTerminator).get(0).toString());
+                    f.format("%10s",gotos.get(i).get(nonTerminator).get(0).toString());
                 } else f.format("%10s","");
             }
             f.format("\n");

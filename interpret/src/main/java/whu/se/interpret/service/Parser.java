@@ -435,7 +435,7 @@ public class Parser implements ParserImpl {
                 //如果产生式最后面是点，说明可以归约
                 if (core.getRight().size() == core.getIndex()){
                     //创建pair
-                    Pair pair = new Pair('r',grammar.indexOf(core));
+                    Pair pair = new Pair('r',getProductionIndex(grammar,core));
                     // 若U→x.属于Ii，则对FOLLOW(U)中的终结符a和$
                     // 均置ACTION[i，a]=rj或ACTION[i，$]=rj
                     for (String str : followSet.get(core.getLeft())) {
@@ -457,7 +457,7 @@ public class Parser implements ParserImpl {
             for (Node production:productions) {
                 //如果产生式右部
                 if (production.getRight().size() == production.getIndex()){
-                    Pair pair = new Pair('r',grammar.indexOf(production));
+                    Pair pair = new Pair('r',getProductionIndex(grammar,production));
                     for (String str : followSet.get(production.getLeft())) {
                         if (actionRow.containsKey(str)){
                             actionRow.get(str).add(pair);
@@ -501,5 +501,27 @@ public class Parser implements ParserImpl {
         slrTable.setActions(actions);
         slrTable.setGotos(gotos);
         return slrTable;
+    }
+
+    /**
+     * @author      ：Chang Jiaxin
+     * @description ：获取产生式在文法中的位置，生成r几
+     * @date        ：Created in 2019/10/5
+     */
+    public int getProductionIndex(ArrayList<Node> grammar, Node production){
+            if (production == null) {
+                for (int i = 0; i < grammar.size(); i++) {
+                    if (grammar.get(i) == null) {
+                        return i;
+                    }
+                }
+            } else {
+                for (int i = 0; i < grammar.size(); i++) {
+                    if (production.equalsExceptIndex(grammar.get(i))) {
+                        return i;
+                    }
+                }
+            }
+            return -1;
     }
 }
