@@ -1,7 +1,7 @@
 <begin> → <Program>
 <Program> → <Bases>
 <Bases> → <Base> <Bases>
-<Bases> → ε
+<Bases> → <Base>
 <Base> → <Decl>
 <Base> → <StructDef>
 <Base> → <Function>
@@ -10,10 +10,10 @@
 <Decl> → struct id id;
 <StructDef> → struct id { <Decls> } ;
 <Decls> → <Decl> <Decls>
-<Decls> → ε
-<Function> → <Type> <funcDecl> <Block>
-<funcDecl> → id ( <ParamDecls> )
-<funcDecl> → id ( )
+<Decls> → <Decl>
+<Function> → <Type> <FuncDecl> <Block>
+<FuncDecl> → id ( <ParamDecls> )
+<FuncDecl> → id ( )
 <ParamDecls> → <ParamDecl> , <ParamDecls>
 <ParamDecls> → <ParamDecl>
 <ParamDecl> → <Basic> id
@@ -29,8 +29,8 @@
 <Basic> → float
 <Basic> → char
 <Stmts> → <Stmt> <Stmts>
-<Stmts> → ε
-<Stmt> → <Decl> ;
+<Stmts> → <Stmt>
+<Stmt> → <Decl>
 <Stmt> → <Asgn>
 <Stmt> → if ( <Bool> ) <Stmt>
 <Stmt> → if ( <Bool> ) <Stmt> else <Stmt>
