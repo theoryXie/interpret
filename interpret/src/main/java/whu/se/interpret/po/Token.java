@@ -37,6 +37,10 @@ public class Token {
         this.fvalue = fvalue;
         this.row = row;
     }
+    public Token(String name)
+    {
+        this.name = name;
+    }
 
     @Override
     public String toString() {
