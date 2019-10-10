@@ -252,7 +252,7 @@ public class Parser implements ParserImpl {
      **/
     public void updateProjectSets(ProjectSet currentSet,ArrayList<ProjectSet> pSets) {
         ArrayList<String> afterPoints = new ArrayList<>();//所有在point后面的符号集合
-        HashMap<String, Integer> pointer = new HashMap<>();//DFA映射
+        HashMap<String, Integer> pointer = new HashMap<>();//DFA映射                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        7
         for (Node node : currentSet.getCore()
         ) {
             String afterPoint = getAfterPoint(node);
@@ -528,12 +528,11 @@ public class Parser implements ParserImpl {
      * @description    :生成语法分析结果 ParserResult（以下简称PR）
      * @param tokens   :词法分析产生的单词序列
      * @param slrTable :SLR(1)分析表
-     * @param grammar  :文法结构
      * @return         : 1.PR为空:输入的tokens为空
      *                 : 2.PR中passed为false：语法分析未通过，此时PR中curToken应保存当前token（其中有错误行数信息）
      *                 : 3.PR中passed为false且curToken为空：输入串已访问到结尾 $
      */
-    public ParserResult syntaxCheck(List<Token> tokens, SLRTable slrTable, ArrayList<Node> grammar){
+    public ParserResult syntaxCheck(List<Token> tokens, SLRTable slrTable){
         Stack<Integer> state = new Stack();//状态栈
         Stack<Token> symbol = new Stack();//符号栈
         ArrayList<HashMap<String, ArrayList<Pair>>> actions = slrTable.getActions();//action表
@@ -545,10 +544,14 @@ public class Parser implements ParserImpl {
         //每次循环就是一次移进
         for (Token token:tokens) {
             if(!actions.get(state.peek()).containsKey(token.getName())){
-                result.setPassed(false);
-                result.setCurToken(token);
-                result.setDescription("移进过程中action表访问到空节点，程序语法错误");
-                return result;
+                if(token.getTokenType().equals(Token.Symbol.floatsym)) {
+                    token.setName("id");
+                } else {
+                    result.setPassed(false);
+                    result.setCurToken(token);
+                    result.setDescription("移进过程中action表访问到空节点或表中无此终结符，程序语法错误");
+                    return result;
+                }
             }
             char c = actions.get(state.peek()).get(token.getName()).get(0).getC();
             int num = actions.get(state.peek()).get(token.getName()).get(0).getNum();
@@ -588,14 +591,14 @@ public class Parser implements ParserImpl {
                     if(!gotos.get(state.peek()).containsKey(left)){
                         result.setPassed(false);
                         result.setCurToken(token);
-                        result.setDescription("规约过程中goto表访问到空节点，程序语法错误");
+                        result.setDescription("规约过程中goto表访问到空节点或表中无此非终结符");
                         return result;
                     }
                     state.push(gotos.get(state.peek()).get(left).get(0).getNum());
                     if(!actions.get(state.peek()).containsKey(token.getName())){
                         result.setPassed(false);
                         result.setCurToken(token);
-                        result.setDescription("移进过程中action表访问到空节点，程序语法错误");
+                        result.setDescription("移进过程中action表访问到空节点或表中无此终结符，程序语法错误");
                         return result;
                     }
                     c = actions.get(state.peek()).get(token.getName()).get(0).getC();
@@ -641,14 +644,14 @@ public class Parser implements ParserImpl {
             if(!gotos.get(state.peek()).containsKey(left)){
                 result.setPassed(false);
                 result.setCurToken(null);
-                result.setDescription("规约过程中goto表访问到空节点，程序语法错误");
+                result.setDescription("规约过程中goto表访问到空节点或表中无此非终结符");
                 return result;
             }
             state.push(gotos.get(state.peek()).get(left).get(0).getNum());
             if(!actions.get(state.peek()).containsKey("$")){
                 result.setPassed(false);
                 result.setCurToken(null);
-                result.setDescription("移进过程中action表访问到空节点，程序语法错误");
+                result.setDescription("移进过程中action表访问到空节点或表中无此终结符，程序语法错误");
                 return result;
             }
             num = actions.get(state.peek()).get("$").get(0).getNum();
