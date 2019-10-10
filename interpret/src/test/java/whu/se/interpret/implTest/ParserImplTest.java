@@ -2,11 +2,11 @@ package whu.se.interpret.implTest;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import sun.dc.pr.PRError;
 import whu.se.interpret.InterpretApplicationTests;
-import whu.se.interpret.po.Family;
-import whu.se.interpret.po.Node;
-import whu.se.interpret.po.SLRTable;
+import whu.se.interpret.po.*;
 import whu.se.interpret.service.Parser;
+import whu.se.interpret.service.impl.LexerImpl;
 import whu.se.interpret.service.impl.ParserImpl;
 
 import java.io.FileNotFoundException;
@@ -22,6 +22,9 @@ public class ParserImplTest extends InterpretApplicationTests {
 
     @Autowired
     ParserImpl parserImpl;
+
+    @Autowired
+    LexerImpl lexerImpl;
 
     @Test
     public void testGetGrammar() throws IOException {
@@ -59,10 +62,15 @@ public class ParserImplTest extends InterpretApplicationTests {
     @Test
     public void generateFamily(){
         try {
-            parserImpl.init("test1MiNiGrammar");
+            parserImpl.init("grammar.txt");
             Family family = parserImpl.generateFamily(parserImpl.getGrammar());
             SLRTable slrTable = parserImpl.generateSLRTable(family);
             slrTable.print();
+
+            String code = "int main(){int a = 0;\nif(a<100){\na=a+1;\n} else {\na=a-1;\n}\n}";
+            List<Token> tokens = lexerImpl.lexer(code);
+            ParserResult parserResult = parserImpl.syntaxCheck(tokens,slrTable);
+            parserResult.print();
         }catch (IOException e){
             e.printStackTrace();
         }

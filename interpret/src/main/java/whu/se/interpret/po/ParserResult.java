@@ -13,6 +13,17 @@ public class ParserResult {
     Token curToken;//语法分析出错时当前token
     String description;//错误描述
 
+    public void print(){
+        if (!passed){
+            if(curToken!=null){
+                System.out.print(curToken);
+            }
+        }
+        System.out.print(description);
+
+
+    }
+
     public String getDescription() {
         return description;
     }

@@ -534,44 +534,59 @@ public class Parser implements ParserImpl {
      */
     public ParserResult syntaxCheck(List<Token> tokens, SLRTable slrTable){
         Stack<Integer> state = new Stack();//状态栈
-        Stack<Token> symbol = new Stack();//符号栈
+        Stack<String> symbol = new Stack();//符号栈
+        String terminalStr;//用于将token转换为String匹配slr表
         ArrayList<HashMap<String, ArrayList<Pair>>> actions = slrTable.getActions();//action表
         ArrayList<HashMap<String, ArrayList<Pair>>> gotos = slrTable.getGotos();//goto表
         if(tokens.isEmpty())return null;
         ParserResult result = new ParserResult(tokens.get(0));
         state.push(0);
 
+        ArrayList<Pair> pairs = new ArrayList<>();//用于保存移进规约过程
+        ArrayList<String> symbols = new ArrayList<>();//用于保存过程中的符号栈
+        ArrayList<String> states = new ArrayList<>();//用于保存过程中的状态栈
+
+
         //每次循环就是一次移进
         for (Token token:tokens) {
             if(!actions.get(state.peek()).containsKey(token.getName())){
-                if(token.getTokenType().equals(Token.Symbol.floatsym)) {
-                    token.setName("id");
+                if(token.getTokenType().equals(Token.Symbol.number)) {
+                    terminalStr="num";
+                } else if(token.getTokenType().equals(Token.Symbol.fnumber)){
+                    terminalStr="real";
                 } else if(token.getTokenType().equals(Token.Symbol.mainsym)){
-                    token.setName("id");
-                }
-                else {
+                    terminalStr="id";
+                } else if(token.getTokenType().equals(Token.Symbol.ident)){
+                    terminalStr="id";
+                } else if(token.getTokenType().equals(Token.Symbol.realsym)){
+                    terminalStr="real";
+                } else {
                     result.setPassed(false);
                     result.setCurToken(token);
                     result.setDescription("移进过程中action表访问到空节点或表中无此终结符，程序语法错误");
                     return result;
                 }
+            } else {
+                terminalStr=token.getName();
             }
-            char c = actions.get(state.peek()).get(token.getName()).get(0).getC();
-            int num = actions.get(state.peek()).get(token.getName()).get(0).getNum();
+            char c = actions.get(state.peek()).get(terminalStr).get(0).getC();
+            int num = actions.get(state.peek()).get(terminalStr).get(0).getNum();
 
             //冲突解决:移进规约冲突选移进
-            if(actions.get(state.peek()).get(token.getName()).size()!=1){
-                if(actions.get(state.peek()).get(token.getName()).get(1).getC()=='S') {
+            if(actions.get(state.peek()).get(terminalStr).size()!=1){
+                if(actions.get(state.peek()).get(terminalStr).get(1).getC()=='S') {
                     c = 'S';
-                    num = actions.get(state.peek()).get(token.getName()).get(1).getNum();
+                    num = actions.get(state.peek()).get(terminalStr).get(1).getNum();
                 }
             }
+
+            pairs.add(new Pair(c,num));//保存移进或规约
 
             // r 规约(在移进循环中进行规约循环)
             if(c=='r'){
                 while(c=='r'){
-                    ArrayList<String> right = grammar.get(num-1).getRight();//slr表从r1开始,文法从0开始
-                    String left = grammar.get(num-1).getLeft();
+                    ArrayList<String> right = grammar.get(num).getRight();//slr表r0表示acc通过
+                    String left = grammar.get(num).getLeft();
 
                     for(int i = right.size()-1;i>=0;i--) {
                         if(symbol.empty()){
@@ -580,7 +595,8 @@ public class Parser implements ParserImpl {
                             result.setDescription("规约过程中符号表为空，可能是slr表或文法问题");
                             return result;
                         }
-                        if(symbol.peek().getName().equals(right.get(i))){
+
+                        if(symbol.peek().equals(right.get(i))){
                             symbol.pop();
                             state.pop();
                         }else{
@@ -590,7 +606,8 @@ public class Parser implements ParserImpl {
                             return result;
                         }
                     }
-                    symbol.push(new Token(left));
+                    symbol.push(left);
+                    symbols.add(symbol.toString());
                     if(!gotos.get(state.peek()).containsKey(left)){
                         result.setPassed(false);
                         result.setCurToken(token);
@@ -598,52 +615,65 @@ public class Parser implements ParserImpl {
                         return result;
                     }
                     state.push(gotos.get(state.peek()).get(left).get(0).getNum());
-                    if(!actions.get(state.peek()).containsKey(token.getName())){
+                    states.add(state.toString());
+                    if(!actions.get(state.peek()).containsKey(terminalStr)){
                         result.setPassed(false);
                         result.setCurToken(token);
                         result.setDescription("移进过程中action表访问到空节点或表中无此终结符，程序语法错误");
                         return result;
                     }
-                    c = actions.get(state.peek()).get(token.getName()).get(0).getC();
-                    num = actions.get(state.peek()).get(token.getName()).get(0).getNum();
+                    c = actions.get(state.peek()).get(terminalStr).get(0).getC();
+                    num = actions.get(state.peek()).get(terminalStr).get(0).getNum();
+                    //冲突解决:移进规约冲突选移进
+                    if(actions.get(state.peek()).get(terminalStr).size()!=1){
+                        if(actions.get(state.peek()).get(terminalStr).get(1).getC()=='S') {
+                            c = 'S';
+                            num = actions.get(state.peek()).get(terminalStr).get(1).getNum();
+                        }
+                    }
+
+                    pairs.add(new Pair(c,num));//保存移进或规约
                 }
             }
 
             // S 移进
-            symbol.push(token);
+            symbol.push(terminalStr);
+            symbols.add(symbol.toString());
             state.push(num);
+            states.add(state.toString());
         }
 
         // $ 规约
         if(!actions.get(state.peek()).containsKey("$")){
             result.setPassed(false);
             result.setCurToken(null);
-            result.setDescription("规约过程中action表访问到空节点，程序语法错误");
+            result.setDescription("规约过程中action表访问到空节点，程序语法错误，已访问到结尾$");
             return result;
         }
         int num = actions.get(state.peek()).get("$").get(0).getNum();
         while(num!=0){
-            ArrayList<String> right = grammar.get(num-1).getRight();
-            String left = grammar.get(num-1).getLeft();
+            ArrayList<String> right = grammar.get(num).getRight();
+            String left = grammar.get(num).getLeft();
 
             for(int i = right.size()-1;i>=0;i--) {
                 if(symbol.empty()){
                     result.setPassed(false);
                     result.setCurToken(null);
-                    result.setDescription("规约过程中符号表为空，可能是slr表或文法问题");
+                    result.setDescription("规约过程中符号表为空，可能是slr表或文法问题，已访问到结尾$");
                     return result;
                 }
-                if(symbol.peek().getName().equals(right.get(i))){
+                if(symbol.peek().equals(right.get(i))){
                     symbol.pop();
                     state.pop();
                 }else{
                     result.setPassed(false);
                     result.setCurToken(null);
-                    result.setDescription("规约过程中符号表和文法右部不匹配，程序语法错误");
+                    result.setDescription("规约过程中符号表和文法右部不匹配，程序语法错误，已访问到结尾$");
                     return result;
                 }
             }
-            symbol.push(new Token(left));
+            symbol.push(left);
+            symbols.add(symbol.toString());
             if(!gotos.get(state.peek()).containsKey(left)){
                 result.setPassed(false);
                 result.setCurToken(null);
@@ -651,6 +681,7 @@ public class Parser implements ParserImpl {
                 return result;
             }
             state.push(gotos.get(state.peek()).get(left).get(0).getNum());
+            states.add(state.toString());
             if(!actions.get(state.peek()).containsKey("$")){
                 result.setPassed(false);
                 result.setCurToken(null);
@@ -660,6 +691,7 @@ public class Parser implements ParserImpl {
             num = actions.get(state.peek()).get("$").get(0).getNum();
         }
         result.setPassed(true);
+        result.setDescription("语法分析通过");
         return result;
     }
 }
