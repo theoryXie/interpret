@@ -546,7 +546,10 @@ public class Parser implements ParserImpl {
             if(!actions.get(state.peek()).containsKey(token.getName())){
                 if(token.getTokenType().equals(Token.Symbol.floatsym)) {
                     token.setName("id");
-                } else {
+                } else if(token.getTokenType().equals(Token.Symbol.mainsym)){
+                    token.setName("id");
+                }
+                else {
                     result.setPassed(false);
                     result.setCurToken(token);
                     result.setDescription("移进过程中action表访问到空节点或表中无此终结符，程序语法错误");
