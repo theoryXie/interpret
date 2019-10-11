@@ -2,14 +2,11 @@ package whu.se.interpret.implTest;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import sun.dc.pr.PRError;
 import whu.se.interpret.InterpretApplicationTests;
 import whu.se.interpret.po.*;
-import whu.se.interpret.service.Parser;
 import whu.se.interpret.service.impl.LexerImpl;
 import whu.se.interpret.service.impl.ParserImpl;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 
