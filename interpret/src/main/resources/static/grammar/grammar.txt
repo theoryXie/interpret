@@ -14,9 +14,7 @@
 <StructDef> → struct id { <Decls> } ;
 <Decls> → <Decl> <Decls>
 <Decls> → <Decl>
-<Function> → <TypeAndVoid> <FuncDecl> <Block>
-<TypeAndVoid> → <Type>
-<TypeAndVoid> → void
+<Function> → <Type> <FuncDecl> <Block>
 <FuncDecl> → id ( <ParamDecls> )
 <FuncDecl> → id ( )
 <ParamDecls> → <ParamDecl> , <ParamDecls>
@@ -32,6 +30,7 @@
 <Type> → int
 <Type> → float
 <Type> → char
+<Type> → void
 <AllStmts> → <AllStmt> <AllStmts>
 <AllStmt> → <Stmt>
 <AllStmt> → break ;
