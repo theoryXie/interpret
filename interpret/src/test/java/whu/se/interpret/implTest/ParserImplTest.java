@@ -72,9 +72,10 @@ public class ParserImplTest extends InterpretApplicationTests {
             List<Token> tokens = lexerImpl.lexer(code);
             ParserResult parserResult = parserImpl.syntaxCheck(tokens,slrTable);
 
+            //输出结果路径在target/classes/static下
             Write2FileByFileWriter("output/family",family.toString());
             Write2FileByFileWriter("output/slrTable",slrTable.toString());
-            //填入语义分析结果
+            //qyr填入语义分析结果
             Write2FileByFileWriter("output/syntaxCheck","");
 
         }catch (Exception e){
@@ -140,7 +141,7 @@ public class ParserImplTest extends InterpretApplicationTests {
                 file.createNewFile();
             }
             fw = new FileWriter(file);
-            fw.write("Write2FileByFileWriter");
+            fw.write(output);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
