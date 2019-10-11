@@ -53,7 +53,7 @@ public class Node implements Cloneable{
     }
 
     public String toSLRString(){
-        StringBuilder stringBuffer =  new StringBuilder();
+        StringBuffer stringBuffer =  new StringBuffer();
         for (int i = 0;i<right.size();i++){
             if(i == index) {
                 stringBuffer.append(".").append(right.get(i));
@@ -67,9 +67,7 @@ public class Node implements Cloneable{
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null)
-            return false;
-        if (obj instanceof Node){
+        if(obj instanceof Node && obj != null){
             return this.left.equals(((Node) obj).left)
                     && this.right.equals(((Node) obj).right)
                     && this.index == ((Node) obj).index;
@@ -96,7 +94,8 @@ public class Node implements Cloneable{
     public Object clone() {
         try {
             return super.clone();
-        } catch (CloneNotSupportedException ignored){}
-        return null;
+        } catch (CloneNotSupportedException ignored) {
+            return null;
+        }
     }
 }

@@ -250,7 +250,7 @@ public class Parser implements ParserImpl {
      * @Author: zhouqian
      * Date: 2019-10-04
      **/
-    public void updateProjectSets(ProjectSet currentSet,ArrayList<ProjectSet> pSets) {
+    private void updateProjectSets(ProjectSet currentSet,ArrayList<ProjectSet> pSets) {
         ArrayList<String> afterPoints = new ArrayList<>();//所有在point后面的符号集合
         HashMap<String, Integer> pointer = new HashMap<>();//DFA映射                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        7
         for (Node node : currentSet.getCore()
@@ -288,7 +288,7 @@ public class Parser implements ParserImpl {
      *@Author: zhouqian
      *Date: 2019-10-04
      **/
-    public int getSLRIndex(ProjectSet projectSet, ArrayList<ProjectSet> projectSets){
+    private int getSLRIndex(ProjectSet projectSet, ArrayList<ProjectSet> projectSets){
         ArrayList<Node> pCore = projectSet.getCore();
         for (int i = 0; i < projectSets.size(); i++) {
             boolean equal = true;
@@ -313,7 +313,7 @@ public class Parser implements ParserImpl {
      * @Author: zhouqian
      * Date: 2019-10-04
      **/
-    public ProjectSet getNextProjectSet(ProjectSet currentSet, String next) {
+    private ProjectSet getNextProjectSet(ProjectSet currentSet, String next) {
         ProjectSet nextSet = new ProjectSet();
         ArrayList<Node> currentCore = currentSet.getCore();
         ArrayList<Node> nextCore = new ArrayList<>();
@@ -346,7 +346,7 @@ public class Parser implements ParserImpl {
      * @Author: zhouqian
      * Date: 2019-10-03
      **/
-    public ArrayList<Node> getProductionSet(ArrayList<Node> core) {
+    private ArrayList<Node> getProductionSet(ArrayList<Node> core) {
         ArrayList<Node> array = new ArrayList<>();
         ArrayList<String> lefts = new ArrayList<>(); //非核心项目集产生式左部的集合
         for (Node node : core
@@ -367,7 +367,7 @@ public class Parser implements ParserImpl {
      * @Author: zhouqian
      * Date: 2019-10-04
      **/
-    public void updateProductionSet(ArrayList<Node> array, ArrayList<Node> core, String left, ArrayList<String> lefts) {
+    private void updateProductionSet(ArrayList<Node> array, ArrayList<Node> core, String left, ArrayList<String> lefts) {
         //只有left不在lefts中，才需要添加
         if (!lefts.contains(left)) {
             lefts.add(left);
@@ -392,7 +392,7 @@ public class Parser implements ParserImpl {
      * @Author: zhouqian
      * Date: 2019-10-04
      **/
-    public String getAfterPoint(Node node) {
+    private String getAfterPoint(Node node) {
         String afterPoint = "ε";
         //首先要判断point的位置是否在末尾
         if (node.getIndex() < node.getRight().size()) {
