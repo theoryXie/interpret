@@ -16,7 +16,9 @@ public class SLRTable {
     private ArrayList<HashMap<String, ArrayList<Pair>>> actions; //action表
     private ArrayList<HashMap<String, ArrayList<Pair>>> gotos; //goto表
 
-    public void print(){
+    @Override
+    public String toString(){
+        StringBuilder stringBuilder = new StringBuilder();
         Set<String> terminators = new HashSet<>();
         for (HashMap<String, ArrayList<Pair>> map : actions) {
             terminators.addAll(map.keySet());
@@ -25,35 +27,34 @@ public class SLRTable {
         for (HashMap<String, ArrayList<Pair>> map : gotos) {
             nonTerminators.addAll(map.keySet());
         }
-        Formatter f = new Formatter(System.out);
-        f.format("%4s","");
+        stringBuilder.append(String.format("%4s",""));
         for (String s : terminators) {
-            f.format("%10s",s);
+            stringBuilder.append(String.format("%10s",s));
         }
         for (String s : nonTerminators) {
-            f.format("%10s",s);
+            stringBuilder.append(String.format("%10s",s));
         }
-        f.format("\n");
+        stringBuilder.append("\n");
         for (int i = 0; i < actions.size(); i++){
-            f.format("%4s",i);
+            stringBuilder.append(String.format("%4s",i));
             for (String terminator : terminators) {
                 if (actions.get(i).containsKey(terminator)){
                     if (actions.get(i).get(terminator).size() == 1)
-                        f.format("%10s",actions.get(i).get(terminator).get(0).toString());
+                        stringBuilder.append(String.format("%10s",actions.get(i).get(terminator).get(0).toString()));
                     else {
                         String ss = actions.get(i).get(terminator).get(0).toString()
                                 + "/" + actions.get(i).get(terminator).get(1).toString();
-                        f.format("%10s",ss);
+                        stringBuilder.append(String.format("%10s",ss));
                     }
-                } else f.format("%10s","");
+                } else stringBuilder.append(String.format("%10s",""));
             }
             for (String nonTerminator : nonTerminators) {
                 if (gotos.get(i).containsKey(nonTerminator)){
-                    f.format("%10s",gotos.get(i).get(nonTerminator).get(0).toString());
-                } else f.format("%10s","");
+                    stringBuilder.append(String.format("%10s",gotos.get(i).get(nonTerminator).get(0).toString()));
+                } else stringBuilder.append(String.format("%10s",""));
             }
-            f.format("\n");
+            stringBuilder.append("\n");
         }
-        f.flush();
+        return stringBuilder.toString();
     }
 }
