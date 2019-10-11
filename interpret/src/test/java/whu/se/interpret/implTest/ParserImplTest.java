@@ -2,6 +2,8 @@ package whu.se.interpret.implTest;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import whu.se.interpret.InterpretApplicationTests;
 import whu.se.interpret.po.*;
 import whu.se.interpret.service.impl.LexerImpl;
@@ -63,19 +65,18 @@ public class ParserImplTest extends InterpretApplicationTests {
             String code = ReadFileByLine("code/TempSimple.txt");
             //读取完成
 
-            StringBuilder testOutput = null;
 
             parserImpl.init("grammar/grammar.txt");
             Family family = parserImpl.generateFamily(parserImpl.getGrammar());
             SLRTable slrTable = parserImpl.generateSLRTable(family);
-            List<Token> tokens = lexerImpl.lexer(code.toString());
+            List<Token> tokens = lexerImpl.lexer(code);
             ParserResult parserResult = parserImpl.syntaxCheck(tokens,slrTable);
 
-            testOutput.append(family);
-            testOutput.append(slrTable);
-            testOutput.append("");
+            Write2FileByFileWriter("output/family",family.toString());
+            Write2FileByFileWriter("output/slrTable",slrTable.toString());
+            //填入语义分析结果
+            Write2FileByFileWriter("output/syntaxCheck","");
 
-            Write2FileByOutputStream("testOutput",testOutput.toString());
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -89,11 +90,14 @@ public class ParserImplTest extends InterpretApplicationTests {
      */
     public static String ReadFileByLine(String filename) {
         StringBuilder stringBuilder = new StringBuilder();
-        File file = new File(filename);
+
+        Resource resource = new ClassPathResource("static/" + filename);
+        File file = null;
         InputStream is = null;
         Reader reader = null;
         BufferedReader bufferedReader = null;
         try {
+            file = resource.getFile();
             is = new FileInputStream(file);
             reader = new InputStreamReader(is);
             bufferedReader = new BufferedReader(reader);
@@ -118,7 +122,7 @@ public class ParserImplTest extends InterpretApplicationTests {
                 e.printStackTrace();
             }
         }
-        return bufferedReader.toString();
+        return stringBuilder.toString();
     }
     /** @Author: zfq
      * @Description:
@@ -126,35 +130,23 @@ public class ParserImplTest extends InterpretApplicationTests {
      * @param: null
      * @return:
      */
-    public static void Write2FileByOutputStream(String filename,String output) {
-        File file = new File(filename);
-        FileOutputStream fos = null;
-        // BufferedOutputStream bos = null;
-        OutputStreamWriter osw = null;
+    public static void Write2FileByFileWriter(String filename,String output) {
+        Resource resource = new ClassPathResource("static/" + filename);
+        File file;
+        FileWriter fw = null;
         try {
+            file = resource.getFile();
             if (!file.exists()) {
                 file.createNewFile();
             }
-            fos = new FileOutputStream(file);
-            osw = new OutputStreamWriter(fos);
-            osw.write(output);
-            // bos = new BufferedOutputStream(fos);
-            // bos.write("Write2FileByOutputStream".getBytes());
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            fw = new FileWriter(file);
+            fw.write("Write2FileByFileWriter");
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if (null != osw) {
+            if (null != fw) {
                 try {
-                    osw.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (null != fos) {
-                try {
-                    fos.close();
+                    fw.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

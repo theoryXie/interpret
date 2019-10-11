@@ -26,10 +26,18 @@ public class LexerImplTest extends InterpretApplicationTests {
      **/
     @Test
     public void testLexer(){
-        String code = "/*xsy write in 2019*/\nint main(){int a = 0;\nwhile(a<100){\na++;\nwrite(a);\n}\nreturn 0;\n}";
+        String code = "int main(){\n" +
+                "    int a = 0;\n" +
+                "    if(a<100){\n" +
+                "        a=a+1;\n" +
+                "    } else {\n" +
+                "        a=a-1;\n" +
+                "    }\n" +
+                "}";
         List<Token> tokens = lexerImpl.lexer(code);
-        for (Token token : tokens) {
+        /*for (Token token : tokens) {
             System.out.println(token);
-        }
+        }*/
+        System.out.println(tokens.toString());
     }
 }
