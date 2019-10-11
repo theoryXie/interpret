@@ -238,8 +238,6 @@ public class Parser implements ParserImpl {
         }
         updateProjectSets(firstProjectSet,pSets);
         slrFamily.setSets(pSets);
-        /**如果用的是测试文法，此处取消注释*/
-        System.out.println(slrFamily);
         return slrFamily;
     }
 
