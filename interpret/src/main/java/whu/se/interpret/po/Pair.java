@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Pair {
-    private char c; //只能写大写S或者小写r或者小写a，表示acc
+    private char c; //只能写大写S或者小写r,r0即为acc
     private int num; //数字
 
     public Pair(char c, int num){
@@ -29,9 +29,9 @@ public class Pair {
 
     @Override
     public String toString() {
-        if (c == 'S' || c == 'r')
+        if (c == 'S' || (c == 'r' && num != 0 ))
             return ""+c+num;
-        else if (c == 'a')
+        else if (c == 'r')
             return "acc";
         else return ""+num;
     }

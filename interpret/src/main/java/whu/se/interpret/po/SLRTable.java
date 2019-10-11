@@ -16,7 +16,7 @@ public class SLRTable {
     private ArrayList<HashMap<String, ArrayList<Pair>>> actions; //action表
     private ArrayList<HashMap<String, ArrayList<Pair>>> gotos; //goto表
 
-    void print(){
+    public void print(){
         Set<String> terminators = new HashSet<>();
         for (HashMap<String, ArrayList<Pair>> map : actions) {
             terminators.addAll(map.keySet());
@@ -49,7 +49,7 @@ public class SLRTable {
             }
             for (String nonTerminator : nonTerminators) {
                 if (gotos.get(i).containsKey(nonTerminator)){
-                    f.format("10%s",gotos.get(i).get(nonTerminator).get(0).toString());
+                    f.format("%10s",gotos.get(i).get(nonTerminator).get(0).toString());
                 } else f.format("%10s","");
             }
             f.format("\n");

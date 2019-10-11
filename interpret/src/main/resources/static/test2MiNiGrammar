@@ -1,4 +1,4 @@
-<Begin> → <program>
+<begin> → <program>
 <program> → int main ( ) { <SS> }
 <SS> → <SS> <S>
 <SS> → <S>
