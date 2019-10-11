@@ -7,7 +7,7 @@
 <Base> → <Function>
 <Decl> → <Type> id ;
 <Decl> → <Type> id = <Bool> ;
-<Decl> → struct id id;
+<Decl> → struct id id ;
 <StructDef> → struct id { <Decls> } ;
 <Decls> → <Decl> <Decls>
 <Decls> → <Decl>
