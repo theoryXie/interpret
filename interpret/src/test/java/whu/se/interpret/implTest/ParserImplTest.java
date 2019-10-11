@@ -6,6 +6,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import whu.se.interpret.InterpretApplicationTests;
 import whu.se.interpret.po.*;
+import whu.se.interpret.result.Result;
 import whu.se.interpret.service.impl.LexerImpl;
 import whu.se.interpret.service.impl.ParserImpl;
 
@@ -65,18 +66,19 @@ public class ParserImplTest extends InterpretApplicationTests {
             String code = ReadFileByLine("code/TempSimple.txt");
             //读取完成
 
-
             parserImpl.init("grammar/grammar.txt");
             Family family = parserImpl.generateFamily(parserImpl.getGrammar());
             SLRTable slrTable = parserImpl.generateSLRTable(family);
+
+            //String code = "int main(){int a = 0;\nif(a<100){\na=a+1;\n} else {\na=a-1;\n}\n}";
             List<Token> tokens = lexerImpl.lexer(code);
-            ParserResult parserResult = parserImpl.syntaxCheck(tokens,slrTable);
+            Result result = parserImpl.syntaxCheck(tokens);
 
             //输出结果路径在target/classes/static下
             Write2FileByFileWriter("output/family",family.toString());
             Write2FileByFileWriter("output/slrTable",slrTable.toString());
             //qyr填入语义分析结果
-            Write2FileByFileWriter("output/syntaxCheck","");
+            Write2FileByFileWriter("output/syntaxCheck",result.getOutput());
 
         }catch (Exception e){
             e.printStackTrace();
@@ -153,5 +155,6 @@ public class ParserImplTest extends InterpretApplicationTests {
                 }
             }
         }
+
     }
 }
