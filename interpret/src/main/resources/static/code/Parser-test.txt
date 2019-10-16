@@ -1,0 +1,175 @@
+int aaa;
+int bbb = 1;
+int ccc = aaa;
+
+struct struct1 {
+	int q1;
+	int q2;
+};
+
+int count_test(int a, float f, bool bool0)
+{
+	//int a = 1;
+	int b, c = 2;//b=unknown
+	//float f = 0.5;
+	bool0 = false;
+	//char char0 = 'c';
+	c = 3;
+	b = a;//1
+	b = a + c;//4
+	b = f + a;//1
+	b = a * c;//3
+	b = c / a;//3
+	b = c - (a + f);//1
+	b = c * a + c;//6
+	b = c * (a + c);//12
+	b = c / a + c;//6
+	b = c / (a + c);//0
+	b = a + c / c;//2
+	b = (a + c) /c;//1
+	return a;
+}
+
+void while_ifelse_test()
+{
+	int a = 0;
+	int b = 2;
+	while (a < 10)
+	{
+		a = a + 1;
+		if (a >= 4)
+		{
+			break;
+		}
+		else
+		{
+			b = b * b;
+		}
+	}
+	if (a != 10) {
+		while (a < 10)
+		{
+			a = a + 1;
+			if (a == 6)
+			{
+				break;
+			}
+			else
+			{
+				b = b * b;
+			}
+		}
+	}
+	else
+	{
+		while (a < 10)
+		{
+			a = a + 1;
+			if (a >= 8)
+			{
+				break;
+			}
+			else
+			{
+				b = b * b;
+			}
+		}
+	}
+	while (a <= 12)
+	{
+		a = a + 1;
+	}
+}
+
+void ifelse_test() {
+	int a = 0;
+	if (a == 0) {
+		a = a + 1;
+	}
+	if (a == 0)
+	{
+		a = a + 1;
+	}
+	else
+	{
+		a = a + 2;
+	}
+	if (a == 0)
+	{
+		a = a + 1;
+	}
+	else
+	{
+		if (a == 3)
+		{
+			a = 0;
+		}
+		else
+		{
+			a = a + 1;
+		}
+		if (a == 3)
+		{
+			a = 6;
+		}
+	}
+}
+
+void dowhile_test()
+{
+	int a = 0;
+	do {
+		a = a + 1;
+		if (a == 6)
+		{
+			break;
+		}
+	} while (a < 10);
+}
+
+bool logicalOperation_test()
+{
+	int a = 1;
+	bool b = false;
+	if (!a)
+	{
+		return false;
+	}
+	if (a && b)
+	{
+		return false;
+	}
+	if(a && b || b)
+	{
+		return false;
+	}
+	if (b || b && a)
+	{
+		return false;
+	}
+
+	if ((a = 1) || (b = 1))
+	{
+		b = 1;
+		b = 0;
+	}
+	if ((a = 0) && (b = 1))
+	{
+		return false;
+	}
+
+	if (a || b)
+	{
+		return true;
+	}
+}
+
+
+int main()
+{
+	//count_test(1, 0.5, 'a');
+	while_ifelse_test();
+	ifelse_test();
+	dowhile_test();
+	logicalOperation_test();
+}

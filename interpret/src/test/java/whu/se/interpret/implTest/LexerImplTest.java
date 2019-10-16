@@ -6,6 +6,7 @@ import whu.se.interpret.InterpretApplicationTests;
 import whu.se.interpret.po.Token;
 import whu.se.interpret.service.Lexer;
 import whu.se.interpret.service.impl.LexerImpl;
+import whu.se.interpret.utils.utils;
 
 import java.util.List;
 
@@ -25,19 +26,20 @@ public class LexerImplTest extends InterpretApplicationTests {
      * @author xsy
      **/
     @Test
-    public void testLexer(){
-        String code = "int main(){\n" +
-                "    int a = 0;\n" +
-                "    if(a<100){\n" +
-                "        a=a+1;\n" +
-                "    } else {\n" +
-                "        a=a-1;\n" +
-                "    }\n" +
-                "}";
+    public void testLexer1(){
+        String code = utils.ReadFileByLine("code/Lexer-test.txt");
         List<Token> tokens = lexerImpl.lexer(code);
-        /*for (Token token : tokens) {
-            System.out.println(token);
-        }*/
-        System.out.println(tokens.toString());
+        utils.Write2FileByFileWriter("output/lexer",tokens.toString());
+    }
+    /**
+     * 测试词法分析的接口
+     *
+     * @author zfq更改
+     **/
+    @Test
+    public void testLexer2(){
+        String code = utils.ReadFileByLine("code/Lexer-test-wrong.txt");
+        List<Token> tokens = lexerImpl.lexer(code);
+        utils.Write2FileByFileWriter("output/lexer",tokens.toString());
     }
 }
