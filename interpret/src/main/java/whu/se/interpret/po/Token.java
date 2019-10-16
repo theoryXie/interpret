@@ -15,7 +15,7 @@ public class Token {
         lbrace, rbrace, comma, semicolon, becomes, SingleQuote, DoubleQuotes,
         intsym, floatsym, boolsym, charsym,
         ifsym, elsesym, whilesym, readsym, writesym,
-        realsym, structsym, dosym, breaksym, errorsym,
+        structsym, dosym, breaksym, errorsym,
         voidsym, mainsym, returnsym, errorcomment
     };
     String name;  //该词本身字符串形式

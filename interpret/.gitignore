@@ -29,3 +29,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### doc ###
+/src/main/resources/doc/~$Symbol枚举值对应表.xlsx

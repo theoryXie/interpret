@@ -1,6 +1,7 @@
 package whu.se.interpret.service.impl;
 
 import whu.se.interpret.po.*;
+import whu.se.interpret.result.Result;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -46,11 +47,10 @@ public interface ParserImpl {
     /**
      * @description    :生成语法分析结果 ParserResult（以下简称PR）
      * @param tokens   :词法分析产生的单词序列
-     * @param slrTable :SLR(1)分析表
      * @return         : 1.PR为空:输入的tokens为空
      *                 : 2.PR中passed为false：语法分析未通过，此时PR中curToken应保存当前token（其中有错误行数信息）
      *                 : 3.PR中passed为false且curToken为空：输入串已访问到结尾 $
      */
-    public ParserResult syntaxCheck(List<Token> tokens, SLRTable slrTable);
+    public Result syntaxCheck(List<Token> tokens);
 
 }

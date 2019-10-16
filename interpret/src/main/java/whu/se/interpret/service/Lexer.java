@@ -22,14 +22,14 @@ public class Lexer implements LexerImpl {
     String KeyWord[] =
             {"int","float","bool","char","if",
                     "else","while","read","write",
-                    "real","struct","do","break",
+                    "struct","do","break",
                     "void","main","return"};
     //关键字枚举数组
     Token.Symbol KeyWordValues[] =
             {Token.Symbol.intsym, Token.Symbol.floatsym, Token.Symbol.boolsym,
                     Token.Symbol.charsym, Token.Symbol.ifsym, Token.Symbol.elsesym,
                     Token.Symbol.whilesym, Token.Symbol.readsym, Token.Symbol.writesym,
-                    Token.Symbol.realsym, Token.Symbol.structsym, Token.Symbol.dosym,
+                    Token.Symbol.structsym, Token.Symbol.dosym,
                     Token.Symbol.breaksym, Token.Symbol.voidsym, Token.Symbol.mainsym,
                     Token.Symbol.returnsym};
 

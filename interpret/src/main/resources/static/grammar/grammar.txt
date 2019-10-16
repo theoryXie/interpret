@@ -6,6 +6,9 @@
 <Base> → <StructDef>
 <Base> → <Function>
 <Decl> → <Type> id ;
+<Decl> → <Type> <Array> ;
+<Array> → <Array> [ num ];
+<Array> → id [ num ] ;
 <Decl> → <Type> id = <Bool> ;
 <Decl> → struct id id ;
 <StructDef> → struct id { <Decls> } ;
@@ -16,18 +19,22 @@
 <FuncDecl> → id ( )
 <ParamDecls> → <ParamDecl> , <ParamDecls>
 <ParamDecls> → <ParamDecl>
-<ParamDecl> → <Basic> id
+<ParamDecl> → <Type> id
 <FuncUse> → id ( <Factors> )
 <FuncUse> → id ( )
 <Factors> → <Factor> , <Factors>
 <Factors> → <Factor>
 <Block> → { <Stmts> }
-<Type> → <Type> [ num ]
-<Type> → <Basic>
-<Basic> → Bool
-<Basic> → int
-<Basic> → float
-<Basic> → char
+<LoopBlock> → { <AllStmts> }
+<Type> → bool
+<Type> → int
+<Type> → float
+<Type> → char
+<Type> → void
+<AllStmts> → <AllStmt> <AllStmts>
+<AllStmt> → <Stmt>
+<AllStmt> → break ;
+<AllStmt> → <LoopBlock>
 <Stmts> → <Stmt> <Stmts>
 <Stmts> → <Stmt>
 <Stmt> → <Decl>
@@ -36,7 +43,8 @@
 <Stmt> → if ( <Bool> ) <Stmt> else <Stmt>
 <Stmt> → while ( <Bool> ) <Stmt>
 <Stmt> → do <Stmt> while ( <Bool> ) ;
-<Stmt> → break ;
+<Stmt> → return ;
+<Stmt> → return <Bool> ;
 <Stmt> → <Block>
 <Stmt> → <Bool> ;
 <Asgn> → <Loc> = <Bool> ;
