@@ -27,7 +27,7 @@ public class LexerImplTest extends InterpretApplicationTests {
      **/
     @Test
     public void testLexer1(){
-        String code = utils.ReadFileByLine("code/Lexer-test.txt");
+        String code = utils.ReadFileByLine("code/Parser-test.txt");
         List<Token> tokens = lexerImpl.lexer(code);
         utils.Write2FileByFileWriter("output/lexer",tokens.toString());
     }
