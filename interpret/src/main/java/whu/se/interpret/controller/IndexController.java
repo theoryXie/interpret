@@ -8,6 +8,7 @@ import whu.se.interpret.po.Code;
 import whu.se.interpret.po.Token;
 import whu.se.interpret.result.Result;
 import whu.se.interpret.service.impl.LexerImpl;
+import whu.se.interpret.service.impl.ParserImpl;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
@@ -29,6 +30,9 @@ public class IndexController {
     @Autowired
     LexerImpl lexerImpl;
 
+    @Autowired
+    ParserImpl parserImpl;
+
 
     /**
      * 
@@ -41,7 +45,7 @@ public class IndexController {
     @ResponseBody
     public Result InterpretCode(@RequestBody Code code){
         List<Token> tokens = lexerImpl.lexer(code.getCode()); //获取token序列
-        Result result = lexerImpl.analysisTokens(tokens);     //将token序列转化为发给前端的Result包
+        Result result = parserImpl.syntaxCheck(tokens);       //将token序列转化为发给前端的Result包
         return result;
     }
 
@@ -67,8 +71,7 @@ public class IndexController {
 
 
         List<Token> tokens = lexerImpl.lexer(code); //获取token序列
-        Result result = lexerImpl.analysisTokens(tokens);     //将token序列转化为发给前端的Result
-
+        Result result = parserImpl.syntaxCheck(tokens);
         result.setCode(code);
         return result;
     }
