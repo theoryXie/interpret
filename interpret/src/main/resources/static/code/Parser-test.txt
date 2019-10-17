@@ -4,7 +4,7 @@ int count_test(int a, float f, bool bool0)
 	return a;
 }
 
-void while_ifelse_test()
+/*void while_ifelse_test()
 {
 	int a = 0;
 	int b = 2;
@@ -13,6 +13,7 @@ void while_ifelse_test()
 		a = a + 1;
 		if (a >= 4)
 		{
+		    int a = 0;//此处有bug
 			break;
 		}
 		else
@@ -53,9 +54,9 @@ void while_ifelse_test()
 	{
 		a = a + 1;
 	}
-}
+}*/
 
-void ifelse_test() {
+/*void ifelse_test() {
 	int a = 0;
 	if (a == 0) {
 		a = a + 1;
@@ -87,9 +88,9 @@ void ifelse_test() {
 			a = 6;
 		}
 	}
-}
+}*/
 
-void dowhile_test()
+/*void dowhile_test()
 {
 	int a = 0;
 	do {
@@ -99,9 +100,9 @@ void dowhile_test()
 			break;
 		}
 	} while (a < 10);
-}
+}*/
 
-bool logicalOperation_test()
+/*bool logicalOperation_test()
 {
 	int a = 1;
 	bool b = false;
@@ -136,7 +137,7 @@ bool logicalOperation_test()
 	{
 		return true;
 	}
-}
+}*/
 
 
 int main()

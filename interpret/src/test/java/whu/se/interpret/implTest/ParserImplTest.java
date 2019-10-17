@@ -65,7 +65,8 @@ public class ParserImplTest extends InterpretApplicationTests {
         try {
             //从文件读取测试代码
             //String code = ReadFileByLine("code/Lexer-test.txt");
-            String code = utils.ReadFileByLine("code/Parser-test.txt");
+            //String code = utils.ReadFileByLine("code/Parser-test.txt");
+            String code = utils.ReadFileByLine("code/TempSimple.txt");
             //读取完成
 
             parserImpl.init("grammar/grammar.txt");
@@ -77,6 +78,7 @@ public class ParserImplTest extends InterpretApplicationTests {
             //输出结果路径在target/classes/static下
             utils.Write2FileByFileWriter("output/family",family.toString());
             utils.Write2FileByFileWriter("output/slrTable",slrTable.toString());
+            utils.Write2FileByFileWriter("output/lexer",tokens.toString());
             utils.Write2FileByFileWriter("output/syntaxCheck",result.getOutput());
 
         }catch (Exception e){
