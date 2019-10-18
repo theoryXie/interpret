@@ -18,20 +18,21 @@ public class ProjectSet {
     private ArrayList<Node> production; //非核心项目集
     private HashMap<String, Integer> pointer; //输入某个符号（字符串），转到第几个I
 
+
     @Override
     public String toString() {
-        StringBuffer stringBuffer = new StringBuffer();
+        StringBuilder stringBuilder = new StringBuilder();
         for (Node node:core
              ) {
-            stringBuffer.append(node.toSLRString());
+            stringBuilder.append(node.toSLRString());
         }
         for (Node node:production
         ) {
-            stringBuffer.append(node.toSLRString());
+            stringBuilder.append(node.toSLRString());
         }
         for (String key : pointer.keySet()) {
-            stringBuffer.append(key).append(" ").append(pointer.get(key)).append("\n");
+            stringBuilder.append(key).append(" ").append(pointer.get(key)).append("\n");
         }
-        return stringBuffer.toString();
+        return stringBuilder.toString();
     }
 }

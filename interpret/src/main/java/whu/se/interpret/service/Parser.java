@@ -7,6 +7,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import whu.se.interpret.po.*;
 import whu.se.interpret.po.symbol.Symbol;
+import whu.se.interpret.result.Result;
 import whu.se.interpret.service.impl.ParserImpl;
 
 import java.io.*;
@@ -236,7 +237,7 @@ public class Parser implements ParserImpl {
                 break;
             }
         }
-        updateProjectSets(firstProjectSet,pSets);
+        updateProjectSets(firstProjectSet, pSets);
         slrFamily.setSets(pSets);
         return slrFamily;
     }
@@ -248,7 +249,7 @@ public class Parser implements ParserImpl {
      * @Author: zhouqian
      * Date: 2019-10-04
      **/
-    private void updateProjectSets(ProjectSet currentSet,ArrayList<ProjectSet> pSets) {
+    public void updateProjectSets(ProjectSet currentSet, ArrayList<ProjectSet> pSets) {
         ArrayList<String> afterPoints = new ArrayList<>();//所有在point后面的符号集合
         HashMap<String, Integer> pointer = new HashMap<>();//DFA映射                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        7
         for (Node node : currentSet.getCore()
@@ -264,41 +265,41 @@ public class Parser implements ParserImpl {
                 afterPoints.add(afterPoint);
         }
 
-        for (String after:afterPoints
+        for (String after : afterPoints
         ) {
-            ProjectSet nextSet = getNextProjectSet(currentSet,after);
-            int slrIndex = getSLRIndex(nextSet,pSets);
-            if(slrIndex != -1)
-                pointer.put(after,slrIndex);
+            ProjectSet nextSet = getNextProjectSet(currentSet, after);
+            int slrIndex = getSLRIndex(nextSet, pSets);
+            if (slrIndex != -1)
+                pointer.put(after, slrIndex);
             else {
                 pSets.add(nextSet);
-                pointer.put(after,pSets.size()-1);
-                updateProjectSets(nextSet,pSets);
+                pointer.put(after, pSets.size() - 1);
+                updateProjectSets(nextSet, pSets);
             }
         }
         currentSet.setPointer(pointer);
     }
 
     /**
-     *@Description: 找出项目集在项目集族中的编号
-     *@Params: projectSet，需要寻找的项目集；projectSets，项目集编号
-     *@Return: 为负数表示不在项目集中
-     *@Author: zhouqian
-     *Date: 2019-10-04
+     * @Description: 找出项目集在项目集族中的编号
+     * @Params: projectSet，需要寻找的项目集；projectSets，项目集编号
+     * @Return: 为负数表示不在项目集中
+     * @Author: zhouqian
+     * Date: 2019-10-04
      **/
-    private int getSLRIndex(ProjectSet projectSet, ArrayList<ProjectSet> projectSets){
+    public int getSLRIndex(ProjectSet projectSet, ArrayList<ProjectSet> projectSets) {
         ArrayList<Node> pCore = projectSet.getCore();
         for (int i = 0; i < projectSets.size(); i++) {
             boolean equal = true;
             ArrayList<Node> core = projectSets.get(i).getCore();
-            for (Node node: pCore
+            for (Node node : pCore
             ) {
-                if(!core.contains(node))
+                if (!core.contains(node))
                     equal = false;
                 break;
             }
             //如果pCore中的每一个项目都在core中，并且这两个集合的大小相同，说明它们两个相同
-            if(equal && core.size() == pCore.size())
+            if (equal && core.size() == pCore.size())
                 return i;
         }
         return -1;
@@ -311,7 +312,7 @@ public class Parser implements ParserImpl {
      * @Author: zhouqian
      * Date: 2019-10-04
      **/
-    private ProjectSet getNextProjectSet(ProjectSet currentSet, String next) {
+    public ProjectSet getNextProjectSet(ProjectSet currentSet, String next) {
         ProjectSet nextSet = new ProjectSet();
         ArrayList<Node> currentCore = currentSet.getCore();
         ArrayList<Node> nextCore = new ArrayList<>();
@@ -344,7 +345,7 @@ public class Parser implements ParserImpl {
      * @Author: zhouqian
      * Date: 2019-10-03
      **/
-    private ArrayList<Node> getProductionSet(ArrayList<Node> core) {
+    public ArrayList<Node> getProductionSet(ArrayList<Node> core) {
         ArrayList<Node> array = new ArrayList<>();
         ArrayList<String> lefts = new ArrayList<>(); //非核心项目集产生式左部的集合
         for (Node node : core
@@ -365,7 +366,7 @@ public class Parser implements ParserImpl {
      * @Author: zhouqian
      * Date: 2019-10-04
      **/
-    private void updateProductionSet(ArrayList<Node> array, ArrayList<Node> core, String left, ArrayList<String> lefts) {
+    public void updateProductionSet(ArrayList<Node> array, ArrayList<Node> core, String left, ArrayList<String> lefts) {
         //只有left不在lefts中，才需要添加
         if (!lefts.contains(left)) {
             lefts.add(left);
@@ -390,7 +391,7 @@ public class Parser implements ParserImpl {
      * @Author: zhouqian
      * Date: 2019-10-04
      **/
-    private String getAfterPoint(Node node) {
+    public String getAfterPoint(Node node) {
         String afterPoint = "ε";
         //首先要判断point的位置是否在末尾
         if (node.getIndex() < node.getRight().size()) {
@@ -400,12 +401,11 @@ public class Parser implements ParserImpl {
     }
 
 
-
     /**
+     * @return : SLRTable
      * @author ：Chang Jiaxin
      * @description ：根据项目集规范组得到SLR(1)分析表
      * @date ：Created in 2019/9/30
-     * @return : SLRTable
      */
     @Override
     public SLRTable generateSLRTable(Family family) {
@@ -429,43 +429,43 @@ public class Parser implements ParserImpl {
             //判断能否归约，遍历每一条产生式，先遍历核心项目集
             for (Node core : cores) {
                 //如果产生式最后面是点，说明可以归约
-                if (core.getRight().size() == core.getIndex()){
+                if (core.getRight().size() == core.getIndex()) {
                     //创建pair
-                    Pair pair = new Pair('r',getProductionIndex(grammar,core));
+                    Pair pair = new Pair('r', getProductionIndex(grammar, core));
                     // 若U→x.属于Ii，则对FOLLOW(U)中的终结符a和$
                     // 均置ACTION[i，a]=rj或ACTION[i，$]=rj
                     for (String str : followSet.get(core.getLeft())) {
-                        if (actionRow.containsKey(str)){
+                        if (actionRow.containsKey(str)) {
                             actionRow.get(str).add(pair);
                         } else {
                             ArrayList<Pair> pairs = new ArrayList<>();
                             pairs.add(pair);
-                            actionRow.put(str,pairs);
+                            actionRow.put(str, pairs);
                         }
                     }
                     //置终结符的rj
                     ArrayList<Pair> pairs = new ArrayList<>();
                     pairs.add(pair);
-                    actionRow.put("$",pairs);
+                    actionRow.put("$", pairs);
                 }
             }
             //再遍历非核心项目集
-            for (Node production:productions) {
+            for (Node production : productions) {
                 //如果产生式右部
-                if (production.getRight().size() == production.getIndex()){
-                    Pair pair = new Pair('r',getProductionIndex(grammar,production));
+                if (production.getRight().size() == production.getIndex()) {
+                    Pair pair = new Pair('r', getProductionIndex(grammar, production));
                     for (String str : followSet.get(production.getLeft())) {
-                        if (actionRow.containsKey(str)){
+                        if (actionRow.containsKey(str)) {
                             actionRow.get(str).add(pair);
                         } else {
                             ArrayList<Pair> pairs = new ArrayList<>();
                             pairs.add(pair);
-                            actionRow.put(str,pairs);
+                            actionRow.put(str, pairs);
                         }
                     }
                     ArrayList<Pair> pairs = new ArrayList<>();
                     pairs.add(pair);
-                    actionRow.put("$",pairs);
+                    actionRow.put("$", pairs);
                 }
             }
             //遍历所有pointer，写移进和goto
@@ -475,12 +475,12 @@ public class Parser implements ParserImpl {
                     //移进
                     Pair pair = new Pair('S', pointer.getValue());
                     //每一次加pair都要判断是否已经有数组，没有就需要新建
-                    if (actionRow.containsKey(pointer.getKey())){
+                    if (actionRow.containsKey(pointer.getKey())) {
                         actionRow.get(pointer.getKey()).add(pair);
                     } else {
                         ArrayList<Pair> pairs = new ArrayList<>();
                         pairs.add(pair);
-                        actionRow.put(pointer.getKey(),pairs);
+                        actionRow.put(pointer.getKey(), pairs);
                     }
                 }
                 //如果是非终结符，就写到GOTO表
@@ -500,196 +500,187 @@ public class Parser implements ParserImpl {
     }
 
     /**
-     * @author      ：Chang Jiaxin
+     * @author ：Chang Jiaxin
      * @description ：获取产生式在文法中的位置，生成r几
-     * @date        ：Created in 2019/10/5
+     * @date ：Created in 2019/10/5
      */
-    public int getProductionIndex(ArrayList<Node> grammar, Node production){
-            if (production == null) {
-                for (int i = 0; i < grammar.size(); i++) {
-                    if (grammar.get(i) == null) {
-                        return i;
-                    }
-                }
-            } else {
-                for (int i = 0; i < grammar.size(); i++) {
-                    if (production.equalsExceptIndex(grammar.get(i))) {
-                        return i;
-                    }
+    public int getProductionIndex(ArrayList<Node> grammar, Node production) {
+        if (production == null) {
+            for (int i = 0; i < grammar.size(); i++) {
+                if (grammar.get(i) == null) {
+                    return i;
                 }
             }
-            return -1;
+        } else {
+            for (int i = 0; i < grammar.size(); i++) {
+                if (production.equalsExceptIndex(grammar.get(i))) {
+                    return i;
+                }
+            }
+        }
+        return -1;
     }
 
 
     /**
-     * @description    :生成语法分析结果 ParserResult（以下简称PR）
-     * @param tokens   :词法分析产生的单词序列
-     * @param slrTable :SLR(1)分析表
-     * @return         : 1.PR为空:输入的tokens为空
-     *                 : 2.PR中passed为false：语法分析未通过，此时PR中curToken应保存当前token（其中有错误行数信息）
-     *                 : 3.PR中passed为false且curToken为空：输入串已访问到结尾 $
+     * @param tokens :词法分析产生的单词序列
+     * @return : 1.PR为空:输入的tokens为空
+     * : 2.PR中passed为false：语法分析未通过，此时PR中curToken应保存当前token（其中有错误行数信息）
+     * : 3.PR中passed为false且curToken为空：输入串已访问到结尾 $
+     * @description :生成语法分析结果 ParserResult（以下简称PR）
      */
-    public ParserResult syntaxCheck(List<Token> tokens, SLRTable slrTable){
-        Stack<Integer> state = new Stack();//状态栈
-        Stack<String> symbol = new Stack();//符号栈
-        String terminalStr;//用于将token转换为String匹配slr表
-        ArrayList<HashMap<String, ArrayList<Pair>>> actions = slrTable.getActions();//action表
-        ArrayList<HashMap<String, ArrayList<Pair>>> gotos = slrTable.getGotos();//goto表
-        if(tokens.isEmpty())return null;
-        ParserResult result = new ParserResult(tokens.get(0));
-        state.push(0);
+    public Result syntaxCheck(List<Token> tokens) {
 
-        ArrayList<Pair> pairs = new ArrayList<>();//用于保存移进规约过程
+        //用于保存语法分析结果
+        ParserResult parserResult = new ParserResult(tokens.get(0));
+        StringBuilder stringBuilder = new StringBuilder();
+        ArrayList<Pair> pairs = new ArrayList<>();//用于保存移进归约过程
         ArrayList<String> symbols = new ArrayList<>();//用于保存过程中的符号栈
         ArrayList<String> states = new ArrayList<>();//用于保存过程中的状态栈
 
+        try {
+            init("grammar/grammar.txt");
+            Family family = generateFamily(getGrammar());
+            SLRTable slrTable = generateSLRTable(family);
 
-        //每次循环就是一次移进
-        for (Token token:tokens) {
-            if(!actions.get(state.peek()).containsKey(token.getName())){
-                if(token.getTokenType().equals(Token.Symbol.number)) {
-                    terminalStr="num";
-                } else if(token.getTokenType().equals(Token.Symbol.fnumber)){
-                    terminalStr="real";
-                } else if(token.getTokenType().equals(Token.Symbol.mainsym)){
-                    terminalStr="id";
-                } else if(token.getTokenType().equals(Token.Symbol.ident)){
-                    terminalStr="id";
-                } else if(token.getTokenType().equals(Token.Symbol.realsym)){
-                    terminalStr="real";
+            String terminalStr;//用于将token转换为String匹配slr表
+            Stack<Integer> state = new Stack();//状态栈
+            Stack<String> symbol = new Stack();//符号栈
+            ArrayList<HashMap<String, ArrayList<Pair>>> actions = slrTable.getActions();//action表
+            ArrayList<HashMap<String, ArrayList<Pair>>> gotos = slrTable.getGotos();//goto表
+            if (tokens.isEmpty()) return null;
+            state.push(0);
+            tokens.add(new Token("$"));
+
+            //每次循环就是一次移进/归约
+            for (Token token : tokens) {
+                //检查下一步动作
+                if (!actions.get(state.peek()).containsKey(token.getName())) {
+                    if (token.getTokenType().equals(Token.Symbol.number)) {
+                        terminalStr = "num";
+                    } else if (token.getTokenType().equals(Token.Symbol.fnumber)) {
+                        terminalStr = "real";
+                    } else if (token.getTokenType().equals(Token.Symbol.mainsym)) {
+                        terminalStr = "id";
+                    } else if (token.getTokenType().equals(Token.Symbol.ident)) {
+                        terminalStr = "id";
+                    } else {
+                        parserResult.setPassed(false);
+                        parserResult.setCurToken(token);
+                        String d = "归约失败，action表访问到空节点或表中无此终结符，当前格子：："+state.peek()+","+symbol.peek();
+                        parserResult.setDescription(d);
+                        stringBuilder.append(d);
+                        return new Result(stringBuilder.toString());
+                    }
                 } else {
-                    result.setPassed(false);
-                    result.setCurToken(token);
-                    result.setDescription("移进过程中action表访问到空节点或表中无此终结符，程序语法错误");
-                    return result;
+                    terminalStr = token.getName();
                 }
-            } else {
-                terminalStr=token.getName();
-            }
-            char c = actions.get(state.peek()).get(terminalStr).get(0).getC();
-            int num = actions.get(state.peek()).get(terminalStr).get(0).getNum();
-
-            //冲突解决:移进规约冲突选移进
-            if(actions.get(state.peek()).get(terminalStr).size()!=1){
-                if(actions.get(state.peek()).get(terminalStr).get(1).getC()=='S') {
-                    c = 'S';
-                    num = actions.get(state.peek()).get(terminalStr).get(1).getNum();
+                char c = actions.get(state.peek()).get(terminalStr).get(0).getC();
+                int num = actions.get(state.peek()).get(terminalStr).get(0).getNum();
+                //冲突解决:移进归约冲突选移进
+                if (actions.get(state.peek()).get(terminalStr).size() != 1) {
+                    if (actions.get(state.peek()).get(terminalStr).get(1).getC() == 'S') {
+                        c = 'S';
+                        num = actions.get(state.peek()).get(terminalStr).get(1).getNum();
+                    }
                 }
-            }
 
-            pairs.add(new Pair(c,num));//保存移进或规约
+                pairs.add(new Pair(c, num));//保存移进或归约动作
 
-            // r 规约(在移进循环中进行规约循环)
-            if(c=='r'){
-                while(c=='r'){
-                    ArrayList<String> right = grammar.get(num).getRight();//slr表r0表示acc通过
-                    String left = grammar.get(num).getLeft();
+                // r 归约(在移进循环中进行归约循环)
+                if (c == 'r') {
+                    while(c == 'r' && num != 0) {
+                        //slr表r0表示acc通过
+                        ArrayList<String> right = grammar.get(num).getRight();//产生式右部
+                        String left = grammar.get(num).getLeft();//产生式左部
 
-                    for(int i = right.size()-1;i>=0;i--) {
-                        if(symbol.empty()){
-                            result.setPassed(false);
-                            result.setCurToken(token);
-                            result.setDescription("规约过程中符号表为空，可能是slr表或文法问题");
-                            return result;
+                        for (int i = right.size() - 1; i >= 0; i--) {
+                            if (symbol.empty()) {
+                                parserResult.setPassed(false);
+                                parserResult.setCurToken(token);
+                                String d = "归约失败，可能是slr表或文法问题，当前格子：" + state.peek() + "," + symbol.peek();
+                                parserResult.setDescription(d);
+                                stringBuilder.append(d);
+                                return new Result(stringBuilder.toString());
+                            }
+
+                            if (symbol.peek().equals(right.get(i))) {
+                                //符号栈出栈
+                                symbol.pop();
+                                state.pop();
+                            } else {
+                                parserResult.setPassed(false);
+                                parserResult.setCurToken(token);
+                                String d = "归约失败，符号表和产生式右部不匹配，当前格子：" + state.peek() + "," + symbol.peek();
+                                parserResult.setDescription(d);
+                                stringBuilder.append(d);
+                                return new Result(stringBuilder.toString());
+                            }
                         }
+                        //符号栈非终结符入栈,符号栈处理完毕
+                        symbol.push(left);
+                        symbols.add(symbol.toString());
+                        StringBuilder sym = new StringBuilder();
+                        for(String s:symbol){
+                            sym.append(s);
+                        }
+                        stringBuilder.append(String.format("%-70s", sym.toString()));
+                        stringBuilder.append("归约\t" + grammar.get(num).getLeft() + "→");
+                        for (String s : grammar.get(num).getRight()) {
+                            stringBuilder.append(s);
+                        }
+                        stringBuilder.append("\n");
+                        if (!gotos.get(state.peek()).containsKey(left)) {
+                            parserResult.setPassed(false);
+                            parserResult.setCurToken(token);
+                            String d = "归约失败，goto表访问到空节点或表中无此非终结符，当前格子：" + state.peek() + "," + symbol.peek();
+                            parserResult.setDescription(d);
+                            stringBuilder.append(d);
+                            return new Result(stringBuilder.toString());
+                        }
+                        //状态栈入栈
+                        state.push(gotos.get(state.peek()).get(left).get(0).getNum());
+                        states.add(state.toString());
+                        pairs.add(new Pair(c, num));//保存移进或归约动作
 
-                        if(symbol.peek().equals(right.get(i))){
-                            symbol.pop();
-                            state.pop();
-                        }else{
-                            result.setPassed(false);
-                            result.setCurToken(token);
-                            result.setDescription("规约过程中符号表和文法右部不匹配，程序语法错误");
-                            return result;
+                        //检查下一步动作
+                        if (!actions.get(state.peek()).containsKey(terminalStr)) {
+                            parserResult.setPassed(false);
+                            parserResult.setCurToken(token);
+                            String d = "归约失败，action表访问到空节点或表中无此终结符，当前格子："+state.peek()+","+symbol.peek();
+                            parserResult.setDescription(d);
+                            stringBuilder.append(d);
+                            return new Result(stringBuilder.toString());
+                        }
+                        c = actions.get(state.peek()).get(terminalStr).get(0).getC();
+                        num = actions.get(state.peek()).get(terminalStr).get(0).getNum();
+                        //冲突解决:移进归约冲突选移进
+                        if (actions.get(state.peek()).get(terminalStr).size() != 1) {
+                            if (actions.get(state.peek()).get(terminalStr).get(1).getC() == 'S') {
+                                c = 'S';
+                                num = actions.get(state.peek()).get(terminalStr).get(1).getNum();
+                            }
                         }
                     }
-                    symbol.push(left);
-                    symbols.add(symbol.toString());
-                    if(!gotos.get(state.peek()).containsKey(left)){
-                        result.setPassed(false);
-                        result.setCurToken(token);
-                        result.setDescription("规约过程中goto表访问到空节点或表中无此非终结符");
-                        return result;
-                    }
-                    state.push(gotos.get(state.peek()).get(left).get(0).getNum());
-                    states.add(state.toString());
-                    if(!actions.get(state.peek()).containsKey(terminalStr)){
-                        result.setPassed(false);
-                        result.setCurToken(token);
-                        result.setDescription("移进过程中action表访问到空节点或表中无此终结符，程序语法错误");
-                        return result;
-                    }
-                    c = actions.get(state.peek()).get(terminalStr).get(0).getC();
-                    num = actions.get(state.peek()).get(terminalStr).get(0).getNum();
-                    //冲突解决:移进规约冲突选移进
-                    if(actions.get(state.peek()).get(terminalStr).size()!=1){
-                        if(actions.get(state.peek()).get(terminalStr).get(1).getC()=='S') {
-                            c = 'S';
-                            num = actions.get(state.peek()).get(terminalStr).get(1).getNum();
-                        }
-                    }
-
-                    pairs.add(new Pair(c,num));//保存移进或规约
                 }
-            }
-
-            // S 移进
-            symbol.push(terminalStr);
-            symbols.add(symbol.toString());
-            state.push(num);
-            states.add(state.toString());
-        }
-
-        // $ 规约
-        if(!actions.get(state.peek()).containsKey("$")){
-            result.setPassed(false);
-            result.setCurToken(null);
-            result.setDescription("规约过程中action表访问到空节点，程序语法错误，已访问到结尾$");
-            return result;
-        }
-        int num = actions.get(state.peek()).get("$").get(0).getNum();
-        while(num!=0){
-            ArrayList<String> right = grammar.get(num).getRight();
-            String left = grammar.get(num).getLeft();
-
-            for(int i = right.size()-1;i>=0;i--) {
-                if(symbol.empty()){
-                    result.setPassed(false);
-                    result.setCurToken(null);
-                    result.setDescription("规约过程中符号表为空，可能是slr表或文法问题，已访问到结尾$");
-                    return result;
+                // S 移进
+                symbol.push(terminalStr);
+                symbols.add(symbol.toString());
+                state.push(num);
+                states.add(state.toString());
+                StringBuilder sym = new StringBuilder();
+                for(String s:symbol){
+                    sym.append(s);
                 }
-                if(symbol.peek().equals(right.get(i))){
-                    symbol.pop();
-                    state.pop();
-                }else{
-                    result.setPassed(false);
-                    result.setCurToken(null);
-                    result.setDescription("规约过程中符号表和文法右部不匹配，程序语法错误，已访问到结尾$");
-                    return result;
-                }
+                stringBuilder.append(String.format("%-70s",sym));
+                stringBuilder.append("移进\t"+terminalStr+"\n");
             }
-            symbol.push(left);
-            symbols.add(symbol.toString());
-            if(!gotos.get(state.peek()).containsKey(left)){
-                result.setPassed(false);
-                result.setCurToken(null);
-                result.setDescription("规约过程中goto表访问到空节点或表中无此非终结符");
-                return result;
-            }
-            state.push(gotos.get(state.peek()).get(left).get(0).getNum());
-            states.add(state.toString());
-            if(!actions.get(state.peek()).containsKey("$")){
-                result.setPassed(false);
-                result.setCurToken(null);
-                result.setDescription("移进过程中action表访问到空节点或表中无此终结符，程序语法错误");
-                return result;
-            }
-            num = actions.get(state.peek()).get("$").get(0).getNum();
+
+        } catch (Exception e) {
+            stringBuilder.append("\n程序出现异常:"+e.getMessage());
+            return new Result(stringBuilder.toString());
         }
-        result.setPassed(true);
-        result.setDescription("语法分析通过");
-        return result;
+        stringBuilder.append("语法分析已通过");
+        return new Result(stringBuilder.toString());
     }
 }
