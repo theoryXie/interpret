@@ -1,7 +1,24 @@
 int count_test(int a, float f, bool bool0)
 {
-	int a;
-	return a;
+	//int a = 1;
+    int b, c = 2;//b=unknown
+    //float f = 0.5;
+    bool0 = false;
+    char char0 = 'c';
+    c = 3;
+    b = a;//1
+    b = a + c;//4
+    b = f + a;//1
+    b = a * c;//3
+    b = c / a;//3
+    b = c - (a + f);//1
+    b = c * a + c;//6
+    b = c * (a + c);//12
+    b = c / a + c;//6
+    b = c / (a + c);//0
+    b = a + c / c;//2
+    b = (a + c) /c;//1
+    return a;
 }
 
 /*void while_ifelse_test()
