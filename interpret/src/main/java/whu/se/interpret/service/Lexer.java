@@ -207,7 +207,7 @@ public class Lexer implements LexerImpl {
                             }
                         }else
                         {
-                            codePoint++;
+                            //codePoint++;
                             Token mToken = new Token("/", SingleSymbolEnumArr['/'], 0, row);
                             TokenList.add(mToken);
                             if(ch=='\n')  //当除号后面是回车时 行号加一

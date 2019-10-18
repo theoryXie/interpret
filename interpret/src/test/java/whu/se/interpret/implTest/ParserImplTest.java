@@ -9,6 +9,7 @@ import whu.se.interpret.po.*;
 import whu.se.interpret.result.Result;
 import whu.se.interpret.service.impl.LexerImpl;
 import whu.se.interpret.service.impl.ParserImpl;
+import whu.se.interpret.utils.utils;
 
 import java.io.*;
 import java.util.*;
@@ -60,101 +61,30 @@ public class ParserImplTest extends InterpretApplicationTests {
  * @return:
  */
     @Test
-    public void generateFamily(){
+    public void grammarAnalysis(){
         try {
             //从文件读取测试代码
-            String code = ReadFileByLine("code/TempSimple.txt");
+            //String code = ReadFileByLine("code/Lexer-test.txt");
+            //String code = utils.ReadFileByLine("code/Parser-test.txt");
+            String code = utils.ReadFileByLine("code/TempSimple.txt");
             //读取完成
 
             parserImpl.init("grammar/grammar.txt");
             Family family = parserImpl.generateFamily(parserImpl.getGrammar());
             SLRTable slrTable = parserImpl.generateSLRTable(family);
-
-            //String code = "int main(){int a = 0;\nif(a<100){\na=a+1;\n} else {\na=a-1;\n}\n}";
             List<Token> tokens = lexerImpl.lexer(code);
             Result result = parserImpl.syntaxCheck(tokens);
 
             //输出结果路径在target/classes/static下
-            Write2FileByFileWriter("output/family",family.toString());
-            Write2FileByFileWriter("output/slrTable",slrTable.toString());
-            //qyr填入语义分析结果
-            Write2FileByFileWriter("output/syntaxCheck",result.getOutput());
+            utils.Write2FileByFileWriter("output/family",family.toString());
+            utils.Write2FileByFileWriter("output/slrTable",slrTable.toString());
+            utils.Write2FileByFileWriter("output/lexer",tokens.toString());
+            utils.Write2FileByFileWriter("output/syntaxCheck",result.getOutput());
 
         }catch (Exception e){
             e.printStackTrace();
         }
 
     }
-    /** @Author: zfq
-     * @Description:
-     * @Date: 2019/9/30
-     * @param: null
-     * @return:
-     */
-    public static String ReadFileByLine(String filename) {
-        StringBuilder stringBuilder = new StringBuilder();
 
-        Resource resource = new ClassPathResource("static/" + filename);
-        File file = null;
-        InputStream is = null;
-        Reader reader = null;
-        BufferedReader bufferedReader = null;
-        try {
-            file = resource.getFile();
-            is = new FileInputStream(file);
-            reader = new InputStreamReader(is);
-            bufferedReader = new BufferedReader(reader);
-            String line = null;
-            while ((line = bufferedReader.readLine()) != null) {
-               stringBuilder.append(line);
-            }
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (null != bufferedReader)
-                    bufferedReader.close();
-                if (null != reader)
-                    reader.close();
-                if (null != is)
-                    is.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return stringBuilder.toString();
-    }
-    /** @Author: zfq
-     * @Description:
-     * @Date: 2019/9/30
-     * @param: null
-     * @return:
-     */
-    public static void Write2FileByFileWriter(String filename,String output) {
-        Resource resource = new ClassPathResource("static/" + filename);
-        File file;
-        FileWriter fw = null;
-        try {
-            file = resource.getFile();
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-            fw = new FileWriter(file);
-            fw.write(output);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (null != fw) {
-                try {
-                    fw.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-    }
 }
