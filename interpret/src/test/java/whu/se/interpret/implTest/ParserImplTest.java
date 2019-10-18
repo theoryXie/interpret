@@ -2,8 +2,6 @@ package whu.se.interpret.implTest;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import whu.se.interpret.InterpretApplicationTests;
 import whu.se.interpret.po.*;
 import whu.se.interpret.result.Result;
@@ -38,19 +36,14 @@ public class ParserImplTest extends InterpretApplicationTests {
 
     @Test
     public void testInit() throws IOException {
-        //parserImpl.init("grammar");
         parserImpl.init("grammar/grammar.txt");
         HashMap<String, HashSet<String>> firstSet = parserImpl.getAllFirst();
         HashMap<String, HashSet<String>> followSet = parserImpl.getAllFollow();
-//        Iterator iter = firstSet.entrySet().iterator();
-//        while (iter.hasNext()) {
-//            Map.Entry entry = (Map.Entry) iter.next();
-//            System.out.printf("%-20s:%s\n",entry.getKey(),entry.getValue());
-//        }
-        Iterator iter = followSet.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            System.out.printf("%-20s:%s\n",entry.getKey(),entry.getValue());
+        for (Map.Entry<String, HashSet<String>> entry : firstSet.entrySet()) {
+            System.out.printf("%-20s:%s\n", entry.getKey(), entry.getValue());
+        }
+        for (Map.Entry<String, HashSet<String>> entry : followSet.entrySet()) {
+            System.out.printf("%-20s:%s\n", entry.getKey(), entry.getValue());
         }
     }
 
@@ -64,10 +57,7 @@ public class ParserImplTest extends InterpretApplicationTests {
     public void grammarAnalysis(){
         try {
             //从文件读取测试代码
-            //String code = ReadFileByLine("code/Lexer-test.txt");
-            //String code = utils.ReadFileByLine("code/Parser-test.txt");
             String code = utils.ReadFileByLine("code/TempSimple.txt");
-            //读取完成
 
             parserImpl.init("grammar/grammar.txt");
             Family family = parserImpl.generateFamily(parserImpl.getGrammar());
