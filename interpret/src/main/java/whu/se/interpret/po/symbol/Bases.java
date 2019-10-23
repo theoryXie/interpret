@@ -13,7 +13,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-class Bases extends NoTerminal{
+public class Bases extends NoTerminal{
 
 	/**
 	 * @param name

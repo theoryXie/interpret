@@ -14,7 +14,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-class Decls extends NoTerminal{
+public class Decls extends NoTerminal{
 
 	/**
 	 * @param name

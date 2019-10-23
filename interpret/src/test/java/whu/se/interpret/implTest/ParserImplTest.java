@@ -63,13 +63,13 @@ public class ParserImplTest extends InterpretApplicationTests {
             Family family = parserImpl.generateFamily(parserImpl.getGrammar());
             SLRTable slrTable = parserImpl.generateSLRTable(family);
             List<Token> tokens = lexerImpl.lexer(code);
-            Result result = parserImpl.syntaxCheck(tokens);
+            ParserResult parserResult = parserImpl.syntaxCheck(tokens);
 
             //输出结果路径在target/classes/static下
             utils.Write2FileByFileWriter("output/family",family.toString());
             utils.Write2FileByFileWriter("output/slrTable",slrTable.toString());
             utils.Write2FileByFileWriter("output/lexer",tokens.toString());
-            utils.Write2FileByFileWriter("output/syntaxCheck",result.getOutput());
+            utils.Write2FileByFileWriter("output/syntaxCheck",parserResult.getResult().getOutput());
 
         }catch (Exception e){
             e.printStackTrace();
