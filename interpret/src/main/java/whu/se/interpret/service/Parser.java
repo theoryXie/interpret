@@ -547,8 +547,8 @@ public class Parser implements ParserImpl {
             SLRTable slrTable = generateSLRTable(family);
 
             String terminalStr;//用于将token转换为String匹配slr表
-            Stack<Integer> state = new Stack();//状态栈
-            Stack<String> symbol = new Stack();//符号栈
+            Stack<Integer> state = new Stack<>();//状态栈
+            Stack<String> symbol = new Stack<>();//符号栈
             ArrayList<Object> symbol_Object = new ArrayList<>();//符号对象栈
 
             ArrayList<HashMap<String, ArrayList<Pair>>> actions = slrTable.getActions();//action表
@@ -628,7 +628,7 @@ public class Parser implements ParserImpl {
                         Constructor<?> constructor = SymbolClass.getConstructor(String.class);
                         Object symObj = constructor.newInstance(leftSymbolString);
                         symbol_Object.add(symObj);
-                        symbols_Object.add(deepCopy(symbol_Object));
+                        symbols_Object.add(new ArrayList<>(symbol_Object));
                         //符号栈非终结符入栈,符号栈处理完毕
                         symbol.push(left);
                         symbols.add(symbol.toString());
@@ -637,7 +637,7 @@ public class Parser implements ParserImpl {
                             sym.append(s);
                         }
                         stringBuilder.append(String.format("%-70s", sym.toString()));
-                        stringBuilder.append("归约\t" + grammar.get(num).getLeft() + "→");
+                        stringBuilder.append("归约\t").append(grammar.get(num).getLeft()).append("→");
                         for (String s : grammar.get(num).getRight()) {
                             stringBuilder.append(s);
                         }
@@ -679,7 +679,7 @@ public class Parser implements ParserImpl {
                 Terminal terminal = new Terminal(terminalStr);
                 terminal.setToken(token);
                 symbol_Object.add(terminal);
-                symbols_Object.add(deepCopy(symbol_Object));
+                symbols_Object.add(new ArrayList<>(symbol_Object));
                 // S 移进
                 symbol.push(terminalStr);
                 symbols.add(symbol.toString());
@@ -691,11 +691,11 @@ public class Parser implements ParserImpl {
                     sym.append(s);
                 }
                 stringBuilder.append(String.format("%-70s",sym));
-                stringBuilder.append("移进\t"+terminalStr+"\n");
+                stringBuilder.append("移进\t").append(terminalStr).append("\n");
             }
 
         } catch (Exception e) {
-            stringBuilder.append("\n程序出现异常:"+e.getMessage());
+            stringBuilder.append("\n程序出现异常:").append(e.getMessage());
             //return new Result(stringBuilder.toString());
             return parserResultBuilder(parserResult,"\n程序出现异常:"+e.getMessage(),false,pairs,states,symbols,symbols_Object,new Result(stringBuilder.toString()));
         }
@@ -718,7 +718,7 @@ public class Parser implements ParserImpl {
     }
 
 
-    public static <T> ArrayList<T> deepCopy(ArrayList<T> src) throws IOException, ClassNotFoundException {
+    private static <T> ArrayList<T> deepCopy(ArrayList<T> src) throws IOException, ClassNotFoundException {
         ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
         ObjectOutputStream out = new ObjectOutputStream(byteOut);
         out.writeObject(src);
