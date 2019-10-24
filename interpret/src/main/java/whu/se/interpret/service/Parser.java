@@ -610,6 +610,7 @@ public class Parser implements ParserImpl {
                             if (symbol.peek().equals(right.get(i))) {
                                 //符号栈出栈
                                 symbol.pop();
+                                symbol_Object.remove(symbol_Object.size()-1);
                                 state.pop();
                             } else {
                                 parserResult.setPassed(false);
