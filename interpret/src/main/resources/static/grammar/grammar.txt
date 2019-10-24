@@ -25,7 +25,6 @@
 <Factors> → <Factor> , <Factors>
 <Factors> → <Factor>
 <Block> → { <Stmts> }
-<Type> → bool
 <Type> → int
 <Type> → float
 <Type> → char
@@ -73,7 +72,5 @@
 <Factor> → num
 <Factor> → real
 <Factor> → <FuncUse>
-<Factor> → true
-<Factor> → false
 <Factor> → str
 <Factor> → cha
