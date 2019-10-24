@@ -716,17 +716,4 @@ public class Parser implements ParserImpl {
         parserResult.setResult(result);
         return parserResult;
     }
-
-
-    private static <T> ArrayList<T> deepCopy(ArrayList<T> src) throws IOException, ClassNotFoundException {
-        ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-        ObjectOutputStream out = new ObjectOutputStream(byteOut);
-        out.writeObject(src);
-
-        ByteArrayInputStream byteIn = new ByteArrayInputStream(byteOut.toByteArray());
-        ObjectInputStream in = new ObjectInputStream(byteIn);
-        @SuppressWarnings("unchecked")
-        ArrayList<T> dest = (ArrayList<T>) in.readObject();
-        return dest;
-    }
 }
