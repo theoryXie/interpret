@@ -7,8 +7,8 @@
 <Base> → <Function>
 <Decl> → <Type> id ;
 <Decl> → <Type> <Array> ;
-<Array> → <Array> [ num ];
-<Array> → id [ num ] ;
+<Array> → <Array> [ num ]
+<Array> → id [ num ]
 <Decl> → <Type> id = <Bool> ;
 <Decl> → struct id id ;
 <StructDef> → struct id { <Decls> } ;
