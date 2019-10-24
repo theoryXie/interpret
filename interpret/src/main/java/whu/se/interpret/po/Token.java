@@ -1,12 +1,14 @@
 package whu.se.interpret.po;
 
+import java.io.Serializable;
+
 /**
  * @author xsy
  * @projectName interpret
  * @description: 用于记录词素的token
  * @date 2019/9/2121:23
  */
-public class Token {
+public class Token  implements Serializable {
     public enum Symbol {
         nul, ident, number, fnumber, plus, minus, times, slash,
         eql, neq, leq, geq, lss, gtr,

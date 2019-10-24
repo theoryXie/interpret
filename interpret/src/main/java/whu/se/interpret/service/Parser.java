@@ -590,8 +590,6 @@ public class Parser implements ParserImpl {
                     }
                 }
 
-                pairs.add(new Pair(c, num));//保存移进或归约动作
-
                 // r 归约(在移进循环中进行归约循环)
                 if (c == 'r') {
                     while(c == 'r' && num != 0) {
@@ -630,7 +628,7 @@ public class Parser implements ParserImpl {
                         Constructor<?> constructor = SymbolClass.getConstructor(String.class);
                         Object symObj = constructor.newInstance(leftSymbolString);
                         symbol_Object.add(symObj);
-                        symbols_Object.add(symbol_Object);
+                        symbols_Object.add(deepCopy(symbol_Object));
                         //符号栈非终结符入栈,符号栈处理完毕
                         symbol.push(left);
                         symbols.add(symbol.toString());
@@ -681,12 +679,13 @@ public class Parser implements ParserImpl {
                 Terminal terminal = new Terminal(terminalStr);
                 terminal.setToken(token);
                 symbol_Object.add(terminal);
-                symbols_Object.add(symbol_Object);
+                symbols_Object.add(deepCopy(symbol_Object));
                 // S 移进
                 symbol.push(terminalStr);
                 symbols.add(symbol.toString());
                 state.push(num);
                 states.add(state.toString());
+                pairs.add(new Pair(c, num));//保存移进或归约动作
                 StringBuilder sym = new StringBuilder();
                 for(String s:symbol){
                     sym.append(s);
@@ -716,5 +715,18 @@ public class Parser implements ParserImpl {
         parserResult.setSymbols_Object(symbols_Object);
         parserResult.setResult(result);
         return parserResult;
+    }
+
+
+    public static <T> ArrayList<T> deepCopy(ArrayList<T> src) throws IOException, ClassNotFoundException {
+        ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+        ObjectOutputStream out = new ObjectOutputStream(byteOut);
+        out.writeObject(src);
+
+        ByteArrayInputStream byteIn = new ByteArrayInputStream(byteOut.toByteArray());
+        ObjectInputStream in = new ObjectInputStream(byteIn);
+        @SuppressWarnings("unchecked")
+        ArrayList<T> dest = (ArrayList<T>) in.readObject();
+        return dest;
     }
 }

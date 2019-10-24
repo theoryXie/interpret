@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import whu.se.interpret.po.Token;
 
+import java.io.Serializable;
+
 /**
  * @Description:
  * @author: theory
@@ -14,7 +16,7 @@ import whu.se.interpret.po.Token;
  */
 @Getter
 @Setter
-public class Terminal extends Symbol{
+public class Terminal extends Symbol implements Serializable {
 
 	private Token token;
 
