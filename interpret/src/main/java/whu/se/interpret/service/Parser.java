@@ -570,12 +570,10 @@ public class Parser implements ParserImpl {
                     } else if (token.getTokenType().equals(Token.Symbol.ident)) {
                         terminalStr = "id";
                     } else {
-                        parserResult.setPassed(false);
-                        parserResult.setCurToken(token);
                         String d = "归约失败，action表访问到空节点或表中无此终结符，当前格子：："+state.peek()+","+symbol.peek();
                         stringBuilder.append(d);
                         //return new Result(stringBuilder.toString());
-                        return parserResultBuilder(parserResult,d,false,pairs,states,symbols,symbols_Object,new Result(stringBuilder.toString()));
+                        return new ParserResult(token,d,false,pairs,states,symbols,symbols_Object,new Result(stringBuilder.toString()));
                     }
                 } else {
                     terminalStr = token.getName();
@@ -599,12 +597,10 @@ public class Parser implements ParserImpl {
 
                         for (int i = right.size() - 1; i >= 0; i--) {
                             if (symbol.empty()) {
-                                parserResult.setPassed(false);
-                                parserResult.setCurToken(token);
                                 String d = "归约失败，可能是slr表或文法问题，当前格子：" + state.peek() + "," + symbol.peek();
                                 stringBuilder.append(d);
                                 //return new Result(stringBuilder.toString());
-                                return parserResultBuilder(parserResult,d,false,pairs,states,symbols,symbols_Object,new Result(stringBuilder.toString()));
+                                return new ParserResult(token,d,false,pairs,states,symbols,symbols_Object,new Result(stringBuilder.toString()));
                             }
 
                             if (symbol.peek().equals(right.get(i))) {
@@ -613,12 +609,10 @@ public class Parser implements ParserImpl {
                                 symbol_Object.remove(symbol_Object.size()-1);
                                 state.pop();
                             } else {
-                                parserResult.setPassed(false);
-                                parserResult.setCurToken(token);
                                 String d = "归约失败，符号表和产生式右部不匹配，当前格子：" + state.peek() + "," + symbol.peek();
                                 stringBuilder.append(d);
                                 //return new Result(stringBuilder.toString());
-                                return parserResultBuilder(parserResult,d,false,pairs,states,symbols,symbols_Object,new Result(stringBuilder.toString()));
+                                return new ParserResult(token,d,false,pairs,states,symbols,symbols_Object,new Result(stringBuilder.toString()));
                             }
                         }
                         //保存符号对象栈
@@ -644,12 +638,10 @@ public class Parser implements ParserImpl {
                         }
                         stringBuilder.append("\n");
                         if (!gotos.get(state.peek()).containsKey(left)) {
-                            parserResult.setPassed(false);
-                            parserResult.setCurToken(token);
                             String d = "归约失败，goto表访问到空节点或表中无此非终结符，当前格子：" + state.peek() + "," + symbol.peek();
                             stringBuilder.append(d);
                             //return new Result(stringBuilder.toString());
-                            return parserResultBuilder(parserResult,d,false,pairs,states,symbols,symbols_Object,new Result(stringBuilder.toString()));
+                            return new ParserResult(token,d,false,pairs,states,symbols,symbols_Object,new Result(stringBuilder.toString()));
                         }
                         //状态栈入栈
                         state.push(gotos.get(state.peek()).get(left).get(0).getNum());
@@ -658,12 +650,10 @@ public class Parser implements ParserImpl {
 
                         //检查下一步动作
                         if (!actions.get(state.peek()).containsKey(terminalStr)) {
-                            parserResult.setPassed(false);
-                            parserResult.setCurToken(token);
                             String d = "归约失败，action表访问到空节点或表中无此终结符，当前格子："+state.peek()+","+symbol.peek();
                             stringBuilder.append(d);
                             //return new Result(stringBuilder.toString());
-                            return parserResultBuilder(parserResult,d,false,pairs,states,symbols,symbols_Object,new Result(stringBuilder.toString()));
+                            return new ParserResult(token,d,false,pairs,states,symbols,symbols_Object,new Result(stringBuilder.toString()));
 
                         }
                         c = actions.get(state.peek()).get(terminalStr).get(0).getC();
@@ -698,23 +688,10 @@ public class Parser implements ParserImpl {
         } catch (Exception e) {
             stringBuilder.append("\n程序出现异常:").append(e.getMessage());
             //return new Result(stringBuilder.toString());
-            return parserResultBuilder(parserResult,"\n程序出现异常:"+e.getMessage(),false,pairs,states,symbols,symbols_Object,new Result(stringBuilder.toString()));
+            return new ParserResult(null,"\n程序出现异常:"+e.getMessage(),false,pairs,states,symbols,symbols_Object,new Result(stringBuilder.toString()));
         }
         stringBuilder.append("语法分析已通过");
         //return new Result(stringBuilder.toString());
-        return parserResultBuilder(parserResult,"语法分析已通过",true,pairs,states,symbols,symbols_Object,new Result(stringBuilder.toString()));
-    }
-
-    private ParserResult parserResultBuilder(ParserResult parserResult, String description, boolean passed,
-                                                  ArrayList<Pair> pairs, ArrayList<String> states, ArrayList<String> symbols,
-                                                  ArrayList<ArrayList<Object>> symbols_Object, Result result) {
-        parserResult.setDescription(description);
-        parserResult.setPassed(passed);
-        parserResult.setPairs(pairs);
-        parserResult.setStates(states);
-        parserResult.setSymbols_String(symbols);
-        parserResult.setSymbols_Object(symbols_Object);
-        parserResult.setResult(result);
-        return parserResult;
+        return new ParserResult(null,"语法分析已通过",true,pairs,states,symbols,symbols_Object,new Result(stringBuilder.toString()));
     }
 }

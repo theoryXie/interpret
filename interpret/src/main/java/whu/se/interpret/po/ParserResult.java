@@ -23,6 +23,17 @@ public class ParserResult {
 
     Result result;//用于保存传给前端的字符串
 
+    public ParserResult(Token curToken, String description, boolean passed, ArrayList<Pair> pairs, ArrayList<String> states, ArrayList<String> symbols_String, ArrayList<ArrayList<Object>> symbols_Object, Result result) {
+        this.curToken = curToken;
+        this.passed = passed;
+        this.description = description;
+        this.pairs = pairs;
+        this.symbols_String = symbols_String;
+        this.states = states;
+        this.symbols_Object = symbols_Object;
+        this.result = result;
+    }
+
     public ArrayList<Pair> getPairs() {
         return pairs;
     }
