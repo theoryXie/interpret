@@ -1,0 +1,19 @@
+int c = 1;
+int add(int a,int b)
+{
+    {int c = 0;}
+    int c = a+b;
+    return c;
+}
+
+int main(){
+    int c = 1+add(1,2);//c=4
+    if(c<4&&c>3){
+        //if cannot see here
+        c=c-1;
+    }
+    else{
+        c= 100;
+    }
+    return c;
+}

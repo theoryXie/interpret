@@ -1,4 +1,4 @@
-package whu.se.interpret.po.symbol;
+package whu.se.interpret.po;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -14,12 +14,14 @@ public class TableItem implements Cloneable{
     private String name;//变量名
     private String type;//变量类型
     private Object data;//数据
+    private boolean isParam;//是否是参数
 
     public TableItem(String name, String type) {
         this.name = name;
         this.type = type;
     }
 
+    //深拷贝
     public Object clone() {
         TableItem o = null;
         try {

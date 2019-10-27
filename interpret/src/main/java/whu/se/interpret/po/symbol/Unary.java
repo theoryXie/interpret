@@ -5,6 +5,7 @@ package whu.se.interpret.po.symbol;
 
 import lombok.Getter;
 import lombok.Setter;
+import whu.se.interpret.po.Token;
 
 /**
  * @Description:
@@ -14,6 +15,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Unary extends NoTerminal{
+
+	private Token token;
 
 	/**
 	 * @param name

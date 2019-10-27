@@ -21,6 +21,8 @@ public class FiveParam {
 	private String param_3;//第三个参数
 	private int row;//行号
 
+	private SymbolTable pointer;//指向对应的符号表
+
 	public FiveParam(String op, String param_1, String param_2, String param_3, int row) {
 		this.op = op;
 		this.param_1 = param_1;

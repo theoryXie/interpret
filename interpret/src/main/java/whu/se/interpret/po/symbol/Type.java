@@ -16,6 +16,9 @@ import lombok.Setter;
 @Setter
 public class Type extends NoTerminal{
 
+
+	private String type;//数据类型
+
 	/**
 	 * @param name
 	 */
