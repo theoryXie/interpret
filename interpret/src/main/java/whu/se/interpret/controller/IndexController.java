@@ -44,9 +44,15 @@ public class IndexController {
     @PostMapping(value = "api/code")
     @ResponseBody
     public Result InterpretCode(@RequestBody Code code){
-        List<Token> tokens = lexerImpl.lexer(code.getCode()); //获取token序列
-        Result result = parserImpl.syntaxCheck(tokens).getResult();       //将token序列转化为发给前端的Result包
-        return result;
+        try {
+            List<Token> tokens = lexerImpl.lexer(code.getCode()); //获取token序列
+            Result result = parserImpl.syntaxCheck(tokens).getResult();       //将token序列转化为发给前端的Result包
+            return result;
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
@@ -57,7 +63,7 @@ public class IndexController {
      **/
     @PostMapping(value = "api/import")
     @CrossOrigin
-    public Result importData(MultipartFile file) throws IOException {
+    public Result importData(MultipartFile file) throws Exception {
         System.out.println(file.getOriginalFilename());
         Reader reader = new InputStreamReader(file.getInputStream(), "utf-8");
         BufferedReader br = new BufferedReader(reader);

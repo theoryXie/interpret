@@ -24,22 +24,35 @@ public class LexerImplTest extends InterpretApplicationTests {
      * 测试词法分析的接口
      *
      * @author xsy
+     * @ whx 修改 10.18  添加lexer的exception处理
      **/
     @Test
     public void testLexer1(){
         String code = utils.ReadFileByLine("code/Parser-test.txt");
-        List<Token> tokens = lexerImpl.lexer(code);
-        utils.Write2FileByFileWriter("output/lexer",tokens.toString());
+        try {
+            List<Token> tokens = lexerImpl.lexer(code);
+            utils.Write2FileByFileWriter("output/lexer",tokens.toString());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
     }
     /**
      * 测试词法分析的接口
      *
      * @author zfq更改
+     * @ whx 修改 10.18  添加lexer的exception处理
      **/
     @Test
     public void testLexer2(){
         String code = utils.ReadFileByLine("code/Lexer-test-wrong.txt");
-        List<Token> tokens = lexerImpl.lexer(code);
-        utils.Write2FileByFileWriter("output/lexer",tokens.toString());
+        try {
+            List<Token> tokens = lexerImpl.lexer(code);
+            utils.Write2FileByFileWriter("output/lexer",tokens.toString());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 }

@@ -51,7 +51,7 @@ public class Lexer implements LexerImpl {
 
 
     @Override
-    public List<Token> lexer(String code) {
+    public List<Token> lexer(String code) throws Exception {
         code = code + " ";
         ArrayList<Token> TokenList = new ArrayList<Token>();
         codePoint = 0;
@@ -313,6 +313,10 @@ public class Lexer implements LexerImpl {
                     case ']':
                     case '{':
                     case '}':
+                        codePoint++;
+                        mToken = new Token(String.valueOf(ch), SingleSymbolEnumArr[ch], 0, row);
+                        TokenList.add(mToken);
+                        break;
                     case '\'':
                     case '\"':
                         codePoint++;
@@ -321,9 +325,10 @@ public class Lexer implements LexerImpl {
                         break;
                     default:
                         codePoint++;
-                        mToken = new Token(String.valueOf(ch), Token.Symbol.errorsym, 0, row);
-                        TokenList.add(mToken);
-                        break;
+                        throw new Exception("非法字符"+String.valueOf(ch));
+                        //mToken = new Token(String.valueOf(ch), Token.Symbol.errorsym, 0, row);
+                        //TokenList.add(mToken);
+                        //break;
                 }
 
 

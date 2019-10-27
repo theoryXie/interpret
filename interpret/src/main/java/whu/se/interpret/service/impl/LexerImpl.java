@@ -19,7 +19,7 @@ public interface LexerImpl {
      * @Param code -- 代码字符串
      * @return tokens -- token序列
      **/
-    public List<Token> lexer(String code);
+    public List<Token> lexer(String code) throws Exception;
 
     //判断是否是数字
     public boolean isDigit(char symbol);
