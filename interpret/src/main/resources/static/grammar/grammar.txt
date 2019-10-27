@@ -7,8 +7,8 @@
 <Base> → <Function>
 <Decl> → <Type> id ;
 <Decl> → <Type> <Array> ;
-<Array> → <Array> [ num ];
-<Array> → id [ num ] ;
+<Array> → <Array> [ num ]
+<Array> → id [ num ]
 <Decl> → <Type> id = <Bool> ;
 <Decl> → struct id id ;
 <StructDef> → struct id { <Decls> } ;
@@ -25,16 +25,10 @@
 <Factors> → <Factor> , <Factors>
 <Factors> → <Factor>
 <Block> → { <Stmts> }
-<LoopBlock> → { <AllStmts> }
-<Type> → bool
 <Type> → int
 <Type> → float
 <Type> → char
 <Type> → void
-<AllStmts> → <AllStmt> <AllStmts>
-<AllStmt> → <Stmt>
-<AllStmt> → break ;
-<AllStmt> → <LoopBlock>
 <Stmts> → <Stmt> <Stmts>
 <Stmts> → <Stmt>
 <Stmt> → <Decl>
@@ -47,6 +41,7 @@
 <Stmt> → return <Bool> ;
 <Stmt> → <Block>
 <Stmt> → <Bool> ;
+<Stmt> → break ;
 <Asgn> → <Loc> = <Bool> ;
 <Loc> → <Loc> [ <Bool> ]
 <Loc> → id
@@ -77,5 +72,5 @@
 <Factor> → num
 <Factor> → real
 <Factor> → <FuncUse>
-<Factor> → true
-<Factor> → false
+<Factor> → str
+<Factor> → cha

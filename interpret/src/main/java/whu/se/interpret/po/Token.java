@@ -1,5 +1,7 @@
 package whu.se.interpret.po;
 
+import java.io.Serializable;
+
 /**
  * @author xsy
  * @projectName interpret

@@ -51,6 +51,6 @@ public interface ParserImpl {
      *                 : 2.PR中passed为false：语法分析未通过，此时PR中curToken应保存当前token（其中有错误行数信息）
      *                 : 3.PR中passed为false且curToken为空：输入串已访问到结尾 $
      */
-    public Result syntaxCheck(List<Token> tokens);
+    public ParserResult syntaxCheck(List<Token> tokens);
 
 }

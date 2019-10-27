@@ -2,8 +2,6 @@ package whu.se.interpret.implTest;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import whu.se.interpret.InterpretApplicationTests;
 import whu.se.interpret.po.*;
 import whu.se.interpret.result.Result;
@@ -38,19 +36,14 @@ public class ParserImplTest extends InterpretApplicationTests {
 
     @Test
     public void testInit() throws IOException {
-        //parserImpl.init("grammar");
         parserImpl.init("grammar/grammar.txt");
         HashMap<String, HashSet<String>> firstSet = parserImpl.getAllFirst();
         HashMap<String, HashSet<String>> followSet = parserImpl.getAllFollow();
-//        Iterator iter = firstSet.entrySet().iterator();
-//        while (iter.hasNext()) {
-//            Map.Entry entry = (Map.Entry) iter.next();
-//            System.out.printf("%-20s:%s\n",entry.getKey(),entry.getValue());
-//        }
-        Iterator iter = followSet.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            System.out.printf("%-20s:%s\n",entry.getKey(),entry.getValue());
+        for (Map.Entry<String, HashSet<String>> entry : firstSet.entrySet()) {
+            System.out.printf("%-20s:%s\n", entry.getKey(), entry.getValue());
+        }
+        for (Map.Entry<String, HashSet<String>> entry : followSet.entrySet()) {
+            System.out.printf("%-20s:%s\n", entry.getKey(), entry.getValue());
         }
     }
 
@@ -64,22 +57,19 @@ public class ParserImplTest extends InterpretApplicationTests {
     public void grammarAnalysis(){
         try {
             //从文件读取测试代码
-            //String code = ReadFileByLine("code/Lexer-test.txt");
-            //String code = utils.ReadFileByLine("code/Parser-test.txt");
             String code = utils.ReadFileByLine("code/TempSimple.txt");
-            //读取完成
 
             parserImpl.init("grammar/grammar.txt");
             Family family = parserImpl.generateFamily(parserImpl.getGrammar());
             SLRTable slrTable = parserImpl.generateSLRTable(family);
             List<Token> tokens = lexerImpl.lexer(code);
-            Result result = parserImpl.syntaxCheck(tokens);
+            ParserResult parserResult = parserImpl.syntaxCheck(tokens);
 
             //输出结果路径在target/classes/static下
             utils.Write2FileByFileWriter("output/family",family.toString());
             utils.Write2FileByFileWriter("output/slrTable",slrTable.toString());
             utils.Write2FileByFileWriter("output/lexer",tokens.toString());
-            utils.Write2FileByFileWriter("output/syntaxCheck",result.getOutput());
+            utils.Write2FileByFileWriter("output/syntaxCheck",parserResult.getResult().getOutput());
 
         }catch (Exception e){
             e.printStackTrace();

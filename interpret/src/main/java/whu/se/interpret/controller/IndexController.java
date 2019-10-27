@@ -77,7 +77,7 @@ public class IndexController {
 
 
         List<Token> tokens = lexerImpl.lexer(code); //获取token序列
-        Result result = parserImpl.syntaxCheck(tokens);
+        Result result = parserImpl.syntaxCheck(tokens).getResult();
         result.setCode(code);
         return result;
     }

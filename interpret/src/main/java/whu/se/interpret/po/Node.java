@@ -53,16 +53,16 @@ public class Node implements Cloneable{
     }
 
     public String toSLRString(){
-        StringBuilder stringBuffer =  new StringBuilder();
+        StringBuilder stringBuilder =  new StringBuilder();
         for (int i = 0;i<right.size();i++){
             if(i == index) {
-                stringBuffer.append(".").append(right.get(i));
+                stringBuilder.append(".").append(right.get(i));
             } else
-                stringBuffer.append(right.get(i));
+                stringBuilder.append(right.get(i));
         }
         if(index == right.size())
-            stringBuffer.append(".");
-        return left + "->"+stringBuffer.toString()+"\n";
+            stringBuilder.append(".");
+        return left + "->"+stringBuilder.toString()+"\n";
     }
 
     @Override
