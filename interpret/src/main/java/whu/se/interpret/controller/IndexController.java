@@ -46,7 +46,7 @@ public class IndexController {
     public Result InterpretCode(@RequestBody Code code){
         try {
             List<Token> tokens = lexerImpl.lexer(code.getCode()); //获取token序列
-            Result result = parserImpl.syntaxCheck(tokens);       //将token序列转化为发给前端的Result包
+            Result result = parserImpl.syntaxCheck(tokens).getResult();       //将token序列转化为发给前端的Result包
             return result;
         }catch (Exception e)
         {
