@@ -15,12 +15,18 @@ import java.util.ArrayList;
 @Setter
 public class SymbolTable {
 
-    private String name;
+    private String name;//函数名
     private String returnType;//返回值类型
     private int paramNum;//参数个数
     private ArrayList<TableItem> tableItems;//符号序列
     private SymbolTable prePointer;//指向前一个符号表的指针
 
+    public SymbolTable(String name, String returnType) {
+        this.name = name;
+        this.returnType = returnType;
+    }
 
-
+    public SymbolTable(String name) {
+        this.name = name;
+    }
 }

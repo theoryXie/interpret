@@ -6,6 +6,8 @@ package whu.se.interpret.po.symbol;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashMap;
+
 /**
  * @Description:
  * @author: theory
@@ -15,6 +17,11 @@ import lombok.Setter;
 @Setter
 @Getter
 public class ParamDecl extends NoTerminal{
+
+	private String paramName;
+	private String type;
+
+
 
 	/**
 	 * @param name

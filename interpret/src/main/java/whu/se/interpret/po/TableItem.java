@@ -14,11 +14,24 @@ public class TableItem implements Cloneable{
     private String name;//变量名
     private String type;//变量类型
     private Object data;//数据
-    private boolean isParam;//是否是参数
+    private boolean isParam = false;//是否是参数
 
     public TableItem(String name, String type) {
         this.name = name;
         this.type = type;
+    }
+
+    public TableItem(String name, String type, Object data) {
+        this.name = name;
+        this.type = type;
+        this.data = data;
+    }
+
+    public TableItem(String name, String type, Object data, boolean isParam) {
+        this.name = name;
+        this.type = type;
+        this.data = data;
+        this.isParam = isParam;
     }
 
     //深拷贝
