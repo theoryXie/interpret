@@ -8,7 +8,7 @@ struct struct1 {
 	int q1;
 	int q2;
 };
-
+//变量名 函数名 数字
 int count_test(int a, float f, bool bool0)
 {
 	//int a = 1;

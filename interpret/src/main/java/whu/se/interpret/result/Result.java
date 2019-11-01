@@ -23,8 +23,12 @@ public class Result {
     //前端输出
     private String output;
 
+
     //返回文件的内容
     private String code;
+
+    //前端命令
+    private String cmd;
 
     public Result(int status,String tokens,String wrongMessage){
 
@@ -77,4 +81,8 @@ public class Result {
     public void setCode(String code) {
         this.code = code;
     }
+
+    public String getCmd() {return cmd; }
+    
+    public void setCmd(String cmd) { this.cmd = cmd; }
 }

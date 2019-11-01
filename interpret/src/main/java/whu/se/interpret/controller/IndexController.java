@@ -81,4 +81,25 @@ public class IndexController {
         result.setCode(code);
         return result;
     }
+
+    @PostMapping(value = "api/_continue")
+    @CrossOrigin
+    public Result _continue() throws Exception {
+        System.out.println("continue");
+        return null;
+    }
+
+    @PostMapping(value = "api/nextStep")
+    @CrossOrigin
+    public Result nextStep() throws Exception {
+        System.out.println("nextStep");
+        return null;
+    }
+
+    @PostMapping(value = "api/debug")
+    @CrossOrigin
+    public Result debug() throws Exception {
+        System.out.println("debug");
+        return null;
+    }
 }
