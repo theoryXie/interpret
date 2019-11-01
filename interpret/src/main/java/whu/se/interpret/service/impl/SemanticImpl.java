@@ -20,5 +20,5 @@ public interface SemanticImpl {
      * @Param  grammar -- 文法
      * @return
      **/
-    void semantic_analysis(ParserResult parserResult, ArrayList<Node> grammar);
+    void semantic_analysis(ParserResult parserResult, ArrayList<Node> grammar) throws Exception;
 }

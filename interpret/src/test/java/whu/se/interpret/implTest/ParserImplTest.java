@@ -57,7 +57,7 @@ public class ParserImplTest extends InterpretApplicationTests {
     public void grammarAnalysis(){
         try {
             //从文件读取测试代码
-            String code = utils.ReadFileByLine("code/TempSimple.txt");
+            String code = utils.ReadFileByLine("code/semantic-test.txt");
 
             parserImpl.init("grammar/grammar.txt");
             Family family = parserImpl.generateFamily(parserImpl.getGrammar());

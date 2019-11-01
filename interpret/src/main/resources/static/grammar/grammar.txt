@@ -20,10 +20,10 @@
 <ParamDecls> → <ParamDecl> , <ParamDecls>
 <ParamDecls> → <ParamDecl>
 <ParamDecl> → <Type> id
-<FuncUse> → id ( <Factors> )
+<FuncUse> → id ( <Bools> )
 <FuncUse> → id ( )
-<Factors> → <Factor> , <Factors>
-<Factors> → <Factor>
+<Bools> → <Bool> , <Bools>
+<Bools> → <Bool>
 <Block> → { <Stmts> }
 <Type> → int
 <Type> → float

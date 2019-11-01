@@ -3,6 +3,7 @@ package whu.se.interpret.po;
 import lombok.Getter;
 import lombok.Setter;
 import whu.se.interpret.po.TableItem;
+import whu.se.interpret.po.symbol.Array;
 
 import java.util.ArrayList;
 
@@ -20,6 +21,8 @@ public class SymbolTable {
     private int paramNum;//参数个数
     private ArrayList<TableItem> tableItems;//符号序列
     private SymbolTable prePointer;//指向前一个符号表的指针
+
+    private ArrayList<FiveParam> fiveParams;//五元式
 
     public SymbolTable(String name, String returnType) {
         this.name = name;

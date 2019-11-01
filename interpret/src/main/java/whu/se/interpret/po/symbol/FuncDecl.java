@@ -16,6 +16,8 @@ import lombok.Setter;
 @Setter
 public class FuncDecl extends NoTerminal{
 
+	private String funcName;//函数名
+
 	/**
 	 * @param name
 	 */
