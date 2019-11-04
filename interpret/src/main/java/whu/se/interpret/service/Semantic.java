@@ -82,12 +82,16 @@ public class Semantic implements SemanticImpl {
                     SymbolTable symbolTable = new SymbolTable("__F"+F_index);//新建函数符号表
                     symbolTable.setParamNum(0);
                     //记录他的上级来确定这个新符号表是否要执行
-                    if(judgeExecute(nowTablePointer.getName()))
-                    {
-                        executeName.add(symbolTable.getName());
-                    }else {
-                        FiveParam fiveParam = new FiveParam("Call","_","_",symbolTable.getName(),terminal.getToken().getRow());
-                    }
+//                    if(judgeExecute(nowTablePointer.getName()))
+//                    {
+//                        executeName.add(symbolTable.getName());
+//                    }else {
+//                        FiveParam fiveParam = new FiveParam("Call","_","_",symbolTable.getName(),terminal.getToken().getRow());
+//                    }
+                    //2019.11.4 20:48后  全部生成五元式后再统一执行
+                    FiveParam fiveParam = new FiveParam("Call","_","_",symbolTable.getName(),terminal.getToken().getRow());
+                    nowTablePointer.getFiveParams().add(fiveParam);
+                    //*2019.11.4 20:48
                     symbolTable.setPrePointer(nowTablePointer);
                     nowTablePointer = symbolTable;
                     symbolTables.add(symbolTable);
@@ -140,12 +144,13 @@ public class Semantic implements SemanticImpl {
                         Term term = (Term) pre.get(pre_size-1);
                         Expr expr2 = (Expr) pre.get(pre_size-3);
                         Expr expr1 = (Expr) post.get(post_size-1);
-                        String name = nowTablePointer.getName();
+                        String name = nowTablePointer.getName();   //当前符号表的名字
                         //执行
                         Token token1 = expr1.getToken();
                         Token token2 = expr2.getToken();
                         int type_ans = operationType(expr1.getToken(),expr2.getToken());
                         Token token;
+                        //2019.11.4  20：51  将要修改
                         if(judgeExecute(name)){
                                 switch (type_ans){
                                     case 1:
@@ -241,8 +246,91 @@ public class Semantic implements SemanticImpl {
                     else if(num == 25){
                         //<Bools> → <Bool>
                         Bools bools = (Bools) post.get(post_size-1);
-                        Factor factor = (Factor)pre.get(pre_size-1);
+                        Bool bool = (Bool)pre.get(pre_size-1);
+                        bools.getTokens().add(bool.getToken());//<Bools>.token = Bool.token
+                    }
+                    else if(num == 24){
+                        //<Bools1> → <Bool> , <Bools2>
+                        Bools bools_1 = (Bools) post.get(post_size-1);
+                        Bools bools_2 = (Bools) pre.get(pre_size-1);
+                        Bool bool = (Bool) pre.get(pre_size-3);
+                        bools_1.getTokens().add(bool.getToken());
+                        bools_1.getTokens().addAll(bools_2.getTokens());
+                    }
+                    else if(num == 22){
+                        //<FuncUse> → id ( <Bools> )
+                        Terminal id = (Terminal) pre.get(pre_size-4);
+                        Bools bools = (Bools) pre.get(pre_size-2);
+                        String FunName = id.getToken().getName();
+                        if (judgeExecute(nowTablePointer.getName())){
+                             //当前代码正在运行
+                            boolean is_declare = false;
 
+                            //TODO  执行当前FunName下的五元式    没有进行同名函数的处理
+                            for (SymbolTable symbolTable : symbolTables) {
+                                //遍历符号表序列
+                                if(symbolTable.getName().equals(FunName)){
+                                    //若符号表名字与当前函数名字相同
+                                    is_declare = true;
+                                    executeName.add(FunName);//加入可执行函数名
+                                    nowTablePointer=symbolTable; //将指针指向当前符号表
+                                    if(symbolTable.getParamNum() != bools.getTokens().size())
+                                        throw new Exception("第"+id.getToken().getRow()+"行"+FunName + "函数参数个数不匹配");
+                                    for (TableItem tableItem : nowTablePointer.getTableItems()) {
+                                        //遍历符号表参数
+                                        if(tableItem.isParam()){
+                                            //若为函数参数
+                                            int temp_tableItemIndex = nowTablePointer.getTableItems().indexOf(tableItem);  //记录参数第几个
+                                            Token paramToken = bools.getTokens().get(temp_tableItemIndex);
+                                            if(paramToken.getTokenTypeString().equals(tableItem.getType())){
+                                                //对比参数类型后
+                                                tableItem.setData(paramToken.getObjectValue());//因为当前函数是立即执行的所以前面的已经计算过了，可以直接取值
+                                            }else {
+                                                throw new Exception("第"+id.getToken().getRow()+"行"+FunName + "函数第" + (temp_tableItemIndex+1) + "参数" + tableItem.getName() + "类型不匹配");
+                                            }
+                                            //2019.11.4 16:42
+                                        }else {
+                                            break;
+                                        }
+                                    }
+                                    //TODO 在这里执行当前符号表的五元式
+                                    //TODO  执行完五元式要跳回原来执行的地方  并且返回返回值   此处要赋值并且要对比返回值类型是否正确？
+                                    break;
+                                }
+                            }
+                            if (!is_declare)
+                                throw new Exception("第"+id.getToken().getRow()+"行"+FunName + "函数未声明");
+                        }
+                        else{
+                            boolean is_declare = false;
+                            for (SymbolTable symbolTable : symbolTables) {
+                                if(symbolTable.getName().equals(FunName)){
+                                    is_declare = true;
+                                    if(symbolTable.getParamNum() != bools.getTokens().size())
+                                        throw new Exception("第"+id.getToken().getRow()+"行"+FunName + "函数参数个数不匹配");
+                                    //遍历符号表序列(寻找参数)
+                                    for (TableItem tableItem : symbolTable.getTableItems()) {
+                                        if(tableItem.isParam()){
+                                            //是参数
+                                            int paramIndex = symbolTable.getTableItems().indexOf(tableItem);//获取参数位置
+                                            Token paramToken = bools.getTokens().get(paramIndex);
+                                            //对比参数类型
+                                            if(paramToken.getTokenTypeString().equals(tableItem.getType())){
+                                                FiveParam temp_five = new FiveParam("param","_","_", paramToken.getName(),paramToken.getRow());
+                                                nowTablePointer.getFiveParams().add(temp_five);
+                                            }
+                                        }
+                                        else
+                                            break;
+                                    }
+                                }
+                            }
+                            //生成调用函数的五元式
+                            FiveParam fiveParam = new FiveParam("Call","_","_",id.getToken().getName(),id.getToken().getRow());
+                            nowTablePointer.getFiveParams().add(fiveParam);
+                            if(!is_declare)
+                                throw new Exception("第"+id.getToken().getRow()+"行"+FunName + "函数未声明");
+                        }
                     }
                     else if(num == 21){
                         //<ParamDecl>→<Type>id

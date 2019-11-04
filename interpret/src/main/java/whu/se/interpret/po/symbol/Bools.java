@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import whu.se.interpret.po.Token;
 
+import java.util.ArrayList;
+
 /**
  * @author xsy
  * @description: TODO
@@ -13,6 +15,7 @@ import whu.se.interpret.po.Token;
 @Setter
 public class Bools extends NoTerminal{
 
+    private ArrayList<Token> tokens;
 
     /**
      * @param name

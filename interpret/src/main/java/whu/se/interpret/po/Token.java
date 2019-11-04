@@ -95,5 +95,22 @@ public class Token {
         this.fvalue = fvalue;
     }
 
+    public String getTokenTypeString(){
+        if(this.getTokenType() == Symbol.intsym)
+            return "int";
+        else if (this.getTokenType() == Symbol.floatsym)
+            return "float";
+        else
+            return "void//看到这个说明不是正常数";
+    }
+
+    public Object getObjectValue(){
+        if(this.getTokenType() == Symbol.intsym)
+            return this.getValue();
+        else if (this.getTokenType() == Symbol.floatsym)
+            return this.getFvalue();
+        else
+            return "void//看到这个说明不是正常数";
+    }
 
 }
