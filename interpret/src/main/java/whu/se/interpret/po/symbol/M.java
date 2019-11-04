@@ -16,6 +16,8 @@ import lombok.Setter;
 @Getter
 public class M extends NoTerminal{
 
+	private int quad;
+
 	/**
 	 * @param name
 	 */

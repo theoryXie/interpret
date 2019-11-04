@@ -6,6 +6,8 @@ package whu.se.interpret.po.symbol;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+
 /**
  * @Description:
  * @author: theory
@@ -15,6 +17,8 @@ import lombok.Setter;
 @Setter
 @Getter
 public class N extends NoTerminal{
+
+	private ArrayList<Integer> nextList;
 
 	/**
 	 * @param name

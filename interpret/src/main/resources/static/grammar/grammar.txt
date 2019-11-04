@@ -34,7 +34,7 @@
 <Stmt> → <Decl>
 <Stmt> → <Asgn>
 <Stmt> → if ( <Bool> ) <Stmt>
-<Stmt> → if ( <Bool> ) <Stmt> else <Stmt>
+<Stmt> → if ( <Bool> ) <M> <Stmt> <N> else <M> <Stmt>
 <Stmt> → while ( <Bool> ) <Stmt>
 <Stmt> → do <Stmt> while ( <Bool> ) ;
 <Stmt> → return ;
@@ -46,9 +46,9 @@
 <Loc> → <Loc> [ <Bool> ]
 <Loc> → id
 <Loc> → id . id
-<Bool> → <Join> || <Bool>
+<Bool> → <Join> || <M> <Bool>
 <Bool> → <Join>
-<Join> → <Equality> && <Join>
+<Join> → <Equality> && <M> <Join>
 <Join> → <Equality>
 <Equality> → <Rel> == <Equality>
 <Equality> → <Rel> != <Equality>
@@ -74,3 +74,5 @@
 <Factor> → <FuncUse>
 <Factor> → str
 <Factor> → cha
+<M> → ε
+<N> → ε

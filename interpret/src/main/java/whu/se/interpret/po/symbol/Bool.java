@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import whu.se.interpret.po.Token;
 
+import java.util.ArrayList;
+
 /**
  * @Description:
  * @author: theory
@@ -17,6 +19,8 @@ import whu.se.interpret.po.Token;
 public class Bool extends NoTerminal{
 
 	private Token token;
+	private ArrayList<Integer> trueList;
+	private ArrayList<Integer> falseList;
 
 	/**
 	 * @param name
