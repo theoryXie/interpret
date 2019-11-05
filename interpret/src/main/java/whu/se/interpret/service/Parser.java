@@ -230,6 +230,11 @@ public class Parser implements ParserImpl {
         ArrayList<Node> core = new ArrayList<>(); //核心项目集
         for (Node node : grammar
         ) {
+            if(node.getRight().size() == 1 && node.getRight().get(0).equals("ε"))
+                node.setRight(new ArrayList<>());
+        }
+        for (Node node : grammar
+        ) {
             if (node.getLeft().equals("<begin>")) {
                 core.add(node); //第0个项目集的核心集只有一个产生式，就是第一个
                 firstProjectSet.setCore(core);
@@ -250,7 +255,7 @@ public class Parser implements ParserImpl {
      * @Author: zhouqian
      * Date: 2019-10-04
      **/
-    public void updateProjectSets(ProjectSet currentSet, ArrayList<ProjectSet> pSets) {
+    private void updateProjectSets(ProjectSet currentSet, ArrayList<ProjectSet> pSets) {
         ArrayList<String> afterPoints = new ArrayList<>();//所有在point后面的符号集合
         HashMap<String, Integer> pointer = new HashMap<>();//DFA映射                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        7
         for (Node node : currentSet.getCore()
@@ -288,15 +293,17 @@ public class Parser implements ParserImpl {
      * @Author: zhouqian
      * Date: 2019-10-04
      **/
-    public int getSLRIndex(ProjectSet projectSet, ArrayList<ProjectSet> projectSets) {
+    private int getSLRIndex(ProjectSet projectSet, ArrayList<ProjectSet> projectSets) {
         ArrayList<Node> pCore = projectSet.getCore();
         for (int i = 0; i < projectSets.size(); i++) {
             boolean equal = true;
             ArrayList<Node> core = projectSets.get(i).getCore();
             for (Node node : pCore
             ) {
-                if (!core.contains(node))
+                if (!core.contains(node)) {
                     equal = false;
+                    break;
+                }
                 break;
             }
             //如果pCore中的每一个项目都在core中，并且这两个集合的大小相同，说明它们两个相同
@@ -313,7 +320,7 @@ public class Parser implements ParserImpl {
      * @Author: zhouqian
      * Date: 2019-10-04
      **/
-    public ProjectSet getNextProjectSet(ProjectSet currentSet, String next) {
+    private ProjectSet getNextProjectSet(ProjectSet currentSet, String next) {
         ProjectSet nextSet = new ProjectSet();
         ArrayList<Node> currentCore = currentSet.getCore();
         ArrayList<Node> nextCore = new ArrayList<>();
@@ -346,7 +353,7 @@ public class Parser implements ParserImpl {
      * @Author: zhouqian
      * Date: 2019-10-03
      **/
-    public ArrayList<Node> getProductionSet(ArrayList<Node> core) {
+    private ArrayList<Node> getProductionSet(ArrayList<Node> core) {
         ArrayList<Node> array = new ArrayList<>();
         ArrayList<String> lefts = new ArrayList<>(); //非核心项目集产生式左部的集合
         for (Node node : core
@@ -367,7 +374,7 @@ public class Parser implements ParserImpl {
      * @Author: zhouqian
      * Date: 2019-10-04
      **/
-    public void updateProductionSet(ArrayList<Node> array, ArrayList<Node> core, String left, ArrayList<String> lefts) {
+    private void updateProductionSet(ArrayList<Node> array, ArrayList<Node> core, String left, ArrayList<String> lefts) {
         //只有left不在lefts中，才需要添加
         if (!lefts.contains(left)) {
             lefts.add(left);
@@ -392,7 +399,7 @@ public class Parser implements ParserImpl {
      * @Author: zhouqian
      * Date: 2019-10-04
      **/
-    public String getAfterPoint(Node node) {
+    private String getAfterPoint(Node node) {
         String afterPoint = "ε";
         //首先要判断point的位置是否在末尾
         if (node.getIndex() < node.getRight().size()) {
@@ -444,7 +451,7 @@ public class Parser implements ParserImpl {
                             actionRow.put(str, pairs);
                         }
                     }
-                    //置终结符的rj
+                    //置结束符符的rj
                     ArrayList<Pair> pairs = new ArrayList<>();
                     pairs.add(pair);
                     actionRow.put("$", pairs);
@@ -452,7 +459,7 @@ public class Parser implements ParserImpl {
             }
             //再遍历非核心项目集
             for (Node production : productions) {
-                //如果产生式右部
+                //如果产生式右部最后面是点，说明可以归约
                 if (production.getRight().size() == production.getIndex()) {
                     Pair pair = new Pair('r', getProductionIndex(grammar, production));
                     for (String str : followSet.get(production.getLeft())) {
@@ -505,7 +512,7 @@ public class Parser implements ParserImpl {
      * @description ：获取产生式在文法中的位置，生成r几
      * @date ：Created in 2019/10/5
      */
-    public int getProductionIndex(ArrayList<Node> grammar, Node production) {
+    private int getProductionIndex(ArrayList<Node> grammar, Node production) {
         if (production == null) {
             for (int i = 0; i < grammar.size(); i++) {
                 if (grammar.get(i) == null) {
@@ -533,7 +540,6 @@ public class Parser implements ParserImpl {
     public ParserResult syntaxCheck(List<Token> tokens) {
 
         //用于保存语法分析结果
-        ParserResult parserResult = new ParserResult(tokens.get(0));
         StringBuilder stringBuilder = new StringBuilder();
         ArrayList<Pair> pairs = new ArrayList<>();//用于保存移进归约过程
         ArrayList<String> symbols = new ArrayList<>();//用于保存过程中的符号栈
@@ -580,17 +586,20 @@ public class Parser implements ParserImpl {
                 }
                 char c = actions.get(state.peek()).get(terminalStr).get(0).getC();
                 int num = actions.get(state.peek()).get(terminalStr).get(0).getNum();
-                //冲突解决:移进归约冲突选移进
+                //冲突解决:移进归约冲突选移进    现在变成了规约归约冲突！！！！！
                 if (actions.get(state.peek()).get(terminalStr).size() != 1) {
-                    if (actions.get(state.peek()).get(terminalStr).get(1).getC() == 'S') {
-                        c = 'S';
-                        num = actions.get(state.peek()).get(terminalStr).get(1).getNum();
-                    }
+                    c = 'r';
+                    num = 77;
                 }
 
                 // r 归约(在移进循环中进行归约循环)
                 if (c == 'r') {
                     while(c == 'r' && num != 0) {
+
+                        if(num == 41){
+                            System.out.println();
+                        }
+
                         //slr表r0表示acc通过
                         ArrayList<String> right = grammar.get(num).getRight();//产生式右部
                         String left = grammar.get(num).getLeft();//产生式左部
@@ -658,12 +667,10 @@ public class Parser implements ParserImpl {
                         }
                         c = actions.get(state.peek()).get(terminalStr).get(0).getC();
                         num = actions.get(state.peek()).get(terminalStr).get(0).getNum();
-                        //冲突解决:移进归约冲突选移进
+                        //冲突解决:移进归约冲突选移进    现在变成了规约归约冲突！！！！！
                         if (actions.get(state.peek()).get(terminalStr).size() != 1) {
-                            if (actions.get(state.peek()).get(terminalStr).get(1).getC() == 'S') {
-                                c = 'S';
-                                num = actions.get(state.peek()).get(terminalStr).get(1).getNum();
-                            }
+                            c = 'r';
+                            num = 77;
                         }
                     }
                 }

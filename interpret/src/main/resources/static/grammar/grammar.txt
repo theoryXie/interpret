@@ -33,7 +33,7 @@
 <Stmts> → <Stmt>
 <Stmt> → <Decl>
 <Stmt> → <Asgn>
-<Stmt> → if ( <Bool> ) <Stmt>
+<Stmt> → if ( <Bool> ) <M> <Stmt>
 <Stmt> → if ( <Bool> ) <M> <Stmt> <N> else <M> <Stmt>
 <Stmt> → while ( <Bool> ) <Stmt>
 <Stmt> → do <Stmt> while ( <Bool> ) ;
