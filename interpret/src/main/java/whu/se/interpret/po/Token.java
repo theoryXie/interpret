@@ -96,9 +96,9 @@ public class Token {
     }
 
     public String getTokenTypeString(){
-        if(this.getTokenType() == Symbol.intsym)
+        if(this.getTokenType() == Symbol.number)
             return "int";
-        else if (this.getTokenType() == Symbol.floatsym)
+        else if (this.getTokenType() == Symbol.fnumber)
             return "float";
         else
             return "void//看到这个说明不是正常数";

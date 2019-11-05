@@ -26,4 +26,5 @@ public class ParamDecls extends NoTerminal{
 	public ParamDecls(String name) {
 		super(name);
 		// TODO Auto-generated constructor stub
+		params = new ArrayList<>();
 	}}

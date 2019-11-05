@@ -23,4 +23,5 @@ public class Bools extends NoTerminal{
     public Bools(String name) {
         super(name);
         // TODO Auto-generated constructor stub
+        tokens = new ArrayList<>();
     }}

@@ -1,9 +1,11 @@
 package whu.se.interpret.service.impl;
 
+import whu.se.interpret.po.FiveParam;
 import whu.se.interpret.po.Node;
 import whu.se.interpret.po.ParserResult;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author xsy
@@ -20,5 +22,5 @@ public interface SemanticImpl {
      * @Param  grammar -- 文法
      * @return
      **/
-    void semantic_analysis(ParserResult parserResult, ArrayList<Node> grammar) throws Exception;
+    List<FiveParam> semantic_analysis(ParserResult parserResult, ArrayList<Node> grammar) throws Exception;
 }

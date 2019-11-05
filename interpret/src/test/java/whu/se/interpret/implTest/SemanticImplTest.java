@@ -3,6 +3,7 @@ package whu.se.interpret.implTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import whu.se.interpret.InterpretApplicationTests;
+import whu.se.interpret.po.FiveParam;
 import whu.se.interpret.po.ParserResult;
 import whu.se.interpret.po.Token;
 import whu.se.interpret.service.Semantic;
@@ -33,6 +34,11 @@ public class SemanticImplTest extends InterpretApplicationTests {
         utils.Write2FileByFileWriter("output/lexer",tokens.toString());
         ParserResult parserResult = parserImpl.syntaxCheck(tokens);
         utils.Write2FileByFileWriter("output/syntaxCheck",parserResult.getResult().getOutput());
-        System.out.println();
+        List<FiveParam> fiveParams = semanticImpl.semantic_analysis(parserResult,parserImpl.getGrammar());
+        StringBuilder ans = new StringBuilder();
+        for (int i = 0; i < fiveParams.size(); i++) {
+            ans.append(i+"\t"+fiveParams.get(i));
+        }
+        utils.Write2FileByFileWriter("output/semantic",ans.toString());
     }
 }

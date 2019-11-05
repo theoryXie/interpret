@@ -27,9 +27,13 @@ public class SymbolTable {
     public SymbolTable(String name, String returnType) {
         this.name = name;
         this.returnType = returnType;
+        tableItems = new ArrayList<>();
+        fiveParams = new ArrayList<>();
     }
 
     public SymbolTable(String name) {
         this.name = name;
+        tableItems = new ArrayList<>();
+        fiveParams = new ArrayList<>();
     }
 }

@@ -592,6 +592,7 @@ public class Parser implements ParserImpl {
                     num = 77;
                 }
 
+
                 // r 归约(在移进循环中进行归约循环)
                 if (c == 'r') {
                     while(c == 'r' && num != 0) {
@@ -609,19 +610,19 @@ public class Parser implements ParserImpl {
                                 String d = "归约失败，可能是slr表或文法问题，当前格子：" + state.peek() + "," + symbol.peek();
                                 stringBuilder.append(d);
                                 //return new Result(stringBuilder.toString());
-                                return new ParserResult(token,d,false,pairs,states,symbols,symbols_Object,new Result(stringBuilder.toString()));
+                                return new ParserResult(token, d, false, pairs, states, symbols, symbols_Object, new Result(stringBuilder.toString()));
                             }
 
                             if (symbol.peek().equals(right.get(i))) {
                                 //符号栈出栈
                                 symbol.pop();
-                                symbol_Object.remove(symbol_Object.size()-1);
+                                symbol_Object.remove(symbol_Object.size() - 1);
                                 state.pop();
                             } else {
                                 String d = "归约失败，符号表和产生式右部不匹配，当前格子：" + state.peek() + "," + symbol.peek();
                                 stringBuilder.append(d);
                                 //return new Result(stringBuilder.toString());
-                                return new ParserResult(token,d,false,pairs,states,symbols,symbols_Object,new Result(stringBuilder.toString()));
+                                return new ParserResult(token, d, false, pairs, states, symbols, symbols_Object, new Result(stringBuilder.toString()));
                             }
                         }
                         //保存符号对象栈

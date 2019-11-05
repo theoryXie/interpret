@@ -25,5 +25,6 @@ public class N extends NoTerminal{
 	 */
 	public N(String name) {
 		super(name);
+		nextList = new ArrayList<>();
 		// TODO Auto-generated constructor stub
 	}}

@@ -28,4 +28,7 @@ public class Bool extends NoTerminal{
 	public Bool(String name) {
 		super(name);
 		// TODO Auto-generated constructor stub
+		token = new Token("",null,0,0);
+		trueList = new ArrayList<>();
+		falseList = new ArrayList<>();
 	}}

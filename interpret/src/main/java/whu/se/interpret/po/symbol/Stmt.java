@@ -25,5 +25,6 @@ public class Stmt extends NoTerminal{
 	 */
 	public Stmt(String name) {
 		super(name);
+		nextList = new ArrayList<>();
 		// TODO Auto-generated constructor stub
 	}}

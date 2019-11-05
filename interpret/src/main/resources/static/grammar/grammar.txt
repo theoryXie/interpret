@@ -29,7 +29,7 @@
 <Type> → float
 <Type> → char
 <Type> → void
-<Stmts> → <Stmt> <Stmts>
+<Stmts> → <Stmt> <M> <Stmts>
 <Stmts> → <Stmt>
 <Stmt> → <Decl>
 <Stmt> → <Asgn>

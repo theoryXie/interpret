@@ -26,14 +26,32 @@ public class Semantic implements SemanticImpl {
         return false;
     }
 
-    private int operationType(Token token1, Token token2) {
+
+
+    private int operationType(Token token1, Token token2,SymbolTable symbolTable) {
         Token.Symbol tokenSymbol_1 = token1.getTokenType();
         Token.Symbol tokenSymbol_2 = token2.getTokenType();
-        if (tokenSymbol_1 == Token.Symbol.intsym && tokenSymbol_2 == Token.Symbol.intsym) {
+        if(tokenSymbol_1 == Token.Symbol.ident){
+            String idTokenType = checkIdType(token1.getName(),symbolTable);
+            if (idTokenType.equals("int")){
+                tokenSymbol_1 = Token.Symbol.number;
+            }else if(idTokenType.equals("float")){
+                tokenSymbol_1 = Token.Symbol.fnumber;
+            }
+        }
+        if(tokenSymbol_2 == Token.Symbol.ident){
+            String idTokenType = checkIdType(token2.getName(),symbolTable);
+            if (idTokenType.equals("int")){
+                tokenSymbol_2 = Token.Symbol.number;
+            }else if(idTokenType.equals("float")){
+                tokenSymbol_2 = Token.Symbol.fnumber;
+            }
+        }
+        if (tokenSymbol_1 == Token.Symbol.number && tokenSymbol_2 == Token.Symbol.number) {
             return 1;
-        } else if (tokenSymbol_1 == Token.Symbol.intsym && tokenSymbol_2 == Token.Symbol.floatsym) {
+        } else if (tokenSymbol_1 == Token.Symbol.number && tokenSymbol_2 == Token.Symbol.fnumber) {
             return 2;
-        } else if (tokenSymbol_1 == Token.Symbol.floatsym && tokenSymbol_2 == Token.Symbol.intsym) {
+        } else if (tokenSymbol_1 == Token.Symbol.fnumber && tokenSymbol_2 == Token.Symbol.number) {
             return 3;
         } else {
             return 4;
@@ -41,9 +59,37 @@ public class Semantic implements SemanticImpl {
 
     }
 
+    private boolean isIdentDeclare(String name,SymbolTable symbolTable){
+        String ans = checkIdType(name,symbolTable);
+        if (!ans.equals("变量未声明"))
+            return true;
+        return false;
+    }
+    private String checkIdType(String name,SymbolTable symbolTable){
+        String ans = "";
+        SymbolTable now = symbolTable;
+        boolean isFind = false;
+        do{
+            for (TableItem tableItem : now.getTableItems()) {
+                if(tableItem.getName().equals(name)){
+                    ans = tableItem.getType();
+                    isFind = true;
+                }
+            }
+            if(now.getName().equals("全局"))
+                break;
+            now = now.getPrePointer();
+        }   while (true);
+
+        if(isFind){
+            return ans;
+        }else {
+            return "变量未声明";
+        }
+    }
     //语义分析
     @Override
-    public void semantic_analysis(ParserResult parserResult, ArrayList<Node> grammar) throws Exception {
+    public List<FiveParam> semantic_analysis(ParserResult parserResult, ArrayList<Node> grammar) throws Exception {
         ArrayList<ArrayList<Object>> symbols_object = parserResult.getSymbols_Object();//过程集合
         ArrayList<Pair> pairs = parserResult.getPairs();
         ArrayList<SymbolTable> symbolTables = new ArrayList<>();//符号表序列
@@ -65,20 +111,18 @@ public class Semantic implements SemanticImpl {
             Pair pair = pairs.get(i);//当前动作
             char c = pair.getC();//r || s
             int num = pair.getNum();
-            ArrayList<Object> pre = symbols_object.get(i - 1);//i不会为0，因为第一步必定是移进
             ArrayList<Object> post = symbols_object.get(i);
-            int pre_size = pre.size();
             int post_size = post.size();
-            if (c == 's') {
+            if (c == 'S') {
                 //判断当前移进的是否是‘{’
                 Terminal terminal = (Terminal) post.get(post_size - 1);
                 if (terminal.getToken().getName().equals("{")) {
                     //如果前面是funcDecl，则不创建新符号表
-                    if (num == 92) {
+                    if (post.get(post_size-2) instanceof FuncDecl) {
                         continue;
                     }
-
                     SymbolTable symbolTable = new SymbolTable("__F" + F_index);//新建函数符号表
+                    F_index++;
                     symbolTable.setParamNum(0);
                     //记录他的上级来确定这个新符号表是否要执行
 //                    if(judgeExecute(nowTablePointer.getName()))
@@ -98,6 +142,8 @@ public class Semantic implements SemanticImpl {
                     symbolTables.add(symbolTable);
                 }
             } else if (c == 'r') {
+                ArrayList<Object> pre = symbols_object.get(i - 1);//i不会为0，因为第一步必定是移进
+                int pre_size = pre.size();
                 if (num == 0) {
                     //TODO acc
                 } else {
@@ -106,7 +152,7 @@ public class Semantic implements SemanticImpl {
                         Type type = (Type) post.get(post_size - 1);
                         Terminal terminal = (Terminal) pre.get(pre_size - 1);//int | char | float | void
                         type.setType(terminal.getToken().getName());//Type.type = int.type...
-                    } else if (num == 79) {
+                    } else if (num == 77) {
                         //<N>-> ε
                         N n = (N)post.get(post_size-1);
                         n.getNextList().add(wholeFiveParams.size());
@@ -114,7 +160,7 @@ public class Semantic implements SemanticImpl {
                         wholeFiveParams.add(fiveParam);
                         nowTablePointer.getFiveParams().add(fiveParam);
                         fiveParam.setPointer(nowTablePointer);
-                    } else if (num == 78) {
+                    } else if (num == 76) {
                         //<M>-> ε
                         M m = (M)post.get(post_size-1);
                         m.setQuad(wholeFiveParams.size());
@@ -122,7 +168,8 @@ public class Semantic implements SemanticImpl {
                         //<Factor> → <FuncUse>
                         Factor factor = (Factor) post.get(post_size - 1);
                         FuncUse funcUse = (FuncUse)pre.get(pre_size-1) ;
-                        FiveParam fiveParam = new FiveParam("getReturn","","","0T"+T_index,funcUse.getToken().getRow());
+                        FiveParam fiveParam = new FiveParam("getReturn","_","_","0T"+T_index,funcUse.getToken().getRow());
+
                         wholeFiveParams.add(fiveParam);
                         fiveParam.setPointer(nowTablePointer);
                         TableItem tableItem = null;
@@ -133,15 +180,16 @@ public class Semantic implements SemanticImpl {
                                 if (symbolTable.getReturnType().equals("int")){
                                     //利用符号表返回值类型初始化Factor
                                     tableItem = new TableItem("0T"+T_index,"int",null);
-                                    factor.setToken(new Token("0T"+T_index,Token.Symbol.intsym,0,funcUse.getToken().getRow()) ) ;
+                                    factor.setToken(new Token("0T"+T_index,Token.Symbol.number,0,funcUse.getToken().getRow()) ) ;
                                 }else if (symbolTable.getReturnType().equals("float")){
                                     tableItem = new TableItem("0T"+T_index,"float",null);
-                                    factor.setToken(new Token("0T"+T_index,Token.Symbol.floatsym,0,funcUse.getToken().getRow()) ) ;
+                                    factor.setToken(new Token("0T"+T_index,Token.Symbol.fnumber,0,funcUse.getToken().getRow()) ) ;
                                 }
                             }
                         }
                         nowTablePointer.getTableItems().add(tableItem);
                         nowTablePointer.getFiveParams().add(fiveParam);
+                        T_index++;
                     }
                     else if (num == 71 || num == 72) {
                         //<Factor>→num | real
@@ -177,7 +225,7 @@ public class Semantic implements SemanticImpl {
                         //执行
                         Token token1 = term.getToken();
                         Token token2 = expr2.getToken();
-                        int type_ans = operationType(expr1.getToken(), expr2.getToken());
+                        int type_ans = operationType(token1,token2,nowTablePointer);
                         Token token;
 
 
@@ -189,10 +237,10 @@ public class Semantic implements SemanticImpl {
                         TableItem item = null;
                         if (type_ans == 1) {
                             item = new TableItem(expr1.getToken().getName(), "int", null, false);
-                            expr1.getToken().setTokenType(Token.Symbol.intsym);
+                            expr1.getToken().setTokenType(Token.Symbol.number);
                         } else {
                             item = new TableItem(expr1.getToken().getName(), "float", null, false);
-                            expr1.getToken().setTokenType(Token.Symbol.floatsym);
+                            expr1.getToken().setTokenType(Token.Symbol.fnumber);
                         }
                         nowTablePointer.getTableItems().add(item);
                         T_index++;
@@ -201,16 +249,16 @@ public class Semantic implements SemanticImpl {
 //                        if(judgeExecute(name)){
 //                                switch (type_ans){
 //                                    case 1:
-//                                        token = new Token("", Token.Symbol.intsym,token1.getValue()+token2.getValue(),token1.getRow());
+//                                        token = new Token("", Token.Symbol.number,token1.getValue()+token2.getValue(),token1.getRow());
 //                                        break;
 //                                    case 2:
-//                                        token = new Token("", Token.Symbol.floatsym,token1.getValue()+token2.getFvalue(),token1.getRow());
+//                                        token = new Token("", Token.Symbol.fnumber,token1.getValue()+token2.getFvalue(),token1.getRow());
 //                                        break;
 //                                    case 3:
-//                                        token = new Token("", Token.Symbol.floatsym,token1.getFvalue()+token2.getValue(),token1.getRow());
+//                                        token = new Token("", Token.Symbol.fnumber,token1.getFvalue()+token2.getValue(),token1.getRow());
 //                                        break;
 //                                    case 4:
-//                                        token = new Token("", Token.Symbol.floatsym,token1.getFvalue()+token2.getFvalue(),token1.getRow());
+//                                        token = new Token("", Token.Symbol.fnumber,token1.getFvalue()+token2.getFvalue(),token1.getRow());
 //                                        break;
 //                                    default:
 //                                        throw new IllegalStateException("Unexpected value: " + type_ans);
@@ -224,10 +272,10 @@ public class Semantic implements SemanticImpl {
 //                            TableItem item = null;
 //                            if(type_ans==1){
 //                                item = new TableItem(expr1.getToken().getName(),"int",null,false);
-//                                expr1.getToken().setTokenType(Token.Symbol.intsym);
+//                                expr1.getToken().setTokenType(Token.Symbol.number);
 //                            }else {
 //                                item = new TableItem(expr1.getToken().getName(),"float",null,false);
-//                                expr1.getToken().setTokenType(Token.Symbol.floatsym);
+//                                expr1.getToken().setTokenType(Token.Symbol.fnumber);
 //                            }
 //                            nowTablePointer.getTableItems().add(item);
 //                            T_index++;
@@ -245,7 +293,7 @@ public class Semantic implements SemanticImpl {
                         Rel rel = (Rel) post.get(post_size - 1);
                         Expr expr1 = (Expr) pre.get(pre_size - 3);
                         Expr expr2 = (Expr) pre.get(pre_size - 1);
-                        Terminal op = (Terminal) post.get(post_size-2);
+                        Terminal op = (Terminal) pre.get(pre_size-2);
                         int next_quard = wholeFiveParams.size();//下一条五元式下标
                         rel.getTrueList().add(next_quard);
                         rel.getFalseList().add(next_quard+1);
@@ -280,7 +328,7 @@ public class Semantic implements SemanticImpl {
                         M m = (M) pre.get(pre_size-2);
                         for (int integer : equality.getTrueList()) {
                             String quad = String.valueOf(m.getQuad());
-                            nowTablePointer.getFiveParams().get(integer).setParam_3(quad);
+                            wholeFiveParams.get(integer).setParam_3(quad);
                         }
                         join1.setTrueList(join2.getTrueList());
                         join1.getFalseList().addAll(equality.getFalseList());
@@ -304,12 +352,8 @@ public class Semantic implements SemanticImpl {
                         Loc loc = (Loc) pre.get(pre_size - 4);
                         String locName = loc.getToken().getName();
                         boolean is_declare = false;
-                        for (TableItem tableItem : nowTablePointer.getTableItems()) {
-                            //检查变量声明有没有声明
-                            if (tableItem.getName().equals(locName)){
-                                is_declare = true;
-                            }
-                        }
+                        //检查变量声明有没有声明
+                        is_declare=isIdentDeclare(locName,nowTablePointer);
                         if(!is_declare){
                             throw new Exception(String.format("第%d行变量%s未声明",loc.getToken().getRow(),locName));
                         }
@@ -326,7 +370,7 @@ public class Semantic implements SemanticImpl {
                         //<Stmt> -> return <Bool> ;
                         Bool bool = (Bool) pre.get(pre_size - 2);
                         String funcName = nowTablePointer.getName();
-                        FiveParam fiveParam = new FiveParam("ret", "_", "_", bool.getName(), bool.getToken().getRow());
+                        FiveParam fiveParam = new FiveParam("ret", "_", "_", bool.getToken().getName(), bool.getToken().getRow());
                         wholeFiveParams.add(fiveParam);
                         fiveParam.setPointer(nowTablePointer);
                         nowTablePointer.getFiveParams().add(fiveParam);
@@ -361,7 +405,13 @@ public class Semantic implements SemanticImpl {
                     } else if (num == 32) {
                         //<stmts> -> <stmt>
                     } else if (num == 31) {
-                        //<Stmts> → <Stmt> <Stmts>
+                        //<Stmts1> → <Stmt> <M> <Stmts2>
+                        M m = (M) pre.get(pre_size-2);
+                        Stmt stmt = (Stmt) pre.get(pre_size-3);
+                        for (Integer integer : stmt.getNextList()) {
+                            wholeFiveParams.get(integer).setParam_3(String.valueOf(m.getQuad()));
+                        }
+                        //backpatch(stmt.next,M.quad);
                     } else if (num == 26) {
                         //<Block>->{ <stmts> }
                         //TODO 可能会有return的问题
@@ -380,6 +430,7 @@ public class Semantic implements SemanticImpl {
                         bools_1.getTokens().addAll(bools_2.getTokens());
                     } else if (num == 22) {
                         //<FuncUse> → id ( <Bools> )
+                        Terminal bracket = (Terminal) pre.get(pre_size-1);
                         Terminal id = (Terminal) pre.get(pre_size - 4);
                         Bools bools = (Bools) pre.get(pre_size - 2);
                         FuncUse funcUse = (FuncUse)post.get(post_size-1) ;
@@ -401,12 +452,12 @@ public class Semantic implements SemanticImpl {
                                         Token paramToken = bools.getTokens().get(paramIndex);
                                         //对比参数类型
                                         if (paramToken.getTokenTypeString().equals(tableItem.getType())) {
-                                            FiveParam temp_five = new FiveParam("param", "_", "_", paramToken.getName(), paramToken.getRow());
+                                            FiveParam temp_five = new FiveParam("param", "_", "_", paramToken.getName(), bracket.getToken().getRow());
                                             nowTablePointer.getFiveParams().add(temp_five);
                                             wholeFiveParams.add(temp_five);
                                             temp_five.setPointer(nowTablePointer);
                                         } else {
-                                            throw new Exception("第" + id.getToken().getRow() + "行" + FunName + "函数第" + (paramIndex + 1) + "参数" + tableItem.getName() + "类型不匹配");
+                                            throw new Exception("第" + bracket.getToken().getRow() + "行" + FunName + "函数第" + (paramIndex + 1) + "参数" + tableItem.getName() + "类型不匹配");
                                         }
                                     } else
                                         break;   //参数都访问完了
@@ -414,7 +465,7 @@ public class Semantic implements SemanticImpl {
                             }
                         }
                         //生成调用函数的五元式
-                        FiveParam fiveParam = new FiveParam("Call", "_", "_", id.getToken().getName(), id.getToken().getRow());
+                        FiveParam fiveParam = new FiveParam("Call", "_", "_", id.getToken().getName(), bracket.getToken().getRow());
                         wholeFiveParams.add(fiveParam);
                         fiveParam.setPointer(nowTablePointer);
                         nowTablePointer.getFiveParams().add(fiveParam);
@@ -509,7 +560,7 @@ public class Semantic implements SemanticImpl {
                         ParamDecls paramDecls1 = (ParamDecls) post.get(post_size - 1);
                         paramDecls1.getParams().add(paramDecl);
                         paramDecls1.getParams().addAll(paramDecls2.getParams());
-                    } else if (num == 16) {
+                    } else if (num == 18) {
                         //<FuncDecl>→id()
                         Terminal id = (Terminal) pre.get(pre_size - 3);
                         FuncDecl funcDecl = (FuncDecl) post.get(post_size - 1);
@@ -590,9 +641,9 @@ public class Semantic implements SemanticImpl {
                             }
                         }
                         TableItem tableItem = null;
-                        if (bool.getToken().getTokenType() == Token.Symbol.intsym)
+                        if (bool.getToken().getTokenType() == Token.Symbol.number)
                             tableItem = new TableItem(idName, type.getType(), null);
-                        else if (bool.getToken().getTokenType() == Token.Symbol.floatsym)
+                        else if (bool.getToken().getTokenType() == Token.Symbol.fnumber)
                             tableItem = new TableItem(idName, type.getType(), null);
                         nowTablePointer.getTableItems().add(tableItem);
 
@@ -605,9 +656,9 @@ public class Semantic implements SemanticImpl {
 //                        //能执行
 //                        if(judgeExecute(name)){
 //                            //记入符号表
-//                            if(bool.getToken().getTokenType() == Token.Symbol.intsym)
+//                            if(bool.getToken().getTokenType() == Token.Symbol.number)
 //                                tableItem = new TableItem(id.getToken().getName(), type.getType(), bool.getToken().getValue());
-//                            else if(bool.getToken().getTokenType() == Token.Symbol.floatsym)
+//                            else if(bool.getToken().getTokenType() == Token.Symbol.fnumber)
 //                                tableItem = new TableItem(id.getToken().getName(), type.getType(), bool.getToken().getFvalue());
 //                            nowTablePointer.getTableItems().add(tableItem);
 //                        }
@@ -631,5 +682,8 @@ public class Semantic implements SemanticImpl {
                 }
             }
         }
+
+
+        return wholeFiveParams;
     }
 }

@@ -24,4 +24,12 @@ public class FuncDecl extends NoTerminal{
 	public FuncDecl(String name) {
 		super(name);
 		// TODO Auto-generated constructor stub
-	}}
+	}
+
+	@Override
+	public String toString() {
+		return funcName;
+	}
+}
+
+

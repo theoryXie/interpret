@@ -25,4 +25,5 @@ public class Expr extends NoTerminal{
 	public Expr(String name) {
 		super(name);
 		// TODO Auto-generated constructor stub
+		token = new Token("",null,0,0);
 	}}

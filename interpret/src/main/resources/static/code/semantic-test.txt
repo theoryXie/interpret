@@ -12,7 +12,7 @@ int main(){
     int c = 1+add(1+1,2);//c=4
     if(c<4&&c>3){
         //if cannot see here
-        c=c-1;
+        c=c+1;
     }
     else{
         c= 100;
