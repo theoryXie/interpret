@@ -84,6 +84,9 @@ public class Semantic implements SemanticImpl {
                     break;
                 }
             }
+            if(isFind){
+                break;
+            }
             if(now.getName().equals("全局"))
                 break;
             now = now.getPrePointer();
@@ -706,9 +709,9 @@ public class Semantic implements SemanticImpl {
 //        executeName.add("main");
         boolean firstSeeMain = true;
         for (int indexOfFiveParams = 0;indexOfFiveParams < fiveParams.size() ; indexOfFiveParams++) {
-            if(indexOfFiveParams==13){
-                return fiveParams;
-            }
+//            if(indexOfFiveParams==13){
+//                return fiveParams;
+//            }
             FiveParam fiveParam = fiveParams.get(indexOfFiveParams);
             if (!(fiveParam.getPointer().getName().equals("全局") || fiveParam.getPointer().getName().equals("main")) && firstSeeMain ){
                 continue;
@@ -836,7 +839,7 @@ public class Semantic implements SemanticImpl {
                     }
                 }
                 PCs.push(indexOfFiveParams + 1);
-                indexOfFiveParams = nextQuad;
+                indexOfFiveParams = nextQuad - 1;
             }else if (fiveParam.getOp().equals("getReturn")){
                 abc.set(2,returnValueStack.pop());
                 setValueToSymbolTable(fiveParam.getParam_3(),nowSymbolTable,abc.get(2));
@@ -945,10 +948,15 @@ public class Semantic implements SemanticImpl {
         do{
             for (TableItem tableItem : now.getTableItems()) {
                 if(tableItem.getName().equals(name)){
+                    if (tableItem.getData()==null) //这个if是为了防止变量未声明前同名上级已被使用，本级变量暂时还没有数据的情况
+                        break;
                     ans = tableItem.getData();
                     isFind = true;
                     break;
                 }
+            }
+            if(isFind){
+                break;
             }
             if(now.getName().equals("全局"))
                 break;
@@ -976,6 +984,9 @@ public class Semantic implements SemanticImpl {
                     isFind = true;
                     break;
                 }
+            }
+            if(isFind){
+                break;
             }
             if(now.getName().equals("全局"))
                 break;
