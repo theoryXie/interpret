@@ -23,4 +23,6 @@ public interface SemanticImpl {
      * @return
      **/
     List<FiveParam> semantic_analysis(ParserResult parserResult, ArrayList<Node> grammar) throws Exception;
+
+    List<FiveParam> executeFiveParam(List<FiveParam> fiveParams) throws Exception;
 }

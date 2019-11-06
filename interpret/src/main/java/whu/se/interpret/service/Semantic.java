@@ -1,12 +1,15 @@
 package whu.se.interpret.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import whu.se.interpret.po.*;
 import whu.se.interpret.po.symbol.*;
+import whu.se.interpret.service.impl.LexerImpl;
 import whu.se.interpret.service.impl.SemanticImpl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 /**
  * @author xsy
@@ -16,6 +19,10 @@ import java.util.List;
 
 @Service
 public class Semantic implements SemanticImpl {
+
+
+    @Autowired
+    LexerImpl lexerImpl;
 
     private List<String> executeName = new ArrayList<>();
 
@@ -74,6 +81,7 @@ public class Semantic implements SemanticImpl {
                 if(tableItem.getName().equals(name)){
                     ans = tableItem.getType();
                     isFind = true;
+                    break;
                 }
             }
             if(now.getName().equals("全局"))
@@ -132,10 +140,10 @@ public class Semantic implements SemanticImpl {
 //                        FiveParam fiveParam = new FiveParam("Call","_","_",symbolTable.getName(),terminal.getToken().getRow());
 //                    }
                     //2019.11.4 20:48后  全部生成五元式后再统一执行
-                    FiveParam fiveParam = new FiveParam("Call", "_", "_", symbolTable.getName(), terminal.getToken().getRow());
-                    nowTablePointer.getFiveParams().add(fiveParam);
-                    wholeFiveParams.add(fiveParam);
-                    fiveParam.setPointer(nowTablePointer);
+//                    FiveParam fiveParam = new FiveParam("Call", "_", "_", symbolTable.getName(), terminal.getToken().getRow());
+//                    nowTablePointer.getFiveParams().add(fiveParam);
+//                    wholeFiveParams.add(fiveParam);
+//                    fiveParam.setPointer(nowTablePointer);
                     //*2019.11.4 20:48
                     symbolTable.setPrePointer(nowTablePointer);
                     nowTablePointer = symbolTable;
@@ -686,4 +694,300 @@ public class Semantic implements SemanticImpl {
 
         return wholeFiveParams;
     }
+
+    @Override
+    public List<FiveParam> executeFiveParam(List<FiveParam> fiveParams) throws Exception {
+        Stack<Object> paramStack = new Stack<>();
+        Stack<Object> returnValueStack = new Stack<>();
+        Stack<Integer> PCs = new Stack<>();
+//        executeName = new ArrayList<>();
+//        //向可执行函数数组里添加全局main
+//        executeName.add("全局");
+//        executeName.add("main");
+        boolean firstSeeMain = true;
+        for (int indexOfFiveParams = 0;indexOfFiveParams < fiveParams.size() ; indexOfFiveParams++) {
+            if(indexOfFiveParams==13){
+                return fiveParams;
+            }
+            FiveParam fiveParam = fiveParams.get(indexOfFiveParams);
+            if (!(fiveParam.getPointer().getName().equals("全局") || fiveParam.getPointer().getName().equals("main")) && firstSeeMain ){
+                continue;
+            }
+            if (fiveParam.getPointer().getName().equals("main") && firstSeeMain){
+                firstSeeMain = false;
+            }
+            SymbolTable nowSymbolTable = fiveParam.getPointer();
+            ArrayList<String> abc_name = new ArrayList<>();
+            abc_name.add(fiveParam.getParam_1());
+            abc_name.add(fiveParam.getParam_2());
+            abc_name.add(fiveParam.getParam_3());
+            ArrayList<String> abc_type = new ArrayList<>();
+            abc_type.add("");
+            abc_type.add("");
+            abc_type.add("");
+            ArrayList<Object> abc = new ArrayList<>();
+            abc.add(new Object());
+            abc.add(new Object());
+            abc.add(new Object());
+            if(fiveParam.getOp().equals("+")){
+
+
+                for (int i = 0; i < 2 ; i++){
+                    String name = abc_name.get(i);
+                    switch (checkStringIsNumberOrIdent(name)){
+                        case 1:
+                            abc.set(i,Integer.valueOf(name));
+                            abc_type.set(i,"int");
+                            break;
+                        case 2:
+                            abc.set(i,Float.valueOf(name));
+                            abc_type.set(i,"float");
+                            break;
+                        case 3:
+                            abc.set(i,getValueFromSymbolTable(name,nowSymbolTable));
+                            abc_type.set(i,checkIdType(name,nowSymbolTable));
+                            break;
+                    }
+                }
+
+                if (abc_type.get(0).equals("int")&&abc_type.get(1).equals("int")){
+                    abc.set(2, (Integer) abc.get(0) + (Integer)abc.get(1) );
+                }else if (abc_type.get(0).equals("int")&&abc_type.get(1).equals("float")){
+                    abc.set(2, (Integer) abc.get(0) + (Float)abc.get(1) );
+                }else if (abc_type.get(0).equals("float")&&abc_type.get(1).equals("int")){
+                    abc.set(2, (Float) abc.get(0) + (Integer)abc.get(1) );
+                }else if (abc_type.get(0).equals("float")&&abc_type.get(1).equals("float")){
+                    abc.set(2, (Float) abc.get(0) + (Float) abc.get(1) );
+                }
+                setValueToSymbolTable(fiveParam.getParam_3(),nowSymbolTable,abc.get(2));
+            }else if(fiveParam.getOp().equals("=")){
+                for (int i = 0; i < 1 ; i++){
+                    String name = abc_name.get(i);
+                    switch (checkStringIsNumberOrIdent(name)){
+                        case 1:
+                            abc.set(i,Integer.valueOf(name));
+                            abc_type.set(i,"int");
+                            break;
+                        case 2:
+                            abc.set(i,Float.valueOf(name));
+                            abc_type.set(i,"float");
+                            break;
+                        case 3:
+                            abc.set(i,getValueFromSymbolTable(name,nowSymbolTable));
+                            abc_type.set(i,checkIdType(name,nowSymbolTable));
+                            break;
+                    }
+                }
+                abc.set(2, abc.get(0) );
+                setValueToSymbolTable(fiveParam.getParam_3(),nowSymbolTable,abc.get(2));
+            }else if (fiveParam.getOp().equals("ret")){
+                for (int i = 2; i < 3 ; i++){
+                    String name = abc_name.get(i);
+                    switch (checkStringIsNumberOrIdent(name)){
+                        case 1:
+                            abc.set(i,Integer.valueOf(name));
+                            abc_type.set(i,"int");
+                            break;
+                        case 2:
+                            abc.set(i,Float.valueOf(name));
+                            abc_type.set(i,"float");
+                            break;
+                        case 3:
+                            abc.set(i,getValueFromSymbolTable(name,nowSymbolTable));
+                            abc_type.set(i,checkIdType(name,nowSymbolTable));
+                            break;
+                    }
+                }
+                if (nowSymbolTable.getName().equals("main")){
+                    break;
+                }
+                returnValueStack.push(abc.get(2));
+                indexOfFiveParams = PCs.pop()-1;
+            }else if (fiveParam.getOp().equals("param")){
+                for (int i = 2; i < 3 ; i++){
+                    String name = abc_name.get(i);
+                    switch (checkStringIsNumberOrIdent(name)){
+                        case 1:
+                            abc.set(i,Integer.valueOf(name));
+                            abc_type.set(i,"int");
+                            break;
+                        case 2:
+                            abc.set(i,Float.valueOf(name));
+                            abc_type.set(i,"float");
+                            break;
+                        case 3:
+                            abc.set(i,getValueFromSymbolTable(name,nowSymbolTable));
+                            abc_type.set(i,checkIdType(name,nowSymbolTable));
+                            break;
+                    }
+                }
+                paramStack.push(abc.get(2));
+            }else if (fiveParam.getOp().equals("Call")){
+                int nextQuad = indexOfFiveParams;
+                for (int tempIndex = 0;tempIndex<fiveParams.size();tempIndex++){
+                    if (fiveParams.get(tempIndex).getPointer().getName().equals(abc_name.get(2))){
+                        nextQuad = tempIndex;
+                        //放入参数
+                        SymbolTable symbolTable = fiveParams.get(tempIndex).getPointer();
+                        for (int paraIndex = 0; paraIndex < symbolTable.getParamNum();paraIndex++){
+                            setValueToSymbolTable(symbolTable.getTableItems().get(paraIndex).getName(),symbolTable,paramStack.pop());
+                        }
+                        break;
+                    }
+                }
+                PCs.push(indexOfFiveParams + 1);
+                indexOfFiveParams = nextQuad;
+            }else if (fiveParam.getOp().equals("getReturn")){
+                abc.set(2,returnValueStack.pop());
+                setValueToSymbolTable(fiveParam.getParam_3(),nowSymbolTable,abc.get(2));
+            }else if (fiveParam.getOp().equals("j<")){
+                for (int i = 0; i < 2 ; i++){
+                    String name = abc_name.get(i);
+                    switch (checkStringIsNumberOrIdent(name)){
+                        case 1:
+                            abc.set(i,Integer.valueOf(name));
+                            abc_type.set(i,"int");
+                            break;
+                        case 2:
+                            abc.set(i,Float.valueOf(name));
+                            abc_type.set(i,"float");
+                            break;
+                        case 3:
+                            abc.set(i,getValueFromSymbolTable(name,nowSymbolTable));
+                            abc_type.set(i,checkIdType(name,nowSymbolTable));
+                            break;
+                    }
+                }
+                boolean ans = false;
+                if (abc_type.get(0).equals("int")&&abc_type.get(1).equals("int")){
+                    ans = (Integer) abc.get(0) < (Integer)abc.get(1) ;
+                }else if (abc_type.get(0).equals("int")&&abc_type.get(1).equals("float")){
+                    ans = (Integer) abc.get(0) < (Float)abc.get(1) ;
+                }else if (abc_type.get(0).equals("float")&&abc_type.get(1).equals("int")){
+                    ans =  (Float) abc.get(0) < (Integer)abc.get(1);
+                }else if (abc_type.get(0).equals("float")&&abc_type.get(1).equals("float")){
+                    ans = (Float) abc.get(0) < (Float) abc.get(1) ;
+                }
+                if (ans){
+                    PCs.push(indexOfFiveParams);
+                    indexOfFiveParams = Integer.valueOf(abc_name.get(2))-1;
+                }else {
+                    continue;
+                }
+            }else if (fiveParam.getOp().equals("j")){
+                PCs.push(indexOfFiveParams);
+                indexOfFiveParams = Integer.valueOf(abc_name.get(2))-1;
+            }else if (fiveParam.getOp().equals("j>")){
+                for (int i = 0; i < 2 ; i++){
+                    String name = abc_name.get(i);
+                    switch (checkStringIsNumberOrIdent(name)){
+                        case 1:
+                            abc.set(i,Integer.valueOf(name));
+                            abc_type.set(i,"int");
+                            break;
+                        case 2:
+                            abc.set(i,Float.valueOf(name));
+                            abc_type.set(i,"float");
+                            break;
+                        case 3:
+                            abc.set(i,getValueFromSymbolTable(name,nowSymbolTable));
+                            abc_type.set(i,checkIdType(name,nowSymbolTable));
+                            break;
+                    }
+                }
+                boolean ans = false;
+                if (abc_type.get(0).equals("int")&&abc_type.get(1).equals("int")){
+                    ans = (Integer) abc.get(0) > (Integer)abc.get(1) ;
+                }else if (abc_type.get(0).equals("int")&&abc_type.get(1).equals("float")){
+                    ans = (Integer) abc.get(0) > (Float)abc.get(1) ;
+                }else if (abc_type.get(0).equals("float")&&abc_type.get(1).equals("int")){
+                    ans =  (Float) abc.get(0) > (Integer)abc.get(1);
+                }else if (abc_type.get(0).equals("float")&&abc_type.get(1).equals("float")){
+                    ans = (Float) abc.get(0) > (Float) abc.get(1) ;
+                }
+                if (ans){
+                    PCs.push(indexOfFiveParams);
+                    indexOfFiveParams = Integer.valueOf(abc_name.get(2))-1;
+                }else {
+                    continue;
+                }
+            }
+
+        }
+
+
+
+        return fiveParams;
+    }
+
+    private int checkStringIsNumberOrIdent(String name){
+        if(name.length() == 1){
+            if (lexerImpl.isDigit(name.charAt(0))){
+                return 1;//整数
+            }else if (lexerImpl.isAlpha(name.charAt(0))){
+                return 3;//标识符
+            }
+        }else{
+            if (name.contains(".")){
+                return 2;//浮点数
+            }else if (lexerImpl.isDigit(name.charAt(0))&&lexerImpl.isDigit(name.charAt(1))){
+                return 1;
+            }else {
+                return 3;
+            }
+        }
+        return 4;
+    }
+    private Object getValueFromSymbolTable(String name,SymbolTable symbolTable){
+        Object ans = null;
+        SymbolTable now = symbolTable;
+        boolean isFind = false;
+        do{
+            for (TableItem tableItem : now.getTableItems()) {
+                if(tableItem.getName().equals(name)){
+                    ans = tableItem.getData();
+                    isFind = true;
+                    break;
+                }
+            }
+            if(now.getName().equals("全局"))
+                break;
+            now = now.getPrePointer();
+        }   while (true);
+
+        if(isFind){
+            return ans;
+        }else {
+            return "变量未声明";
+        }
+    }
+
+    private void setValueToSymbolTable(String name,SymbolTable symbolTable,Object value) throws Exception {
+        SymbolTable now = symbolTable;
+        boolean isFind = false;
+        do{
+            for (TableItem tableItem : now.getTableItems()) {
+                if(tableItem.getName().equals(name)){
+                    if (tableItem.getType().equals("int")){
+                        tableItem.setData((Integer) value);
+                    }else {
+                        tableItem.setData((Float) value);
+                    }
+                    isFind = true;
+                    break;
+                }
+            }
+            if(now.getName().equals("全局"))
+                break;
+            now = now.getPrePointer();
+        }   while (true);
+
+        if(isFind){
+        }else {
+            throw new Exception("变量未声明");
+        }
+    }
+
+
+
 }

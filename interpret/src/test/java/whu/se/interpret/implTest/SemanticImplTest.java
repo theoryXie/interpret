@@ -35,6 +35,7 @@ public class SemanticImplTest extends InterpretApplicationTests {
         ParserResult parserResult = parserImpl.syntaxCheck(tokens);
         utils.Write2FileByFileWriter("output/syntaxCheck",parserResult.getResult().getOutput());
         List<FiveParam> fiveParams = semanticImpl.semantic_analysis(parserResult,parserImpl.getGrammar());
+        fiveParams = semanticImpl.executeFiveParam(fiveParams);
         StringBuilder ans = new StringBuilder();
         for (int i = 0; i < fiveParams.size(); i++) {
             ans.append(i+"\t"+fiveParams.get(i));
