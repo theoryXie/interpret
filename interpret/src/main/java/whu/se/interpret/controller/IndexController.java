@@ -13,6 +13,7 @@ import whu.se.interpret.service.impl.ParserImpl;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -25,6 +26,10 @@ import java.util.UUID;
 
 @RestController
 public class IndexController {
+
+    private ArrayList<Integer> row;//保存debug的行号
+    private int index;//当前需要debug行的下标
+    private Code code;//保存当前需要debug的代码
 
 
     @Autowired
@@ -48,8 +53,7 @@ public class IndexController {
             List<Token> tokens = lexerImpl.lexer(code.getCode()); //获取token序列
             Result result = parserImpl.syntaxCheck(tokens).getResult();       //将token序列转化为发给前端的Result包
             return result;
-        }catch (Exception e)
-        {
+        }catch (Exception e){
             e.printStackTrace();
             return null;
         }
@@ -82,14 +86,14 @@ public class IndexController {
         return result;
     }
 
-    @PostMapping(value = "api/_continue")
+    @GetMapping(value = "api/_continue")
     @CrossOrigin
     public Result _continue() throws Exception {
         System.out.println("continue");
         return null;
     }
 
-    @PostMapping(value = "api/nextStep")
+    @GetMapping(value = "api/nextStep")
     @CrossOrigin
     public Result nextStep() throws Exception {
         System.out.println("nextStep");
@@ -98,7 +102,7 @@ public class IndexController {
 
     @PostMapping(value = "api/debug")
     @CrossOrigin
-    public Result debug() throws Exception {
+    public Result debug(@RequestBody Code code) throws Exception {
         System.out.println("debug");
         return null;
     }

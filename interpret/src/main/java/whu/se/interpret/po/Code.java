@@ -7,8 +7,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Code {
-    private String code;
-    private String input;
+    private String code;//代码区代码
+    private String input;//前端输入的值
+    public String cmd;//debug需要用到的行号  eg: 1,3,5
 
     public Code() {
 
