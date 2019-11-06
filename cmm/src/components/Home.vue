@@ -115,7 +115,11 @@ export default {
     },
     debug () {
       this.$axios
-        .post('/debug', {})
+        .post('/debug', {
+          code: this.$refs.code.data,
+          cmd: this.cmdStr,
+          input: this.inputStr
+          })
         .then(successResponse => {
           console.log(successResponse)
           if (successResponse.data.status === 200) {

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import whu.se.interpret.po.Code;
+import whu.se.interpret.po.ParserResult;
 import whu.se.interpret.po.Token;
 import whu.se.interpret.result.Result;
 import whu.se.interpret.service.impl.LexerImpl;
@@ -13,10 +14,7 @@ import whu.se.interpret.service.impl.ParserImpl;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author xsy
@@ -27,9 +25,9 @@ import java.util.UUID;
 @RestController
 public class IndexController {
 
-    private ArrayList<Integer> row;//保存debug的行号
+    private ArrayList<Integer> rows;//保存debug的行号
     private int index;//当前需要debug行的下标
-    private Code code;//保存当前需要debug的代码
+    private Code debug_code;//保存当前需要debug的代码
 
 
     @Autowired
@@ -89,21 +87,45 @@ public class IndexController {
     @GetMapping(value = "api/_continue")
     @CrossOrigin
     public Result _continue() throws Exception {
-        System.out.println("continue");
+        index++;
+        int row = rows.get(index);
+        String code = debug_code.getCode();
+        List<Token> tokens = lexerImpl.lexer(code); //获取token序列
+        ParserResult parserResult = parserImpl.syntaxCheck(tokens);//语法分析结果
+        //TODO 语义分析传递parserResult，grammar，row
         return null;
     }
 
     @GetMapping(value = "api/nextStep")
     @CrossOrigin
     public Result nextStep() throws Exception {
-        System.out.println("nextStep");
+        index++;
+        int row = rows.get(index);
+
+
         return null;
     }
 
     @PostMapping(value = "api/debug")
     @CrossOrigin
     public Result debug(@RequestBody Code code) throws Exception {
-        System.out.println("debug");
+        debug_code = code;
+        String cmd = code.getCmd();//获取行号
+        String[] splits = cmd.split(",");
+        try {
+            for (String split : splits) {
+                rows.add(Integer.parseInt(split));
+            }
+        }catch (Exception e){
+            return new Result("debug输入的行号不符合正确格式，正确格式为：1,3,4,6");
+        }
+        Collections.sort(rows);//行号排序
+        String codeString = debug_code.getCode();
+
+        List<Token> tokens = lexerImpl.lexer(codeString); //获取token序列
+        ParserResult parserResult = parserImpl.syntaxCheck(tokens);//语法分析结果
+        //TODO 语义分析传递parserResult，grammar，row
+
         return null;
     }
 }
