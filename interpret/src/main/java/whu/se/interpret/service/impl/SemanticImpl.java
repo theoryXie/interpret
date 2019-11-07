@@ -3,6 +3,7 @@ package whu.se.interpret.service.impl;
 import whu.se.interpret.po.FiveParam;
 import whu.se.interpret.po.Node;
 import whu.se.interpret.po.ParserResult;
+import whu.se.interpret.po.SymbolTable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,5 +25,7 @@ public interface SemanticImpl {
      **/
     List<FiveParam> semantic_analysis(ParserResult parserResult, ArrayList<Node> grammar) throws Exception;
 
-    List<FiveParam> executeFiveParam(List<FiveParam> fiveParams) throws Exception;
+    FiveParam executeFiveParam(List<FiveParam> fiveParams,int stopRow) throws Exception;
+
+    SymbolTable debug(ParserResult parserResult,ArrayList<Node> grammar,int row) throws Exception;
 }

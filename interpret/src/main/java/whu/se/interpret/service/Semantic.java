@@ -699,7 +699,7 @@ public class Semantic implements SemanticImpl {
     }
 
     @Override
-    public List<FiveParam> executeFiveParam(List<FiveParam> fiveParams) throws Exception {
+    public FiveParam executeFiveParam(List<FiveParam> fiveParams,int stopRow) throws Exception {
         Stack<Object> paramStack = new Stack<>();
         Stack<Object> returnValueStack = new Stack<>();
         Stack<Integer> PCs = new Stack<>();
@@ -709,10 +709,11 @@ public class Semantic implements SemanticImpl {
 //        executeName.add("main");
         boolean firstSeeMain = true;
         for (int indexOfFiveParams = 0;indexOfFiveParams < fiveParams.size() ; indexOfFiveParams++) {
-//            if(indexOfFiveParams==13){
-//                return fiveParams;
-//            }
             FiveParam fiveParam = fiveParams.get(indexOfFiveParams);
+
+            if(fiveParam.getRow()>=stopRow){
+                return fiveParam;
+            }
             if (!(fiveParam.getPointer().getName().equals("全局") || fiveParam.getPointer().getName().equals("main")) && firstSeeMain ){
                 continue;
             }
@@ -920,7 +921,15 @@ public class Semantic implements SemanticImpl {
 
 
 
-        return fiveParams;
+        return null;
+    }
+
+    @Override
+    public SymbolTable debug(ParserResult parserResult, ArrayList<Node> grammar, int row) throws Exception {
+        List<FiveParam> fiveParams = semantic_analysis(parserResult,grammar);
+        FiveParam fiveParam = executeFiveParam(fiveParams,row);
+
+        return fiveParam.getPointer();
     }
 
     private int checkStringIsNumberOrIdent(String name){
