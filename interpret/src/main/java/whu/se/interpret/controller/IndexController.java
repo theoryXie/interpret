@@ -104,7 +104,6 @@ public class IndexController {
         String code = debug_code.getCode();
         List<Token> tokens = lexerImpl.lexer(code); //获取token序列
         ParserResult parserResult = parserImpl.syntaxCheck(tokens);//语法分析结果
-        //TODO 语义分析传递parserResult，grammar，row
         SymbolTable ans = semanticImpl.debug(parserResult,parserImpl.getGrammar(),row);
         Result result = new Result(ans.toString());
         result.setFinished(isFinished);
@@ -141,7 +140,8 @@ public class IndexController {
         List<Token> tokens = lexerImpl.lexer(codeString); //获取token序列
         ParserResult parserResult = parserImpl.syntaxCheck(tokens);//语法分析结果
         //TODO 语义分析传递parserResult，grammar，row
-        int row = rows.get(0);
+        index = 0;
+        int row = rows.get(index);
         SymbolTable ans = semanticImpl.debug(parserResult,parserImpl.getGrammar(),row);
 
         return new Result(ans.toString());

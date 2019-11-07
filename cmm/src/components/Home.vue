@@ -20,8 +20,8 @@
           </el-upload>
           <el-button style="float:left">源代码:</el-button>
           <el-button type="success" style="float:right" icon="el-icon-thumb" @click = "runCode">点击运行</el-button>
-          <el-button style="float:right" @click = "nextStep">下一步</el-button>
-          <el-button style="float:right" @click = "_continue">继续</el-button>
+          <el-button style="float:right" @click = "nextStep" :disabled="isDisabled">下一步</el-button>
+          <el-button style="float:right" @click = "_continue" :disabled="isDisabled">继续</el-button>
           <el-button style="float:right" @click = "debug">调试</el-button>
 
         </div>
@@ -53,7 +53,8 @@ export default {
       whichButton: 0,
       cmdStr: '',
       inputStr: '',
-      outputStr: ''
+      outputStr: '',
+      isDisabled: 1
     }
   },
   methods: {
@@ -65,7 +66,7 @@ export default {
         this.cmdStr = this.$refs.output.data
       } else if (this.whichButton === 1) {
         this.inputStr = this.$refs.output.data
-      } else {
+      } else if (this.whichButton === 2) {
         this.outputStr = this.$refs.output.data
       }
       this.$axios
@@ -90,11 +91,21 @@ export default {
         })
     },
     nextStep () {
+      if (this.whichButton === 0) {
+        this.cmdStr = this.$refs.output.data
+      } else if (this.whichButton === 1) {
+        this.inputStr = this.$refs.output.data
+      } else if (this.whichButton === 2) {
+        this.outputStr = this.$refs.output.data
+      }
       this.$axios
         .post('/nextStep', {})
         .then(successResponse => {
           console.log(successResponse)
           if (successResponse.data.status === 200) {
+            this.outputStr = successResponse.data.output
+            this.$refs.output.data = successResponse.data.output
+            this.whichButton = 2
             console.log('下一步')
           }
         })
@@ -102,11 +113,21 @@ export default {
         })
     },
     _continue () {
+      if (this.whichButton === 0) {
+        this.cmdStr = this.$refs.output.data
+      } else if (this.whichButton === 1) {
+        this.inputStr = this.$refs.output.data
+      } else if (this.whichButton === 2) {
+        this.outputStr = this.$refs.output.data
+      }
       this.$axios
         .post('/_continue', {})
         .then(successResponse => {
           console.log(successResponse)
           if (successResponse.data.status === 200) {
+            this.outputStr = successResponse.data.output
+            this.$refs.output.data = successResponse.data.output
+            this.whichButton = 2
             console.log('继续')
           }
         })
@@ -114,15 +135,25 @@ export default {
         })
     },
     debug () {
+      if (this.whichButton === 0) {
+        this.cmdStr = this.$refs.output.data
+      } else if (this.whichButton === 1) {
+        this.inputStr = this.$refs.output.data
+      } else if (this.whichButton === 2) {
+        this.outputStr = this.$refs.output.data
+      }
+      this.isDisabled = 0
       this.$axios
         .post('/debug', {
           code: this.$refs.code.data,
           cmd: this.cmdStr,
-          input: this.inputStr
-          })
+          input: this.inputStr})
         .then(successResponse => {
           console.log(successResponse)
           if (successResponse.data.status === 200) {
+            this.outputStr = successResponse.data.output
+            this.$refs.output.data = successResponse.data.output
+            this.whichButton = 2
             console.log('继续')
           }
         })
@@ -130,7 +161,9 @@ export default {
         })
     },
     clickButton1 () {
-      if (this.whichButton === 1) {
+      if (this.whichButton === 0) {
+        this.cmdStr = this.$refs.output.data
+      } else if (this.whichButton === 1) {
         this.inputStr = this.$refs.output.data
       } else if (this.whichButton === 2) {
         this.outputStr = this.$refs.output.data
@@ -141,6 +174,8 @@ export default {
     clickButton2 () {
       if (this.whichButton === 0) {
         this.cmdStr = this.$refs.output.data
+      } else if (this.whichButton === 1) {
+        this.inputStr = this.$refs.output.data
       } else if (this.whichButton === 2) {
         this.outputStr = this.$refs.output.data
       }
@@ -148,10 +183,12 @@ export default {
       this.$refs.output.data = this.inputStr
     },
     clickButton3 () {
-      if (this.whichButton === 1) {
-        this.inputStr = this.$refs.output.data
-      } else if (this.whichButton === 0) {
+      if (this.whichButton === 0) {
         this.cmdStr = this.$refs.output.data
+      } else if (this.whichButton === 1) {
+        this.inputStr = this.$refs.output.data
+      } else if (this.whichButton === 2) {
+        this.outputStr = this.$refs.output.data
       }
       this.whichButton = 2
       this.$refs.output.data = this.outputStr
