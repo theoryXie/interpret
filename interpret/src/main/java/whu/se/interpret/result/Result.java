@@ -23,6 +23,9 @@ public class Result {
     //前端输出
     private String output;
 
+    //判断debug有没有结束
+    private boolean isFinished;
+
 
     //返回文件的内容
     private String code;

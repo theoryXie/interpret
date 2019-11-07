@@ -27,7 +27,7 @@ import java.util.*;
 @RestController
 public class IndexController {
 
-    private ArrayList<Integer> rows;//保存debug的行号
+    private ArrayList<Integer> rows = new ArrayList<>();//保存debug的行号
     private int index;//当前需要debug行的下标
     private Code debug_code;//保存当前需要debug的代码
 
@@ -92,13 +92,23 @@ public class IndexController {
     @GetMapping(value = "api/_continue")
     @CrossOrigin
     public Result _continue() throws Exception {
-        index++;
-        int row = rows.get(index);
+        int row = 1;
+        boolean isFinished = false;
+        if(index < rows.size()-1) {
+            index++;
+            row = rows.get(index);
+        }else{
+            row = 10000;
+            isFinished = true;
+        }
         String code = debug_code.getCode();
         List<Token> tokens = lexerImpl.lexer(code); //获取token序列
         ParserResult parserResult = parserImpl.syntaxCheck(tokens);//语法分析结果
         //TODO 语义分析传递parserResult，grammar，row
-        return null;
+        SymbolTable ans = semanticImpl.debug(parserResult,parserImpl.getGrammar(),row);
+        Result result = new Result(ans.toString());
+        result.setFinished(isFinished);
+        return result;
     }
 
     @GetMapping(value = "api/nextStep")
@@ -117,6 +127,7 @@ public class IndexController {
         debug_code = code;
         String cmd = code.getCmd();//获取行号
         String[] splits = cmd.split(",");
+        rows.clear();
         try {
             for (String split : splits) {
                 rows.add(Integer.parseInt(split));
