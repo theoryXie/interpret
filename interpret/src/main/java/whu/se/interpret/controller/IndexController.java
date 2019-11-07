@@ -6,10 +6,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import whu.se.interpret.po.Code;
 import whu.se.interpret.po.ParserResult;
+import whu.se.interpret.po.SymbolTable;
 import whu.se.interpret.po.Token;
 import whu.se.interpret.result.Result;
 import whu.se.interpret.service.impl.LexerImpl;
 import whu.se.interpret.service.impl.ParserImpl;
+import whu.se.interpret.service.impl.SemanticImpl;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
@@ -35,6 +37,9 @@ public class IndexController {
 
     @Autowired
     ParserImpl parserImpl;
+
+    @Autowired
+    SemanticImpl semanticImpl;
 
 
     /**
@@ -125,7 +130,9 @@ public class IndexController {
         List<Token> tokens = lexerImpl.lexer(codeString); //获取token序列
         ParserResult parserResult = parserImpl.syntaxCheck(tokens);//语法分析结果
         //TODO 语义分析传递parserResult，grammar，row
+        int row = rows.get(0);
+        SymbolTable ans = semanticImpl.debug(parserResult,parserImpl.getGrammar(),row);
 
-        return null;
+        return new Result(ans.toString());
     }
 }
