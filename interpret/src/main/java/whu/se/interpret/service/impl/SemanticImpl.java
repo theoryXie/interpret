@@ -27,5 +27,7 @@ public interface SemanticImpl {
 
     FiveParam executeFiveParam(List<FiveParam> fiveParams,int stopRow) throws Exception;
 
+
+
     SymbolTable debug(ParserResult parserResult,ArrayList<Node> grammar,int row) throws Exception;
 }

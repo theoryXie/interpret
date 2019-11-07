@@ -36,4 +36,19 @@ public class SymbolTable {
         tableItems = new ArrayList<>();
         fiveParams = new ArrayList<>();
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(name+"\n");
+        for (TableItem tableItem : tableItems) {
+            if(tableItem.getName().charAt(0) == '0' || tableItem.getData() == null)
+                continue;
+            builder.append(tableItem.getName()+"\t"+tableItem.getType()+"\t"+tableItem.getData()+"\n");
+        }
+        if(prePointer == null)
+            return builder.toString();
+        builder.append("\n"+prePointer.toString());
+        return builder.toString();
+    }
 }

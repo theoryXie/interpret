@@ -711,14 +711,15 @@ public class Semantic implements SemanticImpl {
         for (int indexOfFiveParams = 0;indexOfFiveParams < fiveParams.size() ; indexOfFiveParams++) {
             FiveParam fiveParam = fiveParams.get(indexOfFiveParams);
 
-            if(fiveParam.getRow()>=stopRow){
-                return fiveParam;
-            }
+
             if (!(fiveParam.getPointer().getName().equals("全局") || fiveParam.getPointer().getName().equals("main")) && firstSeeMain ){
                 continue;
             }
             if (fiveParam.getPointer().getName().equals("main") && firstSeeMain){
                 firstSeeMain = false;
+            }
+            if(fiveParam.getRow()==stopRow){
+                return fiveParam;
             }
             SymbolTable nowSymbolTable = fiveParam.getPointer();
             ArrayList<String> abc_name = new ArrayList<>();
@@ -928,6 +929,10 @@ public class Semantic implements SemanticImpl {
     public SymbolTable debug(ParserResult parserResult, ArrayList<Node> grammar, int row) throws Exception {
         List<FiveParam> fiveParams = semantic_analysis(parserResult,grammar);
         FiveParam fiveParam = executeFiveParam(fiveParams,row);
+        if (fiveParam == null){
+            SymbolTable ansTemp = new SymbolTable("程序已结束");
+            return ansTemp;
+        }
 
         return fiveParam.getPointer();
     }
