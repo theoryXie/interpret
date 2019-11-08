@@ -89,7 +89,7 @@ public class IndexController {
         return result;
     }
 
-    @GetMapping(value = "api/_continue")
+    @PostMapping(value = "api/_continue")
     @CrossOrigin
     public Result _continue() throws Exception {
         int row = 1;
@@ -110,7 +110,7 @@ public class IndexController {
         return result;
     }
 
-    @GetMapping(value = "api/nextStep")
+    @PostMapping(value = "api/nextStep")
     @CrossOrigin
     public Result nextStep() throws Exception {
         index++;
