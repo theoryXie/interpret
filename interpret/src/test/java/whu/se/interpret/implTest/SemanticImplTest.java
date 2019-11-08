@@ -38,7 +38,7 @@ public class SemanticImplTest extends InterpretApplicationTests {
         List<FiveParam> fiveParams = semanticImpl.semantic_analysis(parserResult,parserImpl.getGrammar());
         StringBuilder ans = new StringBuilder();
         for (int i = 0; i < fiveParams.size(); i++) {
-            ans.append(i+"\t"+fiveParams.get(i));
+            ans.append(i).append("\t").append(fiveParams.get(i));
         }
         utils.Write2FileByFileWriter("output/semantic",ans.toString());
     }
@@ -48,19 +48,17 @@ public class SemanticImplTest extends InterpretApplicationTests {
     @Test
     public void test_debug() throws Exception {
         String code = utils.ReadFileByLine("code/semantic-test.txt");
-
-        StringBuilder builder = new StringBuilder();
-        for(int row = 1; row <= 25; row++){
-            List<Token> tokens = lexerImpl.lexer(code);
-            utils.Write2FileByFileWriter("output/lexer",tokens.toString());
+        StringBuilder s = new StringBuilder();
+        List<Token> tokens = lexerImpl.lexer(code);
+        utils.Write2FileByFileWriter("output/lexer",tokens.toString());
+        for(int row = -2; row <= 27; row++) { // row<=25
             ParserResult parserResult = parserImpl.syntaxCheck(tokens);
             utils.Write2FileByFileWriter("output/syntaxCheck",parserResult.getResult().getOutput());
             SymbolTable ans = semanticImpl.debug(parserResult,parserImpl.getGrammar(),row);
-            builder.append(ans.toString()+"\n\n\n");
+            s.append("第").append(row).append("行即将运行，符号表:\n");
+            s.append(ans.toString()).append("\n");
         }
-        utils.Write2FileByFileWriter("output/debug",builder.toString());
-
-        //utils.Write2FileByFileWriter("output/debug",ans.toString());
+        utils.Write2FileByFileWriter("output/debug",s.toString());
 
     }
 
