@@ -34,11 +34,7 @@ public class FiveParam {
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		for (TableItem tableItem : pointer.getTableItems()) {
-			builder.append(tableItem.getName()+"\t"+tableItem.getType()+"\t"+tableItem.getData()+"\t"+tableItem.isParam() + "\n");
-		}
-		return "(" + op + "," + param_1 + "," + param_2 + "," + param_3 + "," + row +")\n"+ pointer.getName() + "\n"+builder.toString()+"\n";
+		return "(" + op + "," + param_1 + "," + param_2 + "," + param_3 + "," + row +")"+ "\n";
 	}
 	
 	

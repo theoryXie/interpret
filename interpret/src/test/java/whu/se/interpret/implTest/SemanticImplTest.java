@@ -30,18 +30,17 @@ public class SemanticImplTest extends InterpretApplicationTests {
 
     @Test
     public void test_semantic_analysis() throws Exception {
-//        String code = utils.ReadFileByLine("code/semantic-test.txt");
-//        List<Token> tokens = lexerImpl.lexer(code);
-//        utils.Write2FileByFileWriter("output/lexer",tokens.toString());
-//        ParserResult parserResult = parserImpl.syntaxCheck(tokens);
-//        utils.Write2FileByFileWriter("output/syntaxCheck",parserResult.getResult().getOutput());
-//        List<FiveParam> fiveParams = semanticImpl.semantic_analysis(parserResult,parserImpl.getGrammar());
-//        fiveParams = semanticImpl.executeFiveParam(fiveParams);
-//        StringBuilder ans = new StringBuilder();
-//        for (int i = 0; i < fiveParams.size(); i++) {
-//            ans.append(i+"\t"+fiveParams.get(i));
-//        }
-//        utils.Write2FileByFileWriter("output/semantic",ans.toString());
+        String code = utils.ReadFileByLine("code/semantic-test.txt");
+        List<Token> tokens = lexerImpl.lexer(code);
+        utils.Write2FileByFileWriter("output/lexer",tokens.toString());
+        ParserResult parserResult = parserImpl.syntaxCheck(tokens);
+        utils.Write2FileByFileWriter("output/syntaxCheck",parserResult.getResult().getOutput());
+        List<FiveParam> fiveParams = semanticImpl.semantic_analysis(parserResult,parserImpl.getGrammar());
+        StringBuilder ans = new StringBuilder();
+        for (int i = 0; i < fiveParams.size(); i++) {
+            ans.append(i+"\t"+fiveParams.get(i));
+        }
+        utils.Write2FileByFileWriter("output/semantic",ans.toString());
     }
 
 
@@ -49,15 +48,19 @@ public class SemanticImplTest extends InterpretApplicationTests {
     @Test
     public void test_debug() throws Exception {
         String code = utils.ReadFileByLine("code/semantic-test.txt");
-        List<Token> tokens = lexerImpl.lexer(code);
-        utils.Write2FileByFileWriter("output/lexer",tokens.toString());
-        ParserResult parserResult = parserImpl.syntaxCheck(tokens);
-        utils.Write2FileByFileWriter("output/syntaxCheck",parserResult.getResult().getOutput());
 
-        int row = 23;
+        StringBuilder builder = new StringBuilder();
+        for(int row = 1; row <= 25; row++){
+            List<Token> tokens = lexerImpl.lexer(code);
+            utils.Write2FileByFileWriter("output/lexer",tokens.toString());
+            ParserResult parserResult = parserImpl.syntaxCheck(tokens);
+            utils.Write2FileByFileWriter("output/syntaxCheck",parserResult.getResult().getOutput());
+            SymbolTable ans = semanticImpl.debug(parserResult,parserImpl.getGrammar(),row);
+            builder.append(ans.toString()+"\n\n\n");
+        }
+        utils.Write2FileByFileWriter("output/debug",builder.toString());
 
-        SymbolTable ans = semanticImpl.debug(parserResult,parserImpl.getGrammar(),row);
-        utils.Write2FileByFileWriter("output/debug",ans.toString());
+        //utils.Write2FileByFileWriter("output/debug",ans.toString());
 
     }
 

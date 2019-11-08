@@ -74,7 +74,6 @@ public class ParserImplTest extends InterpretApplicationTests {
         }catch (Exception e){
             e.printStackTrace();
         }
-
     }
 
 }
