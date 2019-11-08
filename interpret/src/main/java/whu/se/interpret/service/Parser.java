@@ -300,10 +300,8 @@ public class Parser implements ParserImpl {
             ArrayList<Node> core = projectSets.get(i).getCore();
             for (Node node : pCore
             ) {
-                if (!core.contains(node)) {
+                if (!core.contains(node))
                     equal = false;
-                    break;
-                }
                 break;
             }
             //如果pCore中的每一个项目都在core中，并且这两个集合的大小相同，说明它们两个相同
