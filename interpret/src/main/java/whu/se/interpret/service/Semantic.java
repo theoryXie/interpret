@@ -2,6 +2,7 @@ package whu.se.interpret.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import whu.se.interpret.exception.SemanticException;
 import whu.se.interpret.po.*;
 import whu.se.interpret.po.symbol.*;
 import whu.se.interpret.service.impl.LexerImpl;
@@ -100,7 +101,7 @@ public class Semantic implements SemanticImpl {
     }
     //语义分析
     @Override
-    public List<FiveParam> semantic_analysis(ParserResult parserResult, ArrayList<Node> grammar) throws Exception {
+    public List<FiveParam> semantic_analysis(ParserResult parserResult, ArrayList<Node> grammar) throws SemanticException {
         ArrayList<ArrayList<Object>> symbols_object = parserResult.getSymbols_Object();//过程集合
         ArrayList<Pair> pairs = parserResult.getPairs();
         ArrayList<SymbolTable> symbolTables = new ArrayList<>();//符号表序列
@@ -272,7 +273,7 @@ public class Semantic implements SemanticImpl {
 //                                        token = new Token("", Token.Symbol.fnumber,token1.getFvalue()+token2.getFvalue(),token1.getRow());
 //                                        break;
 //                                    default:
-//                                        throw new IllegalStateException("Unexpected value: " + type_ans);
+//                                        throw new IllegalStateSemanticException("Unexpected value: " + type_ans);
 //                                }
 //                                expr1.setToken(token);
 //                        }
@@ -366,7 +367,7 @@ public class Semantic implements SemanticImpl {
                         //检查变量声明有没有声明
                         is_declare=isIdentDeclare(locName,nowTablePointer);
                         if(!is_declare){
-                            throw new Exception(String.format("第%d行变量%s未声明",loc.getToken().getRow(),locName));
+                            throw new SemanticException(String.format("第%d行变量%s未声明",loc.getToken().getRow(),locName));
                         }
 
                         FiveParam fiveParam = new FiveParam("=", bool.getToken().getName(), "_", locName, loc.getToken().getRow());
@@ -454,7 +455,7 @@ public class Semantic implements SemanticImpl {
                                 //找到与当前函数名名字相同的符号表
                                 is_declare = true;  //函数已声明
                                 if (symbolTable.getParamNum() != bools.getTokens().size())
-                                    throw new Exception("第" + id.getToken().getRow() + "行" + FunName + "函数参数个数不匹配");
+                                    throw new SemanticException("第" + id.getToken().getRow() + "行" + FunName + "函数参数个数不匹配");
                                 //遍历符号表(寻找参数)
                                 for (TableItem tableItem : symbolTable.getTableItems()) {
                                     if (tableItem.isParam()) {
@@ -468,7 +469,7 @@ public class Semantic implements SemanticImpl {
                                             wholeFiveParams.add(temp_five);
                                             temp_five.setPointer(nowTablePointer);
                                         } else {
-                                            throw new Exception("第" + bracket.getToken().getRow() + "行" + FunName + "函数第" + (paramIndex + 1) + "参数" + tableItem.getName() + "类型不匹配");
+                                            throw new SemanticException("第" + bracket.getToken().getRow() + "行" + FunName + "函数第" + (paramIndex + 1) + "参数" + tableItem.getName() + "类型不匹配");
                                         }
                                     } else
                                         break;   //参数都访问完了
@@ -481,7 +482,7 @@ public class Semantic implements SemanticImpl {
                         fiveParam.setPointer(nowTablePointer);
                         nowTablePointer.getFiveParams().add(fiveParam);
                         if (!is_declare)
-                            throw new Exception("第" + id.getToken().getRow() + "行" + FunName + "函数未声明");
+                            throw new SemanticException("第" + id.getToken().getRow() + "行" + FunName + "函数未声明");
 
 //                        if (judgeExecute(nowTablePointer.getName())){
 //                             //当前代码正在运行
@@ -496,7 +497,7 @@ public class Semantic implements SemanticImpl {
 //                                    executeName.add(FunName);//加入可执行函数名
 //                                    nowTablePointer=symbolTable; //将指针指向当前符号表
 //                                    if(symbolTable.getParamNum() != bools.getTokens().size())
-//                                        throw new Exception("第"+id.getToken().getRow()+"行"+FunName + "函数参数个数不匹配");
+//                                        throw new SemanticException("第"+id.getToken().getRow()+"行"+FunName + "函数参数个数不匹配");
 //                                    for (TableItem tableItem : nowTablePointer.getTableItems()) {
 //                                        //遍历符号表参数
 //                                        if(tableItem.isParam()){
@@ -507,7 +508,7 @@ public class Semantic implements SemanticImpl {
 //                                                //对比参数类型后
 //                                                tableItem.setData(paramToken.getObjectValue());//因为当前函数是立即执行的所以前面的已经计算过了，可以直接取值
 //                                            }else {
-//                                                throw new Exception("第"+id.getToken().getRow()+"行"+FunName + "函数第" + (temp_tableItemIndex+1) + "参数" + tableItem.getName() + "类型不匹配");
+//                                                throw new SemanticException("第"+id.getToken().getRow()+"行"+FunName + "函数第" + (temp_tableItemIndex+1) + "参数" + tableItem.getName() + "类型不匹配");
 //                                            }
 //                                            //2019.11.4 16:42
 //                                        }else {
@@ -520,7 +521,7 @@ public class Semantic implements SemanticImpl {
 //                                }
 //                            }
 //                            if (!is_declare)
-//                                throw new Exception("第"+id.getToken().getRow()+"行"+FunName + "函数未声明");
+//                                throw new SemanticException("第"+id.getToken().getRow()+"行"+FunName + "函数未声明");
 //                        }
 //                        else{
 //                            boolean is_declare = false;
@@ -528,7 +529,7 @@ public class Semantic implements SemanticImpl {
 //                                if(symbolTable.getName().equals(FunName)){
 //                                    is_declare = true;
 //                                    if(symbolTable.getParamNum() != bools.getTokens().size())
-//                                        throw new Exception("第"+id.getToken().getRow()+"行"+FunName + "函数参数个数不匹配");
+//                                        throw new SemanticException("第"+id.getToken().getRow()+"行"+FunName + "函数参数个数不匹配");
 //                                    //遍历符号表(寻找参数)
 //                                    for (TableItem tableItem : symbolTable.getTableItems()) {
 //                                        if(tableItem.isParam()){
@@ -550,7 +551,7 @@ public class Semantic implements SemanticImpl {
 //                            FiveParam fiveParam = new FiveParam("Call","_","_",id.getToken().getName(),id.getToken().getRow());
 //                            nowTablePointer.getFiveParams().add(fiveParam);
 //                            if(!is_declare)
-//                                throw new Exception("第"+id.getToken().getRow()+"行"+FunName + "函数未声明");
+//                                throw new SemanticException("第"+id.getToken().getRow()+"行"+FunName + "函数未声明");
 //                        }
                     } else if (num == 21) {
                         //<ParamDecl>→<Type>id
@@ -580,7 +581,7 @@ public class Semantic implements SemanticImpl {
 
                         for (SymbolTable symbolTable : symbolTables) {
                             if (symbolTable.getName().equals(FunctionName))
-                                throw new Exception(String.format("第%d行出现重名函数%s",id.getToken().getRow(),FunctionName));
+                                throw new SemanticException(String.format("第%d行出现重名函数%s",id.getToken().getRow(),FunctionName));
                         }
                         SymbolTable symbolTable = new SymbolTable(FunctionName);//新建函数符号表
                         symbolTable.setParamNum(0);
@@ -597,7 +598,7 @@ public class Semantic implements SemanticImpl {
 
                         for (SymbolTable symbolTable : symbolTables) {
                             if (symbolTable.getName().equals(FunctionName))
-                                throw new Exception(String.format("第%d行出现重名函数%s",id.getToken().getRow(),FunctionName));
+                                throw new SemanticException(String.format("第%d行出现重名函数%s",id.getToken().getRow(),FunctionName));
                         }
                         SymbolTable symbolTable = new SymbolTable(FunctionName);//新建函数符号表
                         symbolTable.setParamNum(paramDecls.getParams().size());
@@ -625,16 +626,39 @@ public class Semantic implements SemanticImpl {
                                         //若当前五元式是ret
                                         //则获取ret五元式的返回的变量名
                                         String returnParaName = fiveParam.getParam_3();
-                                        for (TableItem tableItem : st.getTableItems()) {
-                                            //遍历当前符号表
-                                            if (returnParaName.equals(tableItem.getName())) {
-                                                //从符号表找到对应五元式返回的变量名
-                                                if (!tableItem.getType().equals(type.getType())) {
-                                                    //若类型不匹配
-                                                    throw new Exception(st.getName() + "函数返回值类型与函数内第" + fiveParam.getRow() + "返回值不同");
+                                        String retType = "";
+                                        switch (checkStringIsNumberOrIdent(returnParaName)){
+                                            case 1:
+                                                //整数
+                                                retType = "int";
+                                                break;
+                                            case 2:
+                                                //浮点数
+                                                retType = "float";
+                                                break;
+                                            case 3:
+                                                for (TableItem tableItem : st.getTableItems()) {
+                                                    //遍历当前符号表
+                                                    if (returnParaName.equals(tableItem.getName())) {
+                                                        //从符号表找到对应五元式返回的变量名
+                                                        retType = type.getType();
+                                                        break;
+                                                    }
                                                 }
-                                            }
+                                                break;
+
                                         }
+                                        if (!type.getType().equals(retType)) {
+                                            //若类型不匹配
+                                            throw new SemanticException(st.getName() + "函数返回值类型与函数内第" + fiveParam.getRow() + "行返回值不同");
+                                        }
+//                                        for (TableItem tableItem : st.getTableItems()) {
+//                                            //遍历当前符号表
+//                                            if (returnParaName.equals(tableItem.getName())) {
+//                                                //从符号表找到对应五元式返回的变量名
+//
+//                                            }
+//                                        }
                                     }
                                 }
                             }
@@ -648,7 +672,7 @@ public class Semantic implements SemanticImpl {
                         for (TableItem tableItem : nowTablePointer.getTableItems()) {
                             //检查变量声明有没有重复
                             if (tableItem.getName().equals(idName)){
-                                throw new Exception(String.format("第%d行%s变量已声明",id.getToken().getRow(),idName));
+                                throw new SemanticException(String.format("第%d行%s变量已声明",id.getToken().getRow(),idName));
                             }
                         }
                         TableItem tableItem = null;
@@ -699,7 +723,7 @@ public class Semantic implements SemanticImpl {
     }
 
     @Override
-    public FiveParam executeFiveParam(List<FiveParam> fiveParams,int stopRow) throws Exception {
+    public FiveParam executeFiveParam(List<FiveParam> fiveParams,int stopRow) throws SemanticException {
         Stack<Object> paramStack = new Stack<>();
         Stack<Object> returnValueStack = new Stack<>();
         Stack<Integer> PCs = new Stack<>();
@@ -926,7 +950,7 @@ public class Semantic implements SemanticImpl {
     }
 
     @Override
-    public SymbolTable debug(ParserResult parserResult, ArrayList<Node> grammar, int row) throws Exception {
+    public SymbolTable debug(ParserResult parserResult, ArrayList<Node> grammar, int row) throws SemanticException {
         List<FiveParam> fiveParams = semantic_analysis(parserResult,grammar);
         FiveParam fiveParam = executeFiveParam(fiveParams,row);
         if (fiveParam == null){
@@ -984,7 +1008,7 @@ public class Semantic implements SemanticImpl {
         }
     }
 
-    private void setValueToSymbolTable(String name,SymbolTable symbolTable,Object value) throws Exception {
+    private void setValueToSymbolTable(String name,SymbolTable symbolTable,Object value) throws SemanticException {
         SymbolTable now = symbolTable;
         boolean isFind = false;
         do{
@@ -1009,7 +1033,7 @@ public class Semantic implements SemanticImpl {
 
         if(isFind){
         }else {
-            throw new Exception("变量未声明");
+            throw new SemanticException("变量未声明");
         }
     }
 
