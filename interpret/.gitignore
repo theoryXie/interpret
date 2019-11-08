@@ -31,4 +31,5 @@ build/
 .vscode/
 
 ### doc ###
-/src/main/resources/doc/~$Symbol枚举值对应表.xlsx
+/src/main/resources/static/doc/~$Symbol枚举值对应表.xlsx
+/src/main/resources/static/doc/~$模块功能测试表.xlsx
