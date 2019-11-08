@@ -1,6 +1,7 @@
 package whu.se.interpret.service;
 
 import org.springframework.stereotype.Service;
+import whu.se.interpret.exception.LexerException;
 import whu.se.interpret.po.Token;
 import whu.se.interpret.result.Result;
 import whu.se.interpret.service.impl.LexerImpl;
@@ -51,7 +52,7 @@ public class Lexer implements LexerImpl {
 
 
     @Override
-    public List<Token> lexer(String code) throws Exception {
+    public List<Token> lexer(String code) throws LexerException {
         code = code + " ";
         ArrayList<Token> TokenList = new ArrayList<Token>();
         codePoint = 0;
@@ -325,7 +326,7 @@ public class Lexer implements LexerImpl {
                         break;
                     default:
                         codePoint++;
-                        throw new Exception("非法字符"+String.valueOf(ch));
+                        throw new LexerException("非法字符"+String.valueOf(ch));
                         //mToken = new Token(String.valueOf(ch), Token.Symbol.errorsym, 0, row);
                         //TokenList.add(mToken);
                         //break;
