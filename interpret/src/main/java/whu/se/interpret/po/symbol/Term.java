@@ -24,4 +24,5 @@ public class Term extends NoTerminal{
 	public Term(String name) {
 		super(name);
 		// TODO Auto-generated constructor stub
+		token = new Token("");
 	}}

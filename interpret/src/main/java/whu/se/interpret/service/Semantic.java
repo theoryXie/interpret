@@ -223,12 +223,89 @@ public class Semantic implements SemanticImpl {
                         Term term = (Term) post.get(post_size - 1);
                         Unary unary = (Unary) pre.get(pre_size - 1);
                         term.setToken(unary.getToken());//term.token = unary.token
-                    } else if (num == 62) {
+                    }else if(num == 64){
+                        //<Term1> → <Term2> / <Unary>
+                        Term term1 = (Term) post.get(post_size-1);
+                        Term term2 = (Term) pre.get(pre_size-3);
+                        Unary unary = (Unary) pre.get(pre_size-1);
+                        //执行
+                        Token token1 = term2.getToken();
+                        Token token2 = unary.getToken();
+                        int type_ans = operationType(token1,token2,nowTablePointer);
+                        //生成五元式
+                        FiveParam fiveParam = new FiveParam("/", token1.getName(), token2.getName(), "0T" + T_index, token1.getRow());
+                        wholeFiveParams.add(fiveParam);
+                        fiveParam.setPointer(nowTablePointer);
+                        term1.getToken().setName("0T" + T_index);
+                        TableItem item = null;
+                        if (type_ans == 1) {
+                            item = new TableItem(term1.getToken().getName(), "int", null, false);
+                            term1.getToken().setTokenType(Token.Symbol.number);
+                        } else {
+                            item = new TableItem(term1.getToken().getName(), "float", null, false);
+                            term1.getToken().setTokenType(Token.Symbol.fnumber);
+                        }
+                        nowTablePointer.getTableItems().add(item);
+                        T_index++;
+                        nowTablePointer.getFiveParams().add(fiveParam);
+
+                    }else if(num == 63){
+                        //<Term1> → <Term2> * <Unary>
+                        Term term1 = (Term) post.get(post_size-1);
+                        Term term2 = (Term) pre.get(pre_size-3);
+                        Unary unary = (Unary) pre.get(pre_size-1);
+                        //执行
+                        Token token1 = term2.getToken();
+                        Token token2 = unary.getToken();
+                        int type_ans = operationType(token1,token2,nowTablePointer);
+                        //生成五元式
+                        FiveParam fiveParam = new FiveParam("*", token1.getName(), token2.getName(), "0T" + T_index, token1.getRow());
+                        wholeFiveParams.add(fiveParam);
+                        fiveParam.setPointer(nowTablePointer);
+                        term1.getToken().setName("0T" + T_index);
+                        TableItem item = null;
+                        if (type_ans == 1) {
+                            item = new TableItem(term1.getToken().getName(), "int", null, false);
+                            term1.getToken().setTokenType(Token.Symbol.number);
+                        } else {
+                            item = new TableItem(term1.getToken().getName(), "float", null, false);
+                            term1.getToken().setTokenType(Token.Symbol.fnumber);
+                        }
+                        nowTablePointer.getTableItems().add(item);
+                        T_index++;
+                        nowTablePointer.getFiveParams().add(fiveParam);
+                    }else if (num == 62) {
                         //<Expr>→<Term>
                         Expr expr = (Expr) post.get(post_size - 1);
                         Term term = (Term) pre.get(pre_size - 1);
                         expr.setToken(term.getToken());//expr.token = term.token
-                    } else if (num == 60) {
+                    }else if(num == 61){
+                        //<Expr1> → <Expr2> - <Term>
+                        Term term = (Term) pre.get(pre_size - 1);
+                        Expr expr2 = (Expr) pre.get(pre_size - 3);
+                        Expr expr1 = (Expr) post.get(post_size - 1);
+                        //执行
+                        Token token1 = expr2.getToken();
+                        Token token2 = term.getToken();
+                        int type_ans = operationType(token1,token2,nowTablePointer);
+                        //生成五元式
+                        FiveParam fiveParam = new FiveParam("-", token1.getName(), token2.getName(), "0T" + T_index, token1.getRow());
+                        wholeFiveParams.add(fiveParam);
+                        fiveParam.setPointer(nowTablePointer);
+                        expr1.getToken().setName("0T" + T_index);
+                        TableItem item = null;
+                        if (type_ans == 1) {
+                            item = new TableItem(expr1.getToken().getName(), "int", null, false);
+                            expr1.getToken().setTokenType(Token.Symbol.number);
+                        } else {
+                            item = new TableItem(expr1.getToken().getName(), "float", null, false);
+                            expr1.getToken().setTokenType(Token.Symbol.fnumber);
+                        }
+                        nowTablePointer.getTableItems().add(item);
+                        T_index++;
+                        nowTablePointer.getFiveParams().add(fiveParam);
+                    }
+                    else if (num == 60) {
                         //<Expr1> → <Expr2> + <Term>
                         Term term = (Term) pre.get(pre_size - 1);
                         Expr expr2 = (Expr) pre.get(pre_size - 3);
