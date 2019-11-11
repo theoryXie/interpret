@@ -36,7 +36,7 @@ public class AllExceptionHandler {
 
     //语法分析异常统一处理
     @ResponseBody
-    @ExceptionHandler(value= LexerException.class)
+    @ExceptionHandler(value= ParserException.class)
     public Result handleLexerException(ParserException pe){
         Result result = new Result(pe.getMessage());
         result.setFinished(true);
