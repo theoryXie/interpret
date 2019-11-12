@@ -1,0 +1,15 @@
+Int ()
+{ 
+	Bool Char Float % ~ ` . .. ...
+	/ . / 2.3.4 5..5 ++ + -*'" b**;
+	.if el | se while.
+	stuct #q
+	[
+		bric
+	];@
+	DO
+	(
+		Void &| ||& !
+	) While $True$
+	retern fales
+}

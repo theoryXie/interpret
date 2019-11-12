@@ -1,0 +1,33 @@
+void ifelse_test() {
+	int a = 0;
+	if (a == 0) {
+		a = a + 1;
+	}
+	if (a == 0)
+	{
+		a = a + 1;
+	}
+	else
+	{
+		a = a + 2;
+	}
+	if (a == 0)
+	{
+		a = a + 1;
+	}
+	else
+	{
+		if (a == 3)
+		{
+			a = 0;
+		}
+		else
+		{
+			a = a + 1;
+		}
+		if (a == 3)
+		{
+			a = 6;
+		}
+	}
+}

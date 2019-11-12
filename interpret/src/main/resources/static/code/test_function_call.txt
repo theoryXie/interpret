@@ -1,0 +1,24 @@
+int c = 1;
+int x = 1 + c;
+int add(int a, int b)
+{
+	int x = 1 / c;
+	{
+		int c = 0;
+	}
+	int c = a + b;
+	return add2(a,b);
+}
+
+int add2(int q, int p)
+{
+	return q + p;
+}
+
+int main() 
+{
+	int q = add(c, x);
+}
+
+//return
+//int c = 123;

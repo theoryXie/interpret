@@ -1,0 +1,50 @@
+void while_ifelse_test()
+{
+	int a = 0;
+	int b = 2;
+	while (a < 10)
+	{
+		a = a + 1;
+		if (a >= 4)
+		{
+			break;
+		}
+		else
+		{
+			b = b * b;
+		}
+	}
+	if (a != 10) {
+		while (a < 10)
+		{
+			a = a + 1;
+			if (a == 6)
+			{
+				break;
+			}
+			else
+			{
+				b = b * b;
+			}
+		}
+	}
+	else
+	{
+		while (a < 10)
+		{
+			a = a + 1;
+			if (a >= 8)
+			{
+				break;
+			}
+			else
+			{
+				b = b * b;
+			}
+		}
+	}
+	while (a <= 12)
+	{
+		a = a + 1;
+	}
+}

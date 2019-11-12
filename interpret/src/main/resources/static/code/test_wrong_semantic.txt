@@ -1,0 +1,11 @@
+char add(int a, int b)
+{
+	return a + b;
+}
+
+int main()
+{
+	char a = 1;
+	float b = 2;
+	bool c = add(a,b);
+}
