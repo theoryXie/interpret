@@ -13,6 +13,7 @@ import whu.se.interpret.service.impl.ParserImpl;
 
 import java.io.*;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
@@ -536,7 +537,7 @@ public class Parser implements ParserImpl {
      * : 3.PR中passed为false且curToken为空：输入串已访问到结尾 $
      * @description :生成语法分析结果 ParserResult（以下简称PR）
      */
-    public ParserResult syntaxCheck(List<Token> tokens) throws ParserException {
+    public ParserResult syntaxCheck(List<Token> tokens) throws ParserException, IOException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
 
         //用于保存语法分析结果
         StringBuilder stringBuilder = new StringBuilder();
@@ -546,7 +547,7 @@ public class Parser implements ParserImpl {
 
         ArrayList<ArrayList<Object>> symbols_Object = new ArrayList<>();//用于保存过程中的符号对象栈
 
-        try {
+//        try {
             init("grammar/grammar.txt");
             Family family = generateFamily(getGrammar());
             SLRTable slrTable = generateSLRTable(family);
@@ -575,7 +576,7 @@ public class Parser implements ParserImpl {
                     } else if (token.getTokenType().equals(Token.Symbol.ident)) {
                         terminalStr = "id";
                     } else {
-                        String d = "归约失败，action表访问到空节点或表中无此终结符，当前格子：："+state.peek()+","+symbol.peek();
+                        String d = "归约失败，action表访问到空节点或表中无此终结符，当前行号："+token.getRow();
                         stringBuilder.append(d);
                         //return new Result(stringBuilder.toString());
                         ParserResult parserResult = new ParserResult(token,d,false,pairs,states,symbols,symbols_Object,new Result(stringBuilder.toString()));
@@ -696,12 +697,12 @@ public class Parser implements ParserImpl {
                 stringBuilder.append("移进\t").append(terminalStr).append("\n");
             }
 
-        } catch (Exception e) {
-            stringBuilder.append("\n程序出现异常:").append(e.getMessage());
-            //return new Result(stringBuilder.toString());
-            ParserResult parserResult = new ParserResult(null,"\n程序出现异常:"+e.getMessage(),false,pairs,states,symbols,symbols_Object,new Result(stringBuilder.toString()));
-            throw new ParserException(parserResult.getResult().getOutput());
-        }
+//        } catch (Exception e) {
+//            stringBuilder.append("\n程序出现异常:").append(e.getMessage());
+//            //return new Result(stringBuilder.toString());
+//            ParserResult parserResult = new ParserResult(null,"\n程序出现异常:"+e.getMessage(),false,pairs,states,symbols,symbols_Object,new Result(stringBuilder.toString()));
+//            throw new ParserException(parserResult.getResult().getOutput());
+//        }
         stringBuilder.append("语法分析已通过");
         //return new Result(stringBuilder.toString());
         return new ParserResult(null,"语法分析已通过",true,pairs,states,symbols,symbols_Object,new Result(stringBuilder.toString()));

@@ -1,4 +1,4 @@
-int count_test(int a, float f, bool bool0)
+/*int count_test(int a, float f, bool bool0)
 {
 	//int a = 1;
 	int b, c = 2;//b=unknown
@@ -19,4 +19,26 @@ int count_test(int a, float f, bool bool0)
 	b = a + c / c;//2
 	b = (a + c) / c;//1
 	return a;
+}*/
+
+
+int count_test(int a, float f)
+{
+	//int a = 1;
+	//float f = 0.5;
+	int c = 3;
+	int b = a;//1
+	b = a + c;//4
+	b = f + a;//1
+	b = a * c;//3
+	b = c / a;//3
+	b = c - (a + f);//1
+	b = c * a + c;//6
+	b = c * (a + c);//12
+	b = c / a + c;//6
+	b = c / (a + c);//0
+	b = a + c / c;//2
+	b = (a + c) / c;//1
+	return a;
 }
+//调试未通过

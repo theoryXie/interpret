@@ -9,3 +9,7 @@ int main()
 	float b = 2;
 	bool c = add(a,b);
 }
+
+
+//bug:  float b = 2
+//bug    return int 和float冲突

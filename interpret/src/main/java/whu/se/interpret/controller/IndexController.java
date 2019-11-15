@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import whu.se.interpret.exception.ParserException;
 import whu.se.interpret.po.Code;
 import whu.se.interpret.po.ParserResult;
 import whu.se.interpret.po.SymbolTable;
@@ -51,15 +52,10 @@ public class IndexController {
     @CrossOrigin
     @PostMapping(value = "api/code")
     @ResponseBody
-    public Result InterpretCode(@RequestBody Code code){
-        try {
-            List<Token> tokens = lexerImpl.lexer(code.getCode()); //获取token序列
-            Result result = parserImpl.syntaxCheck(tokens).getResult();       //将token序列转化为发给前端的Result包
-            return result;
-        }catch (Exception e){
-            e.printStackTrace();
-            return null;
-        }
+    public Result InterpretCode(@RequestBody Code code) throws Exception {
+        List<Token> tokens = lexerImpl.lexer(code.getCode()); //获取token序列
+        Result result = parserImpl.syntaxCheck(tokens).getResult();       //将token序列转化为发给前端的Result包
+        return result;
     }
 
     /**

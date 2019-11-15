@@ -5,6 +5,7 @@ import whu.se.interpret.po.*;
 import whu.se.interpret.result.Result;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -52,6 +53,6 @@ public interface ParserImpl {
      *                 : 2.PR中passed为false：语法分析未通过，此时PR中curToken应保存当前token（其中有错误行数信息）
      *                 : 3.PR中passed为false且curToken为空：输入串已访问到结尾 $
      */
-    public ParserResult syntaxCheck(List<Token> tokens) throws ParserException;
+    public ParserResult syntaxCheck(List<Token> tokens) throws ParserException, IOException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException;
 
 }
