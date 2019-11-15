@@ -608,7 +608,7 @@ public class Parser implements ParserImpl {
 
                         for (int i = right.size() - 1; i >= 0; i--) {
                             if (symbol.empty()) {
-                                String d = "归约失败，可能是slr表或文法问题，当前格子：" + state.peek() + "," + symbol.peek();
+                                String d = "归约失败，可能是slr表或文法问题，当前行号："+token.getRow();
                                 stringBuilder.append(d);
                                 //return new Result(stringBuilder.toString());
                                 ParserResult parserResult =  new ParserResult(token, d, false, pairs, states, symbols, symbols_Object, new Result(stringBuilder.toString()));
@@ -621,7 +621,7 @@ public class Parser implements ParserImpl {
                                 symbol_Object.remove(symbol_Object.size() - 1);
                                 state.pop();
                             } else {
-                                String d = "归约失败，符号表和产生式右部不匹配，当前格子：" + state.peek() + "," + symbol.peek();
+                                String d = "归约失败，符号表和产生式右部不匹配，当前行号："+token.getRow();
                                 stringBuilder.append(d);
                                 //return new Result(stringBuilder.toString());
                                 ParserResult parserResult = new ParserResult(token, d, false, pairs, states, symbols, symbols_Object, new Result(stringBuilder.toString()));
@@ -651,7 +651,7 @@ public class Parser implements ParserImpl {
                         }
                         stringBuilder.append("\n");
                         if (!gotos.get(state.peek()).containsKey(left)) {
-                            String d = "归约失败，goto表访问到空节点或表中无此非终结符，当前格子：" + state.peek() + "," + symbol.peek();
+                            String d = "归约失败，goto表访问到空节点或表中无此非终结符，当前行号："+token.getRow();
                             stringBuilder.append(d);
                             //return new Result(stringBuilder.toString());
                             ParserResult parserResult = new ParserResult(token,d,false,pairs,states,symbols,symbols_Object,new Result(stringBuilder.toString()));
@@ -664,7 +664,7 @@ public class Parser implements ParserImpl {
 
                         //检查下一步动作
                         if (!actions.get(state.peek()).containsKey(terminalStr)) {
-                            String d = "归约失败，action表访问到空节点或表中无此终结符，当前格子："+state.peek()+","+symbol.peek();
+                            String d = "归约失败，action表访问到空节点或表中无此终结符，当前行号："+token.getRow();
                             stringBuilder.append(d);
                             //return new Result(stringBuilder.toString());
                             ParserResult parserResult = new ParserResult(token,d,false,pairs,states,symbols,symbols_Object,new Result(stringBuilder.toString()));
