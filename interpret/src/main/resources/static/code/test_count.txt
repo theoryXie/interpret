@@ -22,10 +22,10 @@
 }*/
 
 
-int count_test(int a, float f)
+int main()
 {
-	//int a = 1;
-	//float f = 0.5;
+	int a = 1;
+	float f = 0.5;
 	int c = 3;
 	int b = a;//1
 	b = a + c;//4
@@ -41,4 +41,4 @@ int count_test(int a, float f)
 	b = (a + c) / c;//1
 	return a;
 }
-//调试未通过
+//运行通过，调试未通过
