@@ -34,7 +34,8 @@ public class SemanticImplTest extends InterpretApplicationTests {
     //测试生成五元式
     @Test
     public void test_semantic_analysis() throws Exception {
-        String code = utils.ReadFileByLine("code/semantic-test.txt");
+        //String code = utils.ReadFileByLine("code/semantic-test.txt");
+        String code = utils.ReadFileByLine("code/test_ifelse.txt");
         List<Token> tokens = lexerImpl.lexer(code);
         utils.Write2FileByFileWriter("output/lexer",tokens.toString());
         ParserResult parserResult = parserImpl.syntaxCheck(tokens);

@@ -28,4 +28,7 @@ public class Equality extends NoTerminal{
 	public Equality(String name) {
 		super(name);
 		// TODO Auto-generated constructor stub
+		token = new Token("");
+		trueList = new ArrayList<>();
+		falseList = new ArrayList<>();
 	}}

@@ -1,6 +1,7 @@
 package whu.se.interpret.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import whu.se.interpret.exception.SemanticException;
 import whu.se.interpret.po.*;
@@ -213,7 +214,13 @@ public class Semantic implements SemanticImpl {
                         Loc loc = (Loc) pre.get(pre_size - 1);
                         Factor factor = (Factor) post.get(post_size - 1);
                         factor.setToken(loc.getToken());//factor.token = loc.token
-                    } else if (num == 68) {
+                    }else if(num == 69){
+                        //<Factor> → ( <Bool> )
+                        Factor factor = (Factor) post.get(post_size-1);
+                        Bool bool = (Bool) pre.get(pre_size-2);
+                        factor.setToken(bool.getToken());
+                    }
+                    else if (num == 68) {
                         //<Unary> → <Factor>
                         Unary unary = (Unary) post.get(post_size - 1);
                         Factor factor = (Factor) pre.get(pre_size - 1);
@@ -402,7 +409,25 @@ public class Semantic implements SemanticImpl {
                         equality.setToken(rel.getToken());//rel.token = expr.token
                         equality.setFalseList(rel.getFalseList());
                         equality.setTrueList(rel.getTrueList());
-                    } else if (num == 51) {
+                    }else if(num == 52 || num == 53){
+                        //<Equality1> → <Rel> == <Equality2> | !=
+                        Equality equality2 = (Equality) pre.get(pre_size-1);
+                        Equality equality1 = (Equality) post.get(post_size-1);
+                        Terminal op = (Terminal) pre.get(pre_size-2);
+                        Rel rel = (Rel) pre.get(pre_size-3);
+                        int next_quard = wholeFiveParams.size();//下一条五元式下标
+                        equality1.getTrueList().add(next_quard);
+                        equality1.getFalseList().add(next_quard+1);
+                        FiveParam fiveParam = new FiveParam("j"+op.getName(),rel.getToken().getName(),equality2.getToken().getName(),"0",op.getToken().getRow());
+                        FiveParam fiveParam1 = new FiveParam("j","_","_","0",op.getToken().getRow());
+                        wholeFiveParams.add(fiveParam);
+                        fiveParam.setPointer(nowTablePointer);
+                        wholeFiveParams.add(fiveParam1);
+                        fiveParam1.setPointer(nowTablePointer);
+                        nowTablePointer.getFiveParams().add(fiveParam);
+                        nowTablePointer.getFiveParams().add(fiveParam1);
+                    }
+                    else if (num == 51) {
                         //<Join> → <Equality>
                         Join join = (Join) post.get(post_size - 1);
                         Equality equality = (Equality) pre.get(pre_size - 1);
@@ -454,7 +479,9 @@ public class Semantic implements SemanticImpl {
 
                     } else if (num == 41) {
                         //<Stmt> -> <Block>
-                        //
+                        Block block = (Block) pre.get(pre_size-1);
+                        Stmt stmt = (Stmt) post.get(post_size-1);
+                        stmt.setNextList(block.getNextList());
                     } else if (num == 40) {
                         //<Stmt> -> return <Bool> ;
                         Bool bool = (Bool) pre.get(pre_size - 2);
@@ -487,12 +514,30 @@ public class Semantic implements SemanticImpl {
                         stmt1.getNextList().addAll(stmt2.getNextList());
                         stmt1.getNextList().addAll(n.getNextList());
                         stmt1.getNextList().addAll(stmt3.getNextList());
-                    } else if (num == 34) {
+                    }
+                    else if (num == 35){
+                        //<Stmt1> → if ( <Bool> ) <M> <Stmt2>
+                        Stmt stmt1 = (Stmt) post.get(post_size-1);
+                        Stmt stmt2 = (Stmt) pre.get(pre_size-1);
+                        Bool bool = (Bool) pre.get(pre_size-4);
+                        M m = (M) pre.get(pre_size-2);
+                        for (Integer integer : bool.getTrueList()) {
+                            wholeFiveParams.get(integer).setParam_3(String.valueOf(m.getQuad()));
+                        }
+                        ArrayList newList = new ArrayList();
+                        newList.addAll(bool.getFalseList());
+                        newList.addAll(stmt2.getNextList());
+                        stmt1.setNextList(newList);
+                    }
+                    else if (num == 34) {
                         //<Stmt>→<Asgn>
                     } else if (num == 33) {
                         //<stmt> -> <Decl>
                     } else if (num == 32) {
                         //<stmts> -> <stmt>
+                        Stmt stmt = (Stmt) pre.get(pre_size-1);
+                        Stmts stmts = (Stmts) post.get(post_size-1);
+                        stmts.setNextList(stmt.getNextList());
                     } else if (num == 31) {
                         //<Stmts1> → <Stmt> <M> <Stmts2>
                         M m = (M) pre.get(pre_size-2);
@@ -500,11 +545,20 @@ public class Semantic implements SemanticImpl {
                         for (Integer integer : stmt.getNextList()) {
                             wholeFiveParams.get(integer).setParam_3(String.valueOf(m.getQuad()));
                         }
+                        Stmts stmts1 = (Stmts) post.get(post_size-1);
+                        Stmts stmts2 = (Stmts) pre.get(pre_size-1);
+                        stmts1.setNextList(stmts2.getNextList());
                         //backpatch(stmt.next,M.quad);
                     } else if (num == 26) {
                         //<Block>->{ <stmts> }
+                        Stmts stmts = (Stmts) pre.get(pre_size-2);
+                        Block block = (Block) post.get(post_size-1);
+                        block.setNextList(stmts.getNextList());
                         //TODO 可能会有return的问题
+
                         nowTablePointer = nowTablePointer.getPrePointer();
+
+
                     } else if (num == 25) {
                         //<Bools> → <Bool>
                         Bools bools = (Bools) post.get(post_size - 1);
@@ -540,7 +594,11 @@ public class Semantic implements SemanticImpl {
                                         int paramIndex = symbolTable.getTableItems().indexOf(tableItem);//获取参数位置
                                         Token paramToken = bools.getTokens().get(paramIndex);
                                         //对比参数类型
-                                        if (paramToken.getTokenTypeString().equals(tableItem.getType())) {
+                                        String paramTokenType = paramToken.getTokenTypeString();
+                                        if (paramTokenType.equals("void//看到这个说明不是正常数")){
+                                            paramTokenType = checkIdType(paramToken.getName(),nowTablePointer);
+                                        }
+                                        if (paramTokenType.equals(tableItem.getType())) {
                                             FiveParam temp_five = new FiveParam("param", "_", "_", paramToken.getName(), bracket.getToken().getRow());
                                             nowTablePointer.getFiveParams().add(temp_five);
                                             wholeFiveParams.add(temp_five);
@@ -753,10 +811,11 @@ public class Semantic implements SemanticImpl {
                             }
                         }
                         TableItem tableItem = null;
-                        if (bool.getToken().getTokenType() == Token.Symbol.number)
-                            tableItem = new TableItem(idName, type.getType(), null);
-                        else if (bool.getToken().getTokenType() == Token.Symbol.fnumber)
-                            tableItem = new TableItem(idName, type.getType(), null);
+//                        if (bool.getToken().getTokenType() == Token.Symbol.number)
+//                            tableItem = new TableItem(idName, type.getType(), null);
+//                        else if (bool.getToken().getTokenType() == Token.Symbol.fnumber)
+//                            tableItem = new TableItem(idName, type.getType(), null);
+                        tableItem = new TableItem(idName, type.getType(), null);
                         nowTablePointer.getTableItems().add(tableItem);
 
                         FiveParam fiveParam = new FiveParam("=", bool.getToken().getName(), "_", id.getToken().getName(), bool.getToken().getRow());
@@ -864,6 +923,106 @@ public class Semantic implements SemanticImpl {
                     abc.set(2, (Float) abc.get(0) + (Integer)abc.get(1) );
                 }else if (abc_type.get(0).equals("float")&&abc_type.get(1).equals("float")){
                     abc.set(2, (Float) abc.get(0) + (Float) abc.get(1) );
+                }
+                setValueToSymbolTable(fiveParam.getParam_3(),nowSymbolTable,abc.get(2));
+            }else if(fiveParam.getOp().equals("-")){
+
+
+                for (int i = 0; i < 2 ; i++){
+                    String name = abc_name.get(i);
+                    switch (checkStringIsNumberOrIdent(name)){
+                        case 1:
+                            abc.set(i,Integer.valueOf(name));
+                            abc_type.set(i,"int");
+                            break;
+                        case 2:
+                            abc.set(i,Float.valueOf(name));
+                            abc_type.set(i,"float");
+                            break;
+                        case 3:
+                            abc.set(i,getValueFromSymbolTable(name,nowSymbolTable));
+                            abc_type.set(i,checkIdType(name,nowSymbolTable));
+                            break;
+                    }
+                }
+
+                if (abc_type.get(0).equals("int")&&abc_type.get(1).equals("int")){
+                    abc.set(2, (Integer) abc.get(0) - (Integer)abc.get(1) );
+                }else if (abc_type.get(0).equals("int")&&abc_type.get(1).equals("float")){
+                    abc.set(2, (Integer) abc.get(0) - (Float)abc.get(1) );
+                }else if (abc_type.get(0).equals("float")&&abc_type.get(1).equals("int")){
+                    abc.set(2, (Float) abc.get(0) - (Integer)abc.get(1) );
+                }else if (abc_type.get(0).equals("float")&&abc_type.get(1).equals("float")){
+                    abc.set(2, (Float) abc.get(0) - (Float) abc.get(1) );
+                }
+                setValueToSymbolTable(fiveParam.getParam_3(),nowSymbolTable,abc.get(2));
+            }else if(fiveParam.getOp().equals("*")){
+
+
+                for (int i = 0; i < 2 ; i++){
+                    String name = abc_name.get(i);
+                    switch (checkStringIsNumberOrIdent(name)){
+                        case 1:
+                            abc.set(i,Integer.valueOf(name));
+                            abc_type.set(i,"int");
+                            break;
+                        case 2:
+                            abc.set(i,Float.valueOf(name));
+                            abc_type.set(i,"float");
+                            break;
+                        case 3:
+                            abc.set(i,getValueFromSymbolTable(name,nowSymbolTable));
+                            abc_type.set(i,checkIdType(name,nowSymbolTable));
+                            break;
+                    }
+                }
+
+                if (abc_type.get(0).equals("int")&&abc_type.get(1).equals("int")){
+                    abc.set(2, (Integer) abc.get(0) * (Integer)abc.get(1) );
+                }else if (abc_type.get(0).equals("int")&&abc_type.get(1).equals("float")){
+                    abc.set(2, (Integer) abc.get(0) * (Float)abc.get(1) );
+                }else if (abc_type.get(0).equals("float")&&abc_type.get(1).equals("int")){
+                    abc.set(2, (Float) abc.get(0) * (Integer)abc.get(1) );
+                }else if (abc_type.get(0).equals("float")&&abc_type.get(1).equals("float")){
+                    abc.set(2, (Float) abc.get(0) * (Float) abc.get(1) );
+                }
+                setValueToSymbolTable(fiveParam.getParam_3(),nowSymbolTable,abc.get(2));
+            }else if(fiveParam.getOp().equals("/")){
+
+
+                for (int i = 0; i < 2 ; i++){
+                    String name = abc_name.get(i);
+                    switch (checkStringIsNumberOrIdent(name)){
+                        case 1:
+                            abc.set(i,Integer.valueOf(name));
+                            abc_type.set(i,"int");
+                            break;
+                        case 2:
+                            abc.set(i,Float.valueOf(name));
+                            abc_type.set(i,"float");
+                            break;
+                        case 3:
+                            abc.set(i,getValueFromSymbolTable(name,nowSymbolTable));
+                            abc_type.set(i,checkIdType(name,nowSymbolTable));
+                            break;
+                    }
+                }
+
+                if(abc_type.get(1).equals("int")){
+                    if((Integer)abc.get(1)==0)
+                        throw new SemanticException("第"+fiveParam.getRow()+"行除零");
+                }else if (abc_type.get(1).equals("float")){
+                    if((Float)abc.get(1)==0)
+                        throw new SemanticException("第"+fiveParam.getRow()+"行除零");
+                }
+                if (abc_type.get(0).equals("int")&&abc_type.get(1).equals("int")){
+                    abc.set(2, (Integer) abc.get(0) / (Integer)abc.get(1) );
+                }else if (abc_type.get(0).equals("int")&&abc_type.get(1).equals("float")){
+                    abc.set(2, (Integer) abc.get(0) / (Float)abc.get(1) );
+                }else if (abc_type.get(0).equals("float")&&abc_type.get(1).equals("int")){
+                    abc.set(2, (Float) abc.get(0) / (Integer)abc.get(1) );
+                }else if (abc_type.get(0).equals("float")&&abc_type.get(1).equals("float")){
+                    abc.set(2, (Float) abc.get(0) / (Float) abc.get(1) );
                 }
                 setValueToSymbolTable(fiveParam.getParam_3(),nowSymbolTable,abc.get(2));
             }else if(fiveParam.getOp().equals("=")){
@@ -983,6 +1142,40 @@ public class Semantic implements SemanticImpl {
             }else if (fiveParam.getOp().equals("j")){
                 PCs.push(indexOfFiveParams);
                 indexOfFiveParams = Integer.valueOf(abc_name.get(2))-1;
+            }else if (fiveParam.getOp().equals("j==")){
+                for (int i = 0; i < 2 ; i++){
+                    String name = abc_name.get(i);
+                    switch (checkStringIsNumberOrIdent(name)){
+                        case 1:
+                            abc.set(i,Integer.valueOf(name));
+                            abc_type.set(i,"int");
+                            break;
+                        case 2:
+                            abc.set(i,Float.valueOf(name));
+                            abc_type.set(i,"float");
+                            break;
+                        case 3:
+                            abc.set(i,getValueFromSymbolTable(name,nowSymbolTable));
+                            abc_type.set(i,checkIdType(name,nowSymbolTable));
+                            break;
+                    }
+                }
+                boolean ans = false;
+                if (abc_type.get(0).equals("int")&&abc_type.get(1).equals("int")){
+                    ans = (Integer) abc.get(0) == (Integer)abc.get(1) ;
+                }else if (abc_type.get(0).equals("int")&&abc_type.get(1).equals("float")){
+                    ans = false;//(Integer) abc.get(0) == (Float)abc.get(1) ;
+                }else if (abc_type.get(0).equals("float")&&abc_type.get(1).equals("int")){
+                    ans = false;//(Float) abc.get(0) == (Integer)abc.get(1);
+                }else if (abc_type.get(0).equals("float")&&abc_type.get(1).equals("float")){
+                    ans = (Float) abc.get(0) == (Float) abc.get(1) ;
+                }
+                if (ans){
+                    PCs.push(indexOfFiveParams);
+                    indexOfFiveParams = Integer.valueOf(abc_name.get(2))-1;
+                }else {
+                    continue;
+                }
             }else if (fiveParam.getOp().equals("j>")){
                 for (int i = 0; i < 2 ; i++){
                     String name = abc_name.get(i);
@@ -1086,13 +1279,19 @@ public class Semantic implements SemanticImpl {
     }
 
     private void setValueToSymbolTable(String name,SymbolTable symbolTable,Object value) throws SemanticException {
+
         SymbolTable now = symbolTable;
         boolean isFind = false;
         do{
             for (TableItem tableItem : now.getTableItems()) {
                 if(tableItem.getName().equals(name)){
                     if (tableItem.getType().equals("int")){
-                        tableItem.setData((Integer) value);
+                        String s = value.toString();
+                        if(s.contains(".")){
+                            tableItem.setData((int)Math.floor((Float) value));
+                        }else {
+                            tableItem.setData((Integer) value);
+                        }
                     }else {
                         tableItem.setData((Float) value);
                     }

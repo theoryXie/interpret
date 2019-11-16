@@ -8,21 +8,17 @@ int add2(int q, int p)
 }
 
 int add(int a, int b)
-{
-	int x = 1 / c;
-	{
-		int c = 0;
-	}
-	int c = a + b;
-	return add2(a,b);
-}
+ {
+ 	int x = 1 / c;
+ 	{
+ 		int c = 0;
+ 	}
+ 	int c = a + b;
+ 	return add2(a,b);
+ }
 
 
 int main() 
 {
 	int q = add(c, x);
 }
-
-//return
-//int c = 123;
-//运行通过，调试未通过：参数无法为变量

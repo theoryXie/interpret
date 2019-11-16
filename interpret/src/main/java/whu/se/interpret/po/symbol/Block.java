@@ -6,6 +6,8 @@ package whu.se.interpret.po.symbol;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+
 /**
  * @Description:
  * @author: theory
@@ -15,10 +17,13 @@ import lombok.Setter;
 @Setter
 public class Block extends NoTerminal{
 
+	private ArrayList<Integer> nextList;
+
 	/**
 	 * @param name
 	 */
 	public Block(String name) {
 		super(name);
 		// TODO Auto-generated constructor stub
+		nextList = new ArrayList<>();
 	}}
