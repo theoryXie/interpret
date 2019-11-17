@@ -587,7 +587,7 @@ public class Parser implements ParserImpl {
                 }
                 char c = actions.get(state.peek()).get(terminalStr).get(0).getC();
                 int num = actions.get(state.peek()).get(terminalStr).get(0).getNum();
-                //冲突解决:移进归约冲突选移进    现在变成了规约归约冲突！！！！！
+                //冲突解决:归约归约冲突
                 if (actions.get(state.peek()).get(terminalStr).size() != 1) {
                     c = 'r';
                     num = 77;
@@ -597,10 +597,6 @@ public class Parser implements ParserImpl {
                 // r 归约(在移进循环中进行归约循环)
                 if (c == 'r') {
                     while(c == 'r' && num != 0) {
-
-                        if(num == 41){
-                            System.out.println();
-                        }
 
                         //slr表r0表示acc通过
                         ArrayList<String> right = grammar.get(num).getRight();//产生式右部
@@ -672,7 +668,7 @@ public class Parser implements ParserImpl {
                         }
                         c = actions.get(state.peek()).get(terminalStr).get(0).getC();
                         num = actions.get(state.peek()).get(terminalStr).get(0).getNum();
-                        //冲突解决:移进归约冲突选移进    现在变成了规约归约冲突！！！！！
+                        //冲突解决:归约归约冲突
                         if (actions.get(state.peek()).get(terminalStr).size() != 1) {
                             c = 'r';
                             num = 77;
