@@ -26,6 +26,9 @@ public class Result {
     //判断debug有没有结束
     private boolean isFinished;
 
+    //调试代码
+    private String debug_code;
+
 
     //返回文件的内容
     private String code;
@@ -44,6 +47,13 @@ public class Result {
 
         this.status = 200;
         this.output = output;
+    }
+
+    public Result(String output,String debug_code){
+
+        this.status = 200;
+        this.output = output;
+        this.debug_code = debug_code;
     }
 
     public Result(int status){

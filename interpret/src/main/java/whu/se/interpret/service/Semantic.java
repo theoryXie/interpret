@@ -219,17 +219,34 @@ public class Semantic implements SemanticImpl {
                         Factor factor = (Factor) post.get(post_size-1);
                         Bool bool = (Bool) pre.get(pre_size-2);
                         factor.setToken(bool.getToken());
+                        factor.setTrueList(bool.getTrueList());
+                        factor.setFalseList(bool.getFalseList());
                     }
                     else if (num == 68) {
                         //<Unary> → <Factor>
                         Unary unary = (Unary) post.get(post_size - 1);
                         Factor factor = (Factor) pre.get(pre_size - 1);
                         unary.setToken(factor.getToken());//unary.token = factor.token
-                    } else if (num == 65) {
+                        unary.setTrueList(factor.getTrueList());
+                        unary.setFalseList(factor.getFalseList());
+                    }else if(num == 67){
+                        //<Unary> → - <Unary>
+
+                    }
+                    else if(num== 66){
+                        //<Unary1> → ! <Unary2>
+                        Unary unary1 = (Unary) post.get(post_size-1);
+                        Unary unary2 = (Unary) pre.get(pre_size-1);
+                        unary1.setTrueList(unary2.getFalseList());
+                        unary1.setFalseList(unary2.getTrueList());
+                        unary1.setToken(unary2.getToken());
+                    }else if (num == 65) {
                         //<Term>→<Unary>
                         Term term = (Term) post.get(post_size - 1);
                         Unary unary = (Unary) pre.get(pre_size - 1);
                         term.setToken(unary.getToken());//term.token = unary.token
+                        term.setTrueList(unary.getTrueList());
+                        term.setFalseList(unary.getFalseList());
                     }else if(num == 64){
                         //<Term1> → <Term2> / <Unary>
                         Term term1 = (Term) post.get(post_size-1);
@@ -286,6 +303,8 @@ public class Semantic implements SemanticImpl {
                         Expr expr = (Expr) post.get(post_size - 1);
                         Term term = (Term) pre.get(pre_size - 1);
                         expr.setToken(term.getToken());//expr.token = term.token
+                        expr.setTrueList(term.getTrueList());
+                        expr.setFalseList(term.getFalseList());
                     }else if(num == 61){
                         //<Expr1> → <Expr2> - <Term>
                         Term term = (Term) pre.get(pre_size - 1);
@@ -384,6 +403,8 @@ public class Semantic implements SemanticImpl {
                         Rel rel = (Rel) post.get(post_size - 1);
                         Expr expr = (Expr) pre.get(pre_size - 1);
                         rel.setToken(expr.getToken());//rel.token = expr.token
+                        rel.setTrueList(expr.getTrueList());
+                        rel.setFalseList(expr.getFalseList());
                     } else if (num == 55 || num == 56 || num == 57 || num == 58){
                         //<Rel> → <Expr1> < <Expr2> | ....
                         Rel rel = (Rel) post.get(post_size - 1);
@@ -455,7 +476,22 @@ public class Semantic implements SemanticImpl {
                         bool.setToken(join.getToken());//rel.token = expr.token
                         bool.setTrueList(join.getTrueList());
                         bool.setFalseList(join.getFalseList());
-                    } else if (num == 46) {
+                    } else if(num == 48){
+                        //<Bool1> → <Join> || <M> <Bool2>
+                        Join join = (Join) pre.get(pre_size-4);
+                        Bool bool1 = (Bool) post.get(post_size-1);
+                        Bool bool2 = (Bool) pre.get(pre_size-1);
+                        M m = (M) pre.get(pre_size-2);
+                        for (int integer : join.getFalseList()) {
+                            String quad = String.valueOf(m.getQuad());
+                            wholeFiveParams.get(integer).setParam_3(quad);
+                        }
+                        ArrayList<Integer> mergeList = new ArrayList<>();
+                        mergeList.addAll(join.getTrueList());
+                        mergeList.addAll(bool2.getTrueList());
+                        bool1.setTrueList(mergeList);
+                        bool1.setFalseList(bool2.getFalseList());
+                    }else if (num == 46) {
                         //<loc>->id
                         Terminal id = (Terminal) pre.get(pre_size - 1);
                         Loc loc = (Loc) post.get(post_size - 1);

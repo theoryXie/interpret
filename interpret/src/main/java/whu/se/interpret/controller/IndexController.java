@@ -101,7 +101,14 @@ public class IndexController {
         List<Token> tokens = lexerImpl.lexer(code); //获取token序列
         ParserResult parserResult = parserImpl.syntaxCheck(tokens);//语法分析结果
         SymbolTable ans = semanticImpl.debug(parserResult,parserImpl.getGrammar(),row);
-        Result result = new Result(ans.toString());
+
+        while(ans.toString().equals("程序已结束\n") && index < rows.size()-1){
+            index++;
+            row = rows.get(index);
+            ans = semanticImpl.debug(parserResult,parserImpl.getGrammar(),row);
+        }
+        String debugCode = set_arrow(debug_code.getCode(),row);
+        Result result = new Result(ans.toString(),debugCode);
         result.setFinished(isFinished);
         return result;
     }
@@ -140,6 +147,30 @@ public class IndexController {
         int row = rows.get(index);
         SymbolTable ans = semanticImpl.debug(parserResult,parserImpl.getGrammar(),row);
 
-        return new Result(ans.toString());
+        while(ans.toString().equals("程序已结束\n") && index < rows.size()-1){
+            index++;
+            row = rows.get(index);
+            ans = semanticImpl.debug(parserResult,parserImpl.getGrammar(),row);
+        }
+        String debugCode = set_arrow(debug_code.getCode(),row);
+        return new Result(ans.toString(),debugCode);
+    }
+
+
+    //给行号前加→
+    private String set_arrow(String code, int row){
+        StringBuilder ans = new StringBuilder(code);
+        int enter_num = row-1;//需要跨过的\n
+        int arrow_index = 0;//箭头的下标
+        for(int i = 0; i < code.length(); i++){
+            if(enter_num == 0) {
+                arrow_index = i;
+                break;
+            }
+            if(code.charAt(i) == '\n')
+                enter_num--;
+        }
+        ans.insert(arrow_index,'→');
+        return ans.toString();
     }
 }
