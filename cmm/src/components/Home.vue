@@ -54,7 +54,7 @@ export default {
       cmdStr: '',
       inputStr: '',
       outputStr: '',
-      isDisabled: 1
+      isDisabled: true
     }
   },
   methods: {
@@ -106,6 +106,10 @@ export default {
             this.outputStr = successResponse.data.output
             this.$refs.output.data = successResponse.data.output
             this.whichButton = 2
+            this.$refs.code.data = successResponse.data.debug_code
+            if (successResponse.data.isFinished) {
+              this.isDisabled = true
+            }
             console.log('下一步')
           }
         })
@@ -127,6 +131,10 @@ export default {
           if (successResponse.data.status === 200) {
             this.outputStr = successResponse.data.output
             this.$refs.output.data = successResponse.data.output
+            this.$refs.code.data = successResponse.data.debug_code
+            if (successResponse.data.isFinished) {
+              this.isDisabled = true
+            }
             this.whichButton = 2
             console.log('继续')
           }
@@ -142,7 +150,9 @@ export default {
       } else if (this.whichButton === 2) {
         this.outputStr = this.$refs.output.data
       }
-      this.isDisabled = 0
+      this.isDisabled = false
+      console.log(this.whichButton)
+      console.log(this.cmdStr)
       this.$axios
         .post('/debug', {
           code: this.$refs.code.data,
@@ -153,7 +163,11 @@ export default {
           if (successResponse.data.status === 200) {
             this.outputStr = successResponse.data.output
             this.$refs.output.data = successResponse.data.output
+            this.$refs.code.data = successResponse.data.debug_code
             this.whichButton = 2
+            if (successResponse.data.isFinished) {
+              this.isDisabled = true
+            }
             console.log('继续')
           }
         })

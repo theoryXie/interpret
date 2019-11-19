@@ -532,6 +532,24 @@ public class Semantic implements SemanticImpl {
 //                            FiveParam fiveParam = new FiveParam("ret","_","_",bool.getName(),bool.getToken().getRow());
 //                            nowTablePointer.getFiveParams().add(fiveParam);
 //                        }
+                    }else if(num == 37){
+                        //<Stmt1> → while M1 ( <Bool> ) M2 <Stmt2>
+                        Stmt stmt2 = (Stmt) pre.get(pre_size-1);
+                        M m2 = (M) pre.get(pre_size-2);
+                        Bool bool = (Bool) pre.get(pre_size-4);
+                        M m1 = (M) pre.get(pre_size-6);
+                        Stmt stmt1 = (Stmt) post.get(post_size-1);
+                        Terminal whi = (Terminal) pre.get(pre_size-7);
+
+                        for (Integer integer : stmt2.getNextList()) {
+                            wholeFiveParams.get(integer).setParam_3(String.valueOf(m1.getQuad()));
+                        }
+                        for (Integer integer : bool.getTrueList()) {
+                            wholeFiveParams.get(integer).setParam_3(String.valueOf(m2.getQuad()));
+                        }
+                        stmt1.setNextList(bool.getFalseList());
+                        FiveParam fiveParam = new FiveParam("j","_","_",String.valueOf(m1.getQuad()),whi.getToken().getRow());
+                        wholeFiveParams.add(fiveParam);
                     } else if (num == 36) {
                         //<Stmt1>→if(<Bool>)<M1><Stmt2><N>else<M2><Stmt3>
                         Stmt stmt1 = (Stmt) post.get(post_size-1);

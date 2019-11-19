@@ -35,7 +35,7 @@ public class SemanticImplTest extends InterpretApplicationTests {
     @Test
     public void test_semantic_analysis() throws Exception {
         //String code = utils.ReadFileByLine("code/semantic-test.txt");
-        String code = utils.ReadFileByLine("code/test_logical_operation.txt");
+        String code = utils.ReadFileByLine("code/test_while_ifelse.txt");
         List<Token> tokens = lexerImpl.lexer(code);
         utils.Write2FileByFileWriter("output/lexer",tokens.toString());
         ParserResult parserResult = parserImpl.syntaxCheck(tokens);

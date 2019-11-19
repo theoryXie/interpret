@@ -35,7 +35,7 @@
 <Stmt> → <Asgn>
 <Stmt> → if ( <Bool> ) <M> <Stmt>
 <Stmt> → if ( <Bool> ) <M> <Stmt> <N> else <M> <Stmt>
-<Stmt> → while ( <Bool> ) <Stmt>
+<Stmt> → while <M> ( <Bool> ) <M> <Stmt>
 <Stmt> → do <Stmt> while ( <Bool> ) ;
 <Stmt> → return ;
 <Stmt> → return <Bool> ;

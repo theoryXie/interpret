@@ -46,7 +46,7 @@ public class IndexController {
     /**
      * 
      * 
-     * @Param code -- 前端传来的需要分析的代码 
+     * @param code -- 前端传来的需要分析的代码
      * @return result -- 分析的结果
      **/
     @CrossOrigin
@@ -84,7 +84,13 @@ public class IndexController {
         result.setCode(code);
         return result;
     }
-
+    
+    
+    /**
+     *  继续
+     * @author  xsy
+     * @return  debug处理结果
+     */
     @PostMapping(value = "api/_continue")
     @CrossOrigin
     public Result _continue() throws Exception {
@@ -107,6 +113,11 @@ public class IndexController {
             row = rows.get(index);
             ans = semanticImpl.debug(parserResult,parserImpl.getGrammar(),row);
         }
+
+        if(ans.toString().equals("程序已结束\n")){
+            return new Result(ans.toString(),debug_code.getCode());
+        }
+
         String debugCode = set_arrow(debug_code.getCode(),row);
         Result result = new Result(ans.toString(),debugCode);
         result.setFinished(isFinished);
@@ -116,13 +127,17 @@ public class IndexController {
     @PostMapping(value = "api/nextStep")
     @CrossOrigin
     public Result nextStep() throws Exception {
-        index++;
-        int row = rows.get(index);
-
-
-        return null;
+        return new Result("此方法还未实现。");
     }
 
+    
+    
+    /**
+     * 启动debug
+     * @author  xsy
+     * @param  code 前端传来的code
+     * @return debug结果
+     */
     @PostMapping(value = "api/debug")
     @CrossOrigin
     public Result debug(@RequestBody Code code) throws Exception {
@@ -151,6 +166,10 @@ public class IndexController {
             index++;
             row = rows.get(index);
             ans = semanticImpl.debug(parserResult,parserImpl.getGrammar(),row);
+        }
+
+        if(ans.toString().equals("程序已结束\n")){
+            return new Result(ans.toString(),debug_code.getCode());
         }
         String debugCode = set_arrow(debug_code.getCode(),row);
         return new Result(ans.toString(),debugCode);
