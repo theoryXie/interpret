@@ -152,7 +152,7 @@ public class IndexController {
         }catch (Exception e){
             return new Result("debug输入的行号不符合正确格式，正确格式为：1,3,4,6");
         }
-        Collections.sort(rows);//行号排序
+        //Collections.sort(rows);//行号排序
         String codeString = debug_code.getCode();
 
         List<Token> tokens = lexerImpl.lexer(codeString); //获取token序列
@@ -186,10 +186,33 @@ public class IndexController {
                 arrow_index = i;
                 break;
             }
-            if(code.charAt(i) == '\n')
+            if(code.charAt(i) == '\n') {
                 enter_num--;
+            }
         }
         ans.insert(arrow_index,'→');
+        ans.insert(arrow_index+1,' ');
         return ans.toString();
+
+//        StringBuilder ans = new StringBuilder();
+//        String[] splits = code.split("\n");
+//        for (String split : splits) {
+//            ans.append(" "+split+"\n");
+//        }
+//        int enter_num = row-1;//需要跨过的\n
+//        int arrow_index = 0;//箭头的下标
+//        List<Integer> spaceIndex = new ArrayList<>();
+//        for(int i = 0; i < code.length(); i++){
+//            if(enter_num == 0) {
+//                arrow_index = i;
+//                break;
+//            }
+//            if(code.charAt(i) == '\n') {
+//                enter_num--;
+//                spaceIndex.add(i+1);
+//            }
+//        }
+//        ans.insert(arrow_index,'→');
+//        return ans.toString();
     }
 }

@@ -1,15 +1,14 @@
-char add(int a, int b)
+float add(int a, int b)
 {
-	return a + b;
+  	return a + b;
 }
 
 int main()
 {
-	char a = 1;
-	float b = 2;
-	bool c = add(a,b);
+	int a = 1;
+	int b = 2;
+  	float c = add(a,b);
+  	return 0;
 }
 
-
-//bug:  float b = 2
-//bug    return int 和float冲突
+//8,9,10,3

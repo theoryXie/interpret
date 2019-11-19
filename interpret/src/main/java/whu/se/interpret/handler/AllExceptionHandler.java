@@ -15,6 +15,16 @@ import whu.se.interpret.result.Result;
 public class AllExceptionHandler {
 
 
+
+    //类型转化异常
+    @ResponseBody
+    @ExceptionHandler(value= ClassCastException.class)
+    public Result handleClassCastException(ClassCastException ce){
+        Result result = new Result("数据类型不匹配！！！");
+        result.setFinished(true);
+        return result;
+    }
+
     //语义动作异常统一处理
     @ResponseBody
     @ExceptionHandler(value= SemanticException.class)

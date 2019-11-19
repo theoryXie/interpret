@@ -18,8 +18,5 @@ int add2(int q, int p)
 int main()
 {
 	int q = add(c, x);
+	return 0;
 }
-
-//return
-//int c = 123;
-//函数顺序不对

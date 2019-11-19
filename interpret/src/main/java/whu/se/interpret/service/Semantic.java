@@ -550,6 +550,10 @@ public class Semantic implements SemanticImpl {
                         stmt1.setNextList(bool.getFalseList());
                         FiveParam fiveParam = new FiveParam("j","_","_",String.valueOf(m1.getQuad()),whi.getToken().getRow());
                         wholeFiveParams.add(fiveParam);
+                        fiveParam.setPointer(nowTablePointer);
+                        nowTablePointer.getFiveParams().add(fiveParam);
+
+
                     } else if (num == 36) {
                         //<Stmt1>→if(<Bool>)<M1><Stmt2><N>else<M2><Stmt3>
                         Stmt stmt1 = (Stmt) post.get(post_size-1);
@@ -1223,6 +1227,74 @@ public class Semantic implements SemanticImpl {
                     ans = false;//(Float) abc.get(0) == (Integer)abc.get(1);
                 }else if (abc_type.get(0).equals("float")&&abc_type.get(1).equals("float")){
                     ans = (Float) abc.get(0) == (Float) abc.get(1) ;
+                }
+                if (ans){
+                    PCs.push(indexOfFiveParams);
+                    indexOfFiveParams = Integer.valueOf(abc_name.get(2))-1;
+                }else {
+                    continue;
+                }
+            }else if (fiveParam.getOp().equals("j<=")){
+                for (int i = 0; i < 2 ; i++){
+                    String name = abc_name.get(i);
+                    switch (checkStringIsNumberOrIdent(name)){
+                        case 1:
+                            abc.set(i,Integer.valueOf(name));
+                            abc_type.set(i,"int");
+                            break;
+                        case 2:
+                            abc.set(i,Float.valueOf(name));
+                            abc_type.set(i,"float");
+                            break;
+                        case 3:
+                            abc.set(i,getValueFromSymbolTable(name,nowSymbolTable));
+                            abc_type.set(i,checkIdType(name,nowSymbolTable));
+                            break;
+                    }
+                }
+                boolean ans = false;
+                if (abc_type.get(0).equals("int")&&abc_type.get(1).equals("int")){
+                    ans = (Integer) abc.get(0) <= (Integer)abc.get(1) ;
+                }else if (abc_type.get(0).equals("int")&&abc_type.get(1).equals("float")){
+                    ans = (Integer) abc.get(0) <= (Float)abc.get(1) ;
+                }else if (abc_type.get(0).equals("float")&&abc_type.get(1).equals("int")){
+                    ans = (Float) abc.get(0) <= (Integer)abc.get(1);
+                }else if (abc_type.get(0).equals("float")&&abc_type.get(1).equals("float")){
+                    ans = (Float) abc.get(0) <= (Float) abc.get(1) ;
+                }
+                if (ans){
+                    PCs.push(indexOfFiveParams);
+                    indexOfFiveParams = Integer.valueOf(abc_name.get(2))-1;
+                }else {
+                    continue;
+                }
+            }else if (fiveParam.getOp().equals("j>=")){
+                for (int i = 0; i < 2 ; i++){
+                    String name = abc_name.get(i);
+                    switch (checkStringIsNumberOrIdent(name)){
+                        case 1:
+                            abc.set(i,Integer.valueOf(name));
+                            abc_type.set(i,"int");
+                            break;
+                        case 2:
+                            abc.set(i,Float.valueOf(name));
+                            abc_type.set(i,"float");
+                            break;
+                        case 3:
+                            abc.set(i,getValueFromSymbolTable(name,nowSymbolTable));
+                            abc_type.set(i,checkIdType(name,nowSymbolTable));
+                            break;
+                    }
+                }
+                boolean ans = false;
+                if (abc_type.get(0).equals("int")&&abc_type.get(1).equals("int")){
+                    ans = (Integer) abc.get(0) >= (Integer)abc.get(1) ;
+                }else if (abc_type.get(0).equals("int")&&abc_type.get(1).equals("float")){
+                    ans = (Integer) abc.get(0) >= (Float)abc.get(1) ;
+                }else if (abc_type.get(0).equals("float")&&abc_type.get(1).equals("int")){
+                    ans = (Float) abc.get(0) >= (Integer)abc.get(1);
+                }else if (abc_type.get(0).equals("float")&&abc_type.get(1).equals("float")){
+                    ans = (Float) abc.get(0) >= (Float) abc.get(1) ;
                 }
                 if (ans){
                     PCs.push(indexOfFiveParams);
