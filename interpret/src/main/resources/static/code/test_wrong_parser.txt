@@ -1,18 +1,18 @@
 int main())
 {
-	bool _a = 1.15;
-	char __b = _a / 2 + '3' - "4" * 5.5 ++ 1;
-	_a++; __b**;
-	if else while[]
+	int a = 1;;
+	float b = 5..1;
+	if(!!1) { a = 2; }
+	else { a = 3; }
+	else { a = 4; }
+
+	while[a==1]
 	{
 		struct q
-		(
-			break
-		);
+		{
+		    a = 3;
+			break;
+		}
+		break;
 	}
-	do
-	{
-		void Void = q & p && _a == __b | _a || !__b
-	] while (Void);
-	return 'a';
-)
+）
