@@ -20,7 +20,7 @@
           </el-upload>
           <el-button style="float:left">源代码:</el-button>
           <el-button type="success" style="float:right" icon="el-icon-thumb" @click = "runCode">点击运行</el-button>
-          <el-button style="float:right" @click = "nextStep" :disabled="isDisabled">下一步</el-button>
+          <!--<el-button style="float:right" @click = "nextStep" :disabled="isDisabled">下一步</el-button> -->
           <el-button style="float:right" @click = "_continue" :disabled="isDisabled">继续</el-button>
           <el-button style="float:right" @click = "debug">调试</el-button>
 
